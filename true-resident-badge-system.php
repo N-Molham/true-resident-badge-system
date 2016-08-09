@@ -66,6 +66,13 @@ class Plugin extends Singular
 	var $frontend;
 
 	/**
+	 * Bookmarks
+	 *
+	 * @var Bookmarks
+	 */
+	var $bookmarks;
+
+	/**
 	 * Backend
 	 *
 	 * @var Ajax_Handler
@@ -85,10 +92,20 @@ class Plugin extends Singular
 		// autoloader register
 		spl_autoload_register( [ &$this, 'autoloader' ] );
 
+		if ( Helpers::is_plugin_inactive( 'badgeos/badgeos.php' ) ||
+		     Helpers::is_plugin_inactive( 'wp-job-manager/wp-job-manager.php' ) ||
+		     Helpers::is_plugin_inactive( 'wp-job-manager-bookmarks/wp-job-manager-bookmarks.php' )
+		)
+		{
+			// skip as the dependencies aren't available
+			return;
+		}
+
 		// modules
-		$this->ajax     = Ajax_Handler::get_instance();
-		$this->backend  = Backend::get_instance();
-		$this->frontend = Frontend::get_instance();
+		$this->bookmarks = Bookmarks::get_instance();
+		$this->ajax      = Ajax_Handler::get_instance();
+		$this->backend   = Backend::get_instance();
+		$this->frontend  = Frontend::get_instance();
 
 		// plugin loaded hook
 		do_action_ref_array( 'trbs_loaded', [ &$this ] );
