@@ -8,6 +8,7 @@
  */
 
 use True_Resident\Badge_System\Plugin;
+use True_Resident\Badge_System\Rewards;
 
 if ( !function_exists( 'true_resident_badge_system' ) ):
 	/**
@@ -18,6 +19,18 @@ if ( !function_exists( 'true_resident_badge_system' ) ):
 	function true_resident_badge_system()
 	{
 		return Plugin::get_instance();
+	}
+endif;
+
+if ( !function_exists( 'trbs_rewards' ) ):
+	/**
+	 * Get rewards component
+	 *
+	 * @return Rewards
+	 */
+	function trbs_rewards()
+	{
+		return true_resident_badge_system()->rewards;
 	}
 endif;
 
