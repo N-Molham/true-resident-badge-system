@@ -43,7 +43,6 @@ class Rewards extends Component
 			$requirements = array_merge( $requirements, call_user_func( $triggers[ $trigger_type ]['get_callback'], $step_id ) );
 		}
 
-		dump($requirements);
 		return $requirements;
 	}
 
