@@ -1,5 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
+use WP_Job_Manager_Bookmarks;
+
 /**
  * Bookmarks/checking-in logic
  *
@@ -10,7 +12,7 @@ class Bookmarks extends Component
 	/**
 	 * Original Job Manager Bookmarks addon component
 	 *
-	 * @var \WP_Job_Manager_Bookmarks
+	 * @var WP_Job_Manager_Bookmarks
 	 */
 	protected $wp_job_manager_bookmarks;
 
@@ -61,37 +63,49 @@ class Bookmarks extends Component
 			return;
 		}
 
+		// vars
+		$user_id = get_current_user_id();
+
 		// insert/update bookmark
 		if ( !empty( $_POST['submit_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'update_bookmark' ) )
 		{
 			// vars
-			$post_id = absint( $_POST['bookmark_post_id'] );
-			$note    = wp_kses_post( stripslashes( $_POST['bookmark_notes'] ) );
+			$post_id         = absint( filter_input( INPUT_POST, 'bookmark_post_id', FILTER_SANITIZE_NUMBER_INT ) );
+			$note            = wp_kses_post( stripslashes( filter_input( INPUT_POST, 'bookmark_notes', FILTER_SANITIZE_STRING ) ) );
+			$update_bookmark = 'yes' === filter_input( INPUT_POST, 'bookmark_update', FILTER_SANITIZE_STRING );
 
 			if ( $post_id && in_array( get_post_type( $post_id ), [ 'job_listing', 'resume' ] ) )
 			{
-				if ( !$this->wp_job_manager_bookmarks->is_bookmarked( $post_id ) )
+				if ( $this->wp_job_manager_bookmarks->is_bookmarked( $post_id ) && $update_bookmark )
 				{
-					// new bookmark
-					$wpdb->insert(
-						$this->table_name(),
-						[
-							'user_id'       => get_current_user_id(),
-							'post_id'       => $post_id,
-							'bookmark_note' => $note,
-							'date_created'  => current_time( 'mysql' ),
-						], [ '%d', '%d', '%s', '%s' ]
+					// update existing one
+					$wpdb->update( $this->table_name(),
+						[ 'bookmark_note' => $note ],
+						[ 'post_id' => $post_id, 'user_id' => $user_id ],
+						[ '%s' ], [ '%d', '%d' ]
 					);
 				}
 				else
 				{
-					// update existing one
-					$wpdb->update(
-						$this->table_name(),
-						[ 'bookmark_note' => $note ],
-						[ 'post_id' => $post_id, 'user_id' => get_current_user_id() ],
-						[ '%s' ], [ '%d', '%d' ]
-					);
+					$bookmark_data = [
+						'user_id'       => $user_id,
+						'post_id'       => $post_id,
+						'bookmark_note' => $note,
+						'date_created'  => current_time( 'mysql' ),
+					];
+
+					// new bookmark
+					$wpdb->insert( $this->table_name(), $bookmark_data, [ '%d', '%d', '%s', '%s' ] );
+
+					/**
+					 * New listing check-in happened
+					 *
+					 * @param int    $user_id
+					 * @param int    $post_id
+					 * @param string $bookmark_note
+					 * @param string $date_created
+					 */
+					do_action_ref_array( 'listing_new_checkin', $bookmark_data );
 				}
 
 				delete_transient( 'bookmark_count_' . $post_id );
@@ -99,7 +113,7 @@ class Bookmarks extends Component
 		}
 
 		// delete bookmark
-		if ( !empty( $_GET['remove_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'remove_bookmark' ) )
+		/*if ( !empty( $_GET['remove_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'remove_bookmark' ) )
 		{
 			$post_id = absint( $_GET['remove_bookmark'] );
 
@@ -110,7 +124,7 @@ class Bookmarks extends Component
 			);
 
 			delete_transient( 'bookmark_count_' . $post_id );
-		}
+		}*/
 	}
 
 	/**

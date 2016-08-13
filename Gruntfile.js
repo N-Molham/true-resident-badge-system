@@ -10,7 +10,7 @@ var plugin_args = {
 	exclude: [ // excluded files and directory from parsing
 		'vendor/' // composer libs vendor dir
 	],
-	mainFile: 'init.php', // plugin main file ( with plugin description comment doc )
+	mainFile: 'true-resident-badge-system.php', // plugin main file ( with plugin description comment doc )
 	watchFiles: {
 		assets: [ 'assets/src/css/**/*.css', 'assets/src/js/**/*.js' ],
 		potfile: [ './**/*.php' ]
