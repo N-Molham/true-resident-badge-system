@@ -105,7 +105,7 @@ class Bookmarks extends Component
 					 * @param string $bookmark_note
 					 * @param string $date_created
 					 */
-					do_action_ref_array( 'listing_new_checkin', $bookmark_data );
+					do_action_ref_array( 'true_resident_listing_new_check_in', $bookmark_data );
 				}
 
 				delete_transient( 'bookmark_count_' . $post_id );

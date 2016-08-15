@@ -1,5 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
+use True_Resident\Badge_System\Triggers\True_Resident_Trigger_Interface;
+
 /**
  * Backend logic
  *
@@ -39,13 +41,10 @@ class Backend extends Component
 	public function save_step_triggers_options( $title, $step_id, $step_data )
 	{
 		$triggers = trbs_rewards()->get_triggers();
-		foreach ( $triggers as $trigger_name => $trigger_info )
+		foreach ( $triggers as $trigger_name => $trigger )
 		{
-			if ( isset( $trigger_info['save_callback'] ) && is_callable( $trigger_info['save_callback'] ) )
-			{
-				// trigger additional UI
-				call_user_func( $trigger_info['save_callback'], $step_id, $step_data, $trigger_info, $trigger_name );
-			}
+			// trigger additional UI
+			call_user_func( [ &$trigger, 'save_data' ], $step_id, $step_data, $trigger_name );
 		}
 
 		return $title;
@@ -73,13 +72,10 @@ class Backend extends Component
 	public function rewards_triggers_ui()
 	{
 		$triggers = trbs_rewards()->get_triggers();
-		foreach ( $triggers as $trigger_name => $trigger_info )
+		foreach ( $triggers as $trigger_name => $trigger )
 		{
-			if ( isset( $trigger_info['ui_callback'] ) && is_callable( $trigger_info['ui_callback'] ) )
-			{
-				// trigger additional UI
-				add_action( 'badgeos_steps_ui_html_after_trigger_type', $trigger_info['ui_callback'], 10, 2 );
-			}
+			// trigger additional UI
+			add_action( 'badgeos_steps_ui_html_after_trigger_type', [ &$trigger, 'user_interface' ], 10, 2 );
 		}
 	}
 }
