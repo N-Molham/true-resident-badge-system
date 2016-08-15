@@ -19,13 +19,13 @@ class Backend extends Component
 		parent::init();
 
 		// WP initiation action hook
-		add_action( 'init', [ &$this, 'rewards_triggers_ui' ] );
+		add_action( 'init', [ &$this, 'badgeos_rewards_triggers_ui' ] );
 
 		// WP Admin enqueue script action hook
 		add_action( 'admin_enqueue_scripts', [ &$this, 'load_scripts' ] );
 
 		// BadgeOS before saving step
-		add_filter( 'badgeos_save_step', [ &$this, 'save_step_triggers_options' ], 10, 3 );
+		add_filter( 'badgeos_save_step', [ &$this, 'badgeos_save_step_triggers_options' ], 10, 3 );
 	}
 
 
@@ -38,7 +38,7 @@ class Backend extends Component
 	 *
 	 * @return string
 	 */
-	public function save_step_triggers_options( $title, $step_id, $step_data )
+	public function badgeos_save_step_triggers_options( $title, $step_id, $step_data )
 	{
 		$triggers = trbs_rewards()->get_triggers();
 		foreach ( $triggers as $trigger_name => $trigger )
@@ -69,7 +69,7 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function rewards_triggers_ui()
+	public function badgeos_rewards_triggers_ui()
 	{
 		$triggers = trbs_rewards()->get_triggers();
 		foreach ( $triggers as $trigger_name => $trigger )

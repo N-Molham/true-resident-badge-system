@@ -15,11 +15,18 @@ interface True_Resident_Trigger_Interface
 	public function label();
 
 	/**
-	 * Trigger action hook
+	 * Trigger WP action hook
 	 *
 	 * @return string
 	 */
 	public function trigger_action();
+
+	/**
+	 * Step trigger name
+	 *
+	 * @return string
+	 */
+	public function activity_trigger();
 
 	/**
 	 * Trigger Step UI
@@ -46,16 +53,28 @@ interface True_Resident_Trigger_Interface
 	/**
 	 * Get trigger data
 	 *
-	 * @param int $step_id
+	 * @param int    $step_id
+	 * @param string $trigger_type
 	 *
 	 * @return array
 	 */
-	public function get_data( $step_id );
+	public function get_data( $step_id, $trigger_type = '' );
 
 	/**
-	 * Trigger action hook callback
+	 * Activity trigger action hook callback
 	 *
 	 * @return void
 	 */
-	public function hook();
+	public function activity_hook();
+
+	/**
+	 * If user deserves achievement (badge) of not hook
+	 *
+	 * @param boolean $return
+	 * @param int     $user_id
+	 * @param int     $achievement_id
+	 *
+	 * @return boolean
+	 */
+	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id );
 }

@@ -19,10 +19,10 @@ class Rewards extends Component
 		parent::init();
 
 		// BadgeOS activity triggers action
-		add_filter( 'badgeos_activity_triggers', [ &$this, 'register_new_triggers' ] );
+		add_filter( 'badgeos_activity_triggers', [ &$this, 'badegos_register_new_triggers' ] );
 
 		// BadgeOS step data requirements filter
-		add_filter( 'badgeos_get_step_requirements', [ &$this, 'step_data_requirements' ], 10, 2 );
+		add_filter( 'badgeos_get_step_requirements', [ &$this, 'badgeos_step_data_requirements' ], 10, 2 );
 
 		// WP Initialization
 		add_action( 'init', [ &$this, 'badgeos_load_triggers' ] );
@@ -39,7 +39,10 @@ class Rewards extends Component
 		foreach ( $triggers as $trigger_name => $trigger )
 		{
 			// hook up trigger action
-			add_action( $trigger->trigger_action(), [ &$trigger, 'hook' ], 10, 20 );
+			add_action( $trigger->trigger_action(), [ &$trigger, 'activity_hook' ], 10, 20 );
+
+			// user deserves filter hook
+			add_filter( 'user_deserves_achievement', [ &$trigger, 'user_deserves_achievement_hook' ], 15, 3 );
 		}
 	}
 
@@ -51,7 +54,7 @@ class Rewards extends Component
 	 *
 	 * @return array
 	 */
-	public function step_data_requirements( $requirements, $step_id )
+	public function badgeos_step_data_requirements( $requirements, $step_id )
 	{
 		// vars
 		$trigger_type = get_post_meta( $step_id, '_badgeos_trigger_type', true );
@@ -63,7 +66,7 @@ class Rewards extends Component
 			$requirements = array_merge( $requirements, call_user_func( [
 				&$triggers[ $trigger_type ],
 				'get_data',
-			], $step_id ) );
+			], $step_id, $trigger_type ) );
 		}
 
 		return $requirements;
@@ -76,7 +79,7 @@ class Rewards extends Component
 	 *
 	 * @return array
 	 */
-	public function register_new_triggers( $triggers )
+	public function badegos_register_new_triggers( $triggers )
 	{
 		// list trigger with labels
 		$triggers = array_merge( $triggers, array_map( function ( $trigger )
@@ -94,8 +97,10 @@ class Rewards extends Component
 	 */
 	public function get_triggers()
 	{
+		$listings_category_trigger = new Listing_Category_Check_In_Trigger();
+
 		return apply_filters( 'trbs_rewards_activity_triggers', [
-			'true_resident_listing_category_check_in' => new Listing_Category_Check_In_Trigger(),
+			$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
 		] );
 	}
 }
