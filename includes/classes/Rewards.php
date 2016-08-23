@@ -4,6 +4,7 @@ use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger;
 use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\SpecificListing_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\User_Register_Trigger;
 
 /**
  * BadgeOS rewards logic
@@ -114,6 +115,7 @@ class Rewards extends Component
 		$listings_category_trigger = new Listing_Category_Check_In_Trigger();
 		$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
 		$listing_review_trigger    = new Listings_Reviews_Trigger();
+		$user_register_trigger     = new User_Register_Trigger();
 
 		/**
 		 * Filters the list of built-in triggers in the add-on
@@ -126,6 +128,7 @@ class Rewards extends Component
 			$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
 			$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
 			$listing_review_trigger->activity_trigger()    => &$listing_review_trigger,
+			$user_register_trigger->activity_trigger()     => &$user_register_trigger,
 		] );
 	}
 }

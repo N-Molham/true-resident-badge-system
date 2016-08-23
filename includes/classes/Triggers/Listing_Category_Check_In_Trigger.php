@@ -139,7 +139,7 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 
 	public function get_data( $step_id, $trigger_type = '' )
 	{
-		if ( empty( $trigger_type ) )
+		if ( '' === $trigger_type || empty( $trigger_type ) )
 		{
 			// if step trigger type not passed
 			$trigger_type = get_post_meta( $step_id, '_badgeos_trigger_type', true );
