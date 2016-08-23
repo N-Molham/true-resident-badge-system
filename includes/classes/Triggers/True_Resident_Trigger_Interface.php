@@ -17,7 +17,7 @@ interface True_Resident_Trigger_Interface
 	/**
 	 * Trigger WP action hook
 	 *
-	 * @return string
+	 * @return string|array
 	 */
 	public function trigger_action();
 

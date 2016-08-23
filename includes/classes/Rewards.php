@@ -1,6 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
 use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger;
 use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\SpecificListing_Check_In_Trigger;
 
@@ -41,7 +42,17 @@ class Rewards extends Component
 		foreach ( $triggers as $trigger_name => $trigger )
 		{
 			// hook up trigger action
-			add_action( $trigger->trigger_action(), [ $trigger, 'activity_hook' ], 10, 20 );
+			$trigger_action = $trigger->trigger_action();
+			if ( !is_array( $trigger_action ) )
+			{
+				// wrap single action in array
+				$trigger_action = [ $trigger_action ];
+			}
+
+			foreach ( $trigger_action as $action_name )
+			{
+				add_action( $action_name, [ $trigger, 'activity_hook' ], 10, 20 );
+			}
 
 			// user deserves filter hook
 			add_filter( 'user_deserves_achievement', [ $trigger, 'user_deserves_achievement_hook' ], 15, 6 );
@@ -102,6 +113,7 @@ class Rewards extends Component
 		// built-in triggers
 		$listings_category_trigger = new Listing_Category_Check_In_Trigger();
 		$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
+		$listing_review_trigger    = new Listings_Reviews_Trigger();
 
 		/**
 		 * Filters the list of built-in triggers in the add-on
@@ -113,6 +125,7 @@ class Rewards extends Component
 		return apply_filters( 'trbs_rewards_activity_triggers', [
 			$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
 			$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
+			$listing_review_trigger->activity_trigger()    => &$listing_review_trigger,
 		] );
 	}
 }
