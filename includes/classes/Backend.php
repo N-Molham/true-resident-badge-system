@@ -44,7 +44,7 @@ class Backend extends Component
 		foreach ( $triggers as $trigger_name => $trigger )
 		{
 			// trigger additional UI
-			call_user_func( [ &$trigger, 'save_data' ], $step_id, $step_data, $trigger_name );
+			call_user_func( [ $trigger, 'save_data' ], $step_id, $step_data, $trigger_name );
 		}
 
 		return $title;
@@ -75,7 +75,7 @@ class Backend extends Component
 		foreach ( $triggers as $trigger_name => $trigger )
 		{
 			// trigger additional UI
-			add_action( 'badgeos_steps_ui_html_after_trigger_type', [ &$trigger, 'user_interface' ], 10, 2 );
+			add_action( 'badgeos_steps_ui_html_after_trigger_type', [ $trigger, 'user_interface' ], 10, 2 );
 		}
 	}
 }

@@ -11,8 +11,15 @@
 		$( '#steps_list' ).on( 'change trbs-change', step_triggers_selector, function ( e ) {
 			var $trigger = $( e.currentTarget );
 
-			// hide all available condition except for the linked one
-			$trigger.siblings( step_conditions_selector ).hide().filter( '[data-toggle="' + $trigger.val() + '"]' ).show();
+			// look for the linked fields
+			var $linked_fields = $trigger.siblings( step_conditions_selector ).hide().filter( '[data-toggle="' + $trigger.val() + '"]' );
+
+			if ( $linked_fields.length ) {
+				// hide all available condition except for the linked one
+				$linked_fields.show();
+
+
+			}
 		} );
 
 		// trigger change on load

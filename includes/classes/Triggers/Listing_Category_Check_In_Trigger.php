@@ -83,7 +83,7 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 		}
 	}
 
-	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id )
+	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
 	{
 		global $wpdb;
 

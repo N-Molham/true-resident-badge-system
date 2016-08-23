@@ -1,6 +1,8 @@
 <?php namespace True_Resident\Badge_System;
 
 use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\SpecificListing_Check_In_Trigger;
 
 /**
  * BadgeOS rewards logic
@@ -39,10 +41,10 @@ class Rewards extends Component
 		foreach ( $triggers as $trigger_name => $trigger )
 		{
 			// hook up trigger action
-			add_action( $trigger->trigger_action(), [ &$trigger, 'activity_hook' ], 10, 20 );
+			add_action( $trigger->trigger_action(), [ $trigger, 'activity_hook' ], 10, 20 );
 
 			// user deserves filter hook
-			add_filter( 'user_deserves_achievement', [ &$trigger, 'user_deserves_achievement_hook' ], 15, 3 );
+			add_filter( 'user_deserves_achievement', [ $trigger, 'user_deserves_achievement_hook' ], 15, 6 );
 		}
 	}
 
@@ -64,7 +66,7 @@ class Rewards extends Component
 		{
 			// get step extra data based on the trigger
 			$requirements = array_merge( $requirements, call_user_func( [
-				&$triggers[ $trigger_type ],
+				$triggers[ $trigger_type ],
 				'get_data',
 			], $step_id, $trigger_type ) );
 		}
@@ -97,10 +99,20 @@ class Rewards extends Component
 	 */
 	public function get_triggers()
 	{
+		// built-in triggers
 		$listings_category_trigger = new Listing_Category_Check_In_Trigger();
+		$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
 
+		/**
+		 * Filters the list of built-in triggers in the add-on
+		 *
+		 * @param array $triggers
+		 *
+		 * @return array
+		 */
 		return apply_filters( 'trbs_rewards_activity_triggers', [
 			$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
+			$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
 		] );
 	}
 }

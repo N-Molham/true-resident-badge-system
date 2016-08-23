@@ -5,9 +5,9 @@
 // vars
 var a=".select-trigger-type",c=".true-resident-step-condition";
 // when the trigger type changes
-b("#steps_list").on("change trbs-change",a,function(a){var d=b(a.currentTarget);
+b("#steps_list").on("change trbs-change",a,function(a){var d=b(a.currentTarget),e=d.siblings(c).hide().filter('[data-toggle="'+d.val()+'"]');e.length&&
 // hide all available condition except for the linked one
-d.siblings(c).hide().filter('[data-toggle="'+d.val()+'"]').show()}),
+e.show()}),
 // trigger change on load
 b(a).trigger("trbs-change"),
 // Inject our custom step details into the update step action

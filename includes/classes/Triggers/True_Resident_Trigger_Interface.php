@@ -73,8 +73,11 @@ interface True_Resident_Trigger_Interface
 	 * @param boolean $return
 	 * @param int     $user_id
 	 * @param int     $achievement_id
+	 * @param string  $this_trigger
+	 * @param int     $site_id
+	 * @param array   $args
 	 *
 	 * @return boolean
 	 */
-	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id );
+	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args );
 }
