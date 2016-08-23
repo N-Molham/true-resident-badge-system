@@ -56,7 +56,6 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 
 		// load achievements
 		$achievements = $wpdb->get_results( $wpdb->prepare( "SELECT post_id as id, meta_value as category_id FROM $wpdb->postmeta WHERE meta_key = %s", $this->meta_key ) );
-
 		foreach ( $achievements as $achievement )
 		{
 			// achievement scope
@@ -87,9 +86,9 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 	{
 		global $wpdb;
 
-		// If we're not dealing with a step, bail here
 		if ( 'step' != get_post_type( $achievement_id ) )
 		{
+			// If we're not dealing with a step, bail here
 			return $return;
 		}
 
@@ -119,7 +118,7 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 				],
 			] ) );
 
-			if ( !empty($category_listings) )
+			if ( !empty( $category_listings ) )
 			{
 				// filter listings scope
 				$count_sql .= " AND post_id IN ({$category_listings})";
