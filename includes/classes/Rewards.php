@@ -1,6 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
 use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger;
 use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\SpecificListing_Check_In_Trigger;
@@ -122,6 +123,7 @@ class Rewards extends Component
 		{
 			// built-in triggers
 			$listings_category_trigger = new Listing_Category_Check_In_Trigger();
+			$listings_tag_trigger      = new Listing_Tag_Check_In_Trigger();
 			$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
 			$listing_review_trigger    = new Listings_Reviews_Trigger();
 			$user_register_trigger     = new User_Register_Trigger();
@@ -135,6 +137,7 @@ class Rewards extends Component
 			 */
 			$this->triggers_list = apply_filters( 'trbs_rewards_activity_triggers', [
 				$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
+				$listings_tag_trigger->activity_trigger()      => &$listings_tag_trigger,
 				$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
 				$listing_review_trigger->activity_trigger()    => &$listing_review_trigger,
 				$user_register_trigger->activity_trigger()     => &$user_register_trigger,

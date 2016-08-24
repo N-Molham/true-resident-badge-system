@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.0.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2016-08-23 20:51:08+00:00\n"
+"POT-Creation-Date: 2016-08-24 19:51:15+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,19 +25,40 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:26
+#: includes/classes/Ajax_Handler.php:40
+msgid "Invalid access."
+msgstr ""
+
+#: includes/classes/Ajax_Handler.php:47
+msgid "Invalid taxonomy."
+msgstr ""
+
+#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:33
 msgid "True Resident Listing Category Check-in"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:55
+#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:62
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:69
 #: includes/classes/Triggers/Listings_Reviews_Trigger.php:69
 #: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:60
 #: includes/classes/Triggers/User_Register_Trigger.php:52
 msgid "%1$s triggered %2$s (%3$dx)"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:174
+#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:154
 msgid "Any Category"
+msgstr ""
+
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:42
+msgid "True Resident Listing Tags Check-in"
+msgstr ""
+
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:174
+msgid "-- Tag Type --"
+msgstr ""
+
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:184
+msgid "-- Select A Tag --"
 msgstr ""
 
 #: includes/classes/Triggers/Listings_Reviews_Trigger.php:19

@@ -28,6 +28,34 @@ class Ajax_Handler extends Component
 	}
 
 	/**
+	 * Get taxonomy terms
+	 *
+	 * @return void
+	 */
+	public function trbs_get_taxonomy_terms()
+	{
+		if ( !current_user_can( 'manage_options' ) )
+		{
+			// don't have access
+			$this->error( __( 'Invalid access.', TRBS_DOMAIN ) );
+		}
+
+		$taxonomy = sanitize_key( isset( $_REQUEST['taxonomy'] ) ? $_REQUEST['taxonomy'] : '' );
+		if ( '' === $taxonomy || empty( $taxonomy ) || false === get_taxonomy( $taxonomy ) )
+		{
+			// unknown taxonomy
+			$this->error( __( 'Invalid taxonomy.', TRBS_DOMAIN ) );
+		}
+
+		$this->success( get_terms( [
+			'taxonomy'     => $taxonomy,
+			'hide_empty'   => false,
+			'fields'       => 'id=>name',
+			'hierarchical' => false,
+		] ) );
+	}
+
+	/**
 	 * AJAX Debug response
 	 *
 	 * @since 1.0.0
