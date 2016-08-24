@@ -63,25 +63,25 @@ class Frontend extends Component
 		if ( false === $is_earned )
 		{
 			// badge steps
-			$steps           = badgeos_get_required_achievements_for_achievement( $achievement_id );
-			$steps_count     = count( $steps );
-			$steps_completed = 0;
+			$steps            = badgeos_get_required_achievements_for_achievement( $achievement_id );
+			$steps_count      = count( $steps );
+			$steps_percentage = $steps_count * 100;
+			$steps_completed  = 0;
 
 			for ( $i = 0; $i < $steps_count; $i++ )
 			{
-				$step_id = $steps[ $i ]->ID;
-				if ( count( badgeos_get_user_achievements( [
+				// vars
+				$step_id        = $steps[ $i ]->ID;
+				$step_completed = count( badgeos_get_user_achievements( [
 						'user_id'        => $user_id,
 						'achievement_id' => $step_id,
 						'since'          => absint( badgeos_achievement_last_user_activity( $achievement_id, $user_id ) ),
-					] ) ) > 0
-				)
-				{
-					$steps_completed++;
-				}
+					] ) ) > 0;
+
+				$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
 			}
 
-			$earned_percentage = round( $steps_completed ? $steps_completed / $steps_count : 0, 2 ) * 100;
+			$earned_percentage = round( $steps_completed ? $steps_completed / $steps_count : 0 );
 		}
 
 		// Each Achievement

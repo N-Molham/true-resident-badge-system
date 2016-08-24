@@ -103,7 +103,7 @@ class User_Register_Trigger implements True_Resident_Trigger_Interface
 		if ( '' === $trigger_type || empty( $trigger_type ) )
 		{
 			// if step trigger type not passed
-			$trigger_type = get_post_meta( $step_id, '_badgeos_trigger_type', true );
+			$trigger_type = trbs_rewards()->get_step_type( $step_id );
 		}
 
 		if ( $this->activity_trigger() !== $trigger_type )
@@ -146,5 +146,10 @@ class User_Register_Trigger implements True_Resident_Trigger_Interface
 
 		// element end
 		echo '</select>';
+	}
+
+	public function get_step_percentage( $step_id, $user_id )
+	{
+		return 0;
 	}
 }

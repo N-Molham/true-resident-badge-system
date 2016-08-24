@@ -95,13 +95,13 @@ class Listings_Reviews_Trigger implements True_Resident_Trigger_Interface
 		$requirements = badgeos_get_step_requirements( $achievement_id );
 
 		// execute sql for the current count
-		$check_in_count = get_comments( [
+		$comments_count = get_comments( [
 			'user_id'   => $user_id,
 			'post_type' => $this->listing_post_type,
 			'status'    => 'approve',
 			'count'     => true,
 		] );
-		if ( $check_in_count >= $requirements['count'] )
+		if ( $comments_count >= $requirements['count'] )
 		{
 			// target reached
 			$return = true;
@@ -124,5 +124,20 @@ class Listings_Reviews_Trigger implements True_Resident_Trigger_Interface
 	public function user_interface( $step_id, $badge_id )
 	{
 		// no additional information needed
+	}
+
+	public function get_step_percentage( $step_id, $user_id )
+	{
+		// step requirements
+		$step_requirements = badgeos_get_step_requirements( $step_id );
+
+		$comments_count = get_comments( [
+			'user_id'   => $user_id,
+			'post_type' => $this->listing_post_type,
+			'status'    => 'approve',
+			'count'     => true,
+		] );
+
+		return $comments_count ? round( ( $comments_count / $step_requirements['count'] ) * 100 ) : 0;
 	}
 }

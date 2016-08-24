@@ -80,4 +80,14 @@ interface True_Resident_Trigger_Interface
 	 * @return boolean
 	 */
 	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args );
+
+	/**
+	 * Get completed percentage of the given step with this trigger for the given user
+	 *
+	 * @param int $step_id
+	 * @param int $user_id
+	 *
+	 * @return int
+	 */
+	public function get_step_percentage( $step_id, $user_id );
 }

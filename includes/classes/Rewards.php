@@ -14,6 +14,13 @@ use True_Resident\Badge_System\Triggers\User_Register_Trigger;
 class Rewards extends Component
 {
 	/**
+	 * Additional triggers list holder
+	 *
+	 * @var array
+	 */
+	protected $triggers_list;
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -71,7 +78,7 @@ class Rewards extends Component
 	public function badgeos_step_data_requirements( $requirements, $step_id )
 	{
 		// vars
-		$trigger_type = get_post_meta( $step_id, '_badgeos_trigger_type', true );
+		$trigger_type = $this->get_step_type( $step_id );
 		$triggers     = $this->get_triggers();
 
 		if ( isset( $triggers[ $trigger_type ] ) )
@@ -111,24 +118,67 @@ class Rewards extends Component
 	 */
 	public function get_triggers()
 	{
-		// built-in triggers
-		$listings_category_trigger = new Listing_Category_Check_In_Trigger();
-		$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
-		$listing_review_trigger    = new Listings_Reviews_Trigger();
-		$user_register_trigger     = new User_Register_Trigger();
+		if ( null == $this->triggers_list )
+		{
+			// built-in triggers
+			$listings_category_trigger = new Listing_Category_Check_In_Trigger();
+			$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
+			$listing_review_trigger    = new Listings_Reviews_Trigger();
+			$user_register_trigger     = new User_Register_Trigger();
 
-		/**
-		 * Filters the list of built-in triggers in the add-on
-		 *
-		 * @param array $triggers
-		 *
-		 * @return array
-		 */
-		return apply_filters( 'trbs_rewards_activity_triggers', [
-			$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
-			$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
-			$listing_review_trigger->activity_trigger()    => &$listing_review_trigger,
-			$user_register_trigger->activity_trigger()     => &$user_register_trigger,
-		] );
+			/**
+			 * Filters the list of built-in triggers in the add-on
+			 *
+			 * @param array $triggers
+			 *
+			 * @return array
+			 */
+			$this->triggers_list = apply_filters( 'trbs_rewards_activity_triggers', [
+				$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
+				$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
+				$listing_review_trigger->activity_trigger()    => &$listing_review_trigger,
+				$user_register_trigger->activity_trigger()     => &$user_register_trigger,
+			] );
+		}
+
+		return $this->triggers_list;
+	}
+
+	/**
+	 * Get completed percentage of the given step
+	 *
+	 * @param int $step_id
+	 * @param int $user_id
+	 *
+	 * @return int
+	 */
+	public function get_step_completed_percentage( $step_id, $user_id = null )
+	{
+		$step_type = $this->get_step_type( $step_id );
+		if ( !isset( $this->triggers_list[ $step_type ] ) )
+		{
+			// step not in the additional type
+			return 0;
+		}
+
+		if ( null === $user_id )
+		{
+			// current logged in user ID
+			$user_id = get_current_user_id();
+		}
+
+		return $this->triggers_list[ $step_type ]->get_step_percentage( $step_id, $user_id );
+	}
+
+	/**
+	 * Get achievement step trigger type
+	 *
+	 * @param int $step_id
+	 *
+	 * @return string
+	 */
+	public function get_step_type( $step_id )
+	{
+		return get_post_meta( $step_id, '_badgeos_trigger_type', true );
 	}
 }

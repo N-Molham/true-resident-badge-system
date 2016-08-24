@@ -21,6 +21,13 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 	 */
 	var $category_taxonomy = 'job_listing_category';
 
+	/**
+	 * UI field name
+	 *
+	 * @var string
+	 */
+	var $category_field_name = 'check_in_listing_category';
+
 	public function label()
 	{
 		return __( 'True Resident Listing Category Check-in', TRBS_DOMAIN );
@@ -84,8 +91,6 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 
 	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
 	{
-		global $wpdb;
-
 		if ( 'step' != get_post_type( $achievement_id ) )
 		{
 			// If we're not dealing with a step, bail here
@@ -94,18 +99,100 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $achievement_id );
-		if ( !isset( $requirements['check_in_listing_category'] ) )
+		if ( !isset( $requirements[ $this->category_field_name ] ) )
 		{
 			// skip un-related type
 			return $return;
 		}
 
+		// execute sql for the current count
+		$check_in_count = $this->get_check_ins_count( $user_id, $requirements[ $this->category_field_name ] );
+		if ( $check_in_count >= $requirements['count'] )
+		{
+			// target reached
+			$return = true;
+		}
+
+		return $return;
+	}
+
+	public function get_data( $step_id, $trigger_type = '' )
+	{
+		if ( '' === $trigger_type || empty( $trigger_type ) )
+		{
+			// if step trigger type not passed
+			$trigger_type = trbs_rewards()->get_step_type( $step_id );
+		}
+
+		if ( $this->activity_trigger() !== $trigger_type )
+		{
+			// not the same trigger type
+			return [ ];
+		}
+
+		return [
+			$this->category_field_name => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
+		];
+	}
+
+	public function save_data( $step_id, $step_data, $trigger_name = '' )
+	{
+		if ( 'true_resident_listing_category_check_in' !== $trigger_name || $trigger_name !== $step_data['trigger_type'] )
+		{
+			// skip non-related triggers
+			return;
+		}
+
+		// save selected category
+		update_post_meta( $step_id, $this->meta_key, absint( $step_data[ $this->category_field_name ] ) );
+	}
+
+	public function user_interface( $step_id, $badge_id )
+	{
+		// categories dropdown
+		echo str_replace( '<select', '<select data-toggle="true_resident_listing_category_check_in" ', wp_dropdown_categories( [
+			'show_option_all' => __( 'Any Category', TRBS_DOMAIN ),
+			'show_count'      => true,
+			'hide_empty'      => false,
+			'selected'        => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
+			'hierarchical'    => true,
+			'echo'            => false,
+			'name'            => $this->category_field_name,
+			'class'           => 'true-resident-listing-category true-resident-step-condition',
+			'taxonomy'        => $this->category_taxonomy,
+		] ) );
+	}
+
+	public function get_step_percentage( $step_id, $user_id )
+	{
+		// vars
+		$step_requirements = badgeos_get_step_requirements( $step_id );
+		$check_ins_count   = $this->get_check_ins_count( $user_id, $step_requirements[ $this->category_field_name ] );
+		if ( 0 === $check_ins_count )
+		{
+			// non-done yet
+			return 0;
+		}
+
+		return round( ( $check_ins_count / $step_requirements['count'] ) * 100 );
+	}
+
+	/**
+	 * Get check-ins count of the user
+	 *
+	 * @param int $user_id
+	 * @param int $category_id
+	 *
+	 * @return int
+	 */
+	public function get_check_ins_count( $user_id, $category_id = 0 )
+	{
+		global $wpdb;
+
 		// vars
 		$table_name   = trbs_bookmarks()->table_name();
 		$count_sql    = "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d";
-		$count_params = [ $user_id ];
 
-		$category_id = $requirements['check_in_listing_category'];
 		if ( $category_id )
 		{
 			// specific category
@@ -126,60 +213,6 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 		}
 
 		// execute sql for the current count
-		$check_in_count = absint( $wpdb->get_var( $wpdb->prepare( $count_sql, $count_params ) ) );
-		if ( $check_in_count >= $requirements['count'] )
-		{
-			// target reached
-			$return = true;
-		}
-
-		return $return;
-	}
-
-	public function get_data( $step_id, $trigger_type = '' )
-	{
-		if ( '' === $trigger_type || empty( $trigger_type ) )
-		{
-			// if step trigger type not passed
-			$trigger_type = get_post_meta( $step_id, '_badgeos_trigger_type', true );
-		}
-
-		if ( $this->activity_trigger() !== $trigger_type )
-		{
-			// not the same trigger type
-			return [ ];
-		}
-
-		return [
-			'check_in_listing_category' => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
-		];
-	}
-
-	public function save_data( $step_id, $step_data, $trigger_name = '' )
-	{
-		if ( 'true_resident_listing_category_check_in' !== $trigger_name || $trigger_name !== $step_data['trigger_type'] )
-		{
-			// skip non-related triggers
-			return;
-		}
-
-		// save selected category
-		update_post_meta( $step_id, $this->meta_key, absint( $step_data['check_in_listing_category'] ) );
-	}
-
-	public function user_interface( $step_id, $badge_id )
-	{
-		// categories dropdown
-		echo str_replace( '<select', '<select data-toggle="true_resident_listing_category_check_in" ', wp_dropdown_categories( [
-			'show_option_all' => __( 'Any Category', TRBS_DOMAIN ),
-			'show_count'      => true,
-			'hide_empty'      => false,
-			'selected'        => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
-			'hierarchical'    => true,
-			'echo'            => false,
-			'name'            => "check_in_listing_category",
-			'class'           => 'true-resident-listing-category true-resident-step-condition',
-			'taxonomy'        => $this->category_taxonomy,
-		] ) );
+		return absint( $wpdb->get_var( $wpdb->prepare( $count_sql, [ $user_id ] ) ) );
 	}
 }
