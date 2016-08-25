@@ -1,5 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
+use WP_Query;
+
 /**
  * Frontend logic
  *
@@ -31,6 +33,41 @@ class Frontend extends Component
 
 		// mobile request or not
 		$this->popover_trigger = function_exists( 'wp_is_mobile' ) ? ( wp_is_mobile() ? 'click' : 'hover' ) : 'click';
+
+		// Badges list pre-query
+		add_action( 'pre_get_posts', [ &$this, 'badgeos_query_list_all' ] );
+	}
+
+	/**
+	 * Load all badges without pagination
+	 *
+	 * @param WP_Query $query
+	 *
+	 * @return void
+	 */
+	public function badgeos_query_list_all( $query )
+	{
+		$post_type = $query->get( 'post_type' );
+		if ( is_string( $post_type ) )
+		{
+			// wrap in array
+			$post_type = [ $post_type ];
+		}
+
+		if ( !in_array( 'badges', $post_type ) || !defined( 'DOING_AJAX' ) || !DOING_AJAX )
+		{
+			// skip un-related query
+			return;
+		}
+
+		$per_page = $query->get( 'posts_per_page' );
+		if ( $per_page > 0 )
+		{
+			// skip un-related query
+			return;
+		}
+
+		$query->set( 'nopaging', true );
 	}
 
 	/**
@@ -141,7 +178,7 @@ class Frontend extends Component
 		$excerpt = '' === $achievement->post_excerpt || empty( $achievement->post_excerpt ) ? $achievement->post_content : $achievement->post_excerpt;
 		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
 		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
-		$popover_content .= '<span class="badgeos-percentage-number">'. $earned_percentage . '&percnt;</span>';
+		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span>';
 		$popover_content .= '</span></div><!-- .badgeos-item-description --></div><!-- .badgeos-item-description -->';
 
 		// Each Achievement

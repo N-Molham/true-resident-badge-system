@@ -10,6 +10,8 @@
 	-webkit-flex-wrap: wrap;
 	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
+
+	border-top: none;
 }
 
 .badgeos-achievements-list-item {
