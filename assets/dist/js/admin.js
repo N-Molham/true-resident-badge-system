@@ -7,7 +7,7 @@ var a=b("#steps_list"),c=".select-trigger-type",d=".true-resident-step-condition
 // when the trigger type changes
 a.on("change trbs-change",c,function(a){var c=b(a.currentTarget);
 // look for the linked fields
-c.siblings(d).hide().filter('[data-toggle="'+c.val()+'"]').show()}),a.on("change trbs-change",e,function(a){
+c.siblings(d).hide().filter('[data-toggle="'+c.val()+'"]').show()}),a.on("change trbs-change",e,function(a){if(a.currentTarget.value.length>0){
 // linked terms field
 var c=b(a.currentTarget),d=[],e=c.siblings(".spinner"),f=c.siblings(".true-resident-term"),g=parseInt(f.data("value"));
 // disable the field and empty it
@@ -17,7 +17,7 @@ d.push('<option value="'+b+'"'+(g===parseInt(b)?" selected":"")+">"+a.data[b]+"<
 // fill in the options
 f.html(d)}else alert(a.data)},"json").always(function(){
 // re-enable the field
-f.prop("disabled",!1),c.prop("disabled",!1),e.removeClass("is-active")})}),
+f.prop("disabled",!1),c.prop("disabled",!1),e.removeClass("is-active")})}}),
 // trigger change on load
 b([c,e].join(", ")).trigger("trbs-change"),
 // Inject our custom step details into the update step action

@@ -18,44 +18,46 @@
 		} );
 
 		$steps_list.on( 'change trbs-change', taxonomy_field_selector, function ( e ) {
-			// linked terms field
-			var $this         = $( e.currentTarget ),
-			    options       = [],
-			    $loading      = $this.siblings( '.spinner' ),
-			    $terms_field  = $this.siblings( '.true-resident-term' ),
-			    selected_term = parseInt( $terms_field.data( 'value' ) );
+			if ( e.currentTarget.value.length > 0 ) {
+				// linked terms field
+				var $this         = $( e.currentTarget ),
+				    options       = [],
+				    $loading      = $this.siblings( '.spinner' ),
+				    $terms_field  = $this.siblings( '.true-resident-term' ),
+				    selected_term = parseInt( $terms_field.data( 'value' ) );
 
-			// disable the field and empty it
-			$terms_field.empty().prop( 'disabled', true );
-			$this.prop( 'disabled', true );
-			$loading.addClass( 'is-active' );
+				// disable the field and empty it
+				$terms_field.empty().prop( 'disabled', true );
+				$this.prop( 'disabled', true );
+				$loading.addClass( 'is-active' );
 
-			$.post( ajaxurl, {
-				action  : 'trbs_get_taxonomy_terms',
-				taxonomy: e.currentTarget.value
-			}, function ( response ) {
-				if ( response.success ) {
-					for ( var term_id in response.data ) {
-						if ( !response.data.hasOwnProperty( term_id ) ) {
-							// skip invalid property
-							continue;
+				$.post( ajaxurl, {
+					action  : 'trbs_get_taxonomy_terms',
+					taxonomy: e.currentTarget.value
+				}, function ( response ) {
+					if ( response.success ) {
+						for ( var term_id in response.data ) {
+							if ( !response.data.hasOwnProperty( term_id ) ) {
+								// skip invalid property
+								continue;
+							}
+
+							// add the new option
+							options.push( '<option value="' + term_id + '"' + ( selected_term === parseInt( term_id ) ? ' selected' : '' ) + '>' + response.data[ term_id ] + '</option>' );
 						}
 
-						// add the new option
-						options.push( '<option value="' + term_id + '"' + ( selected_term === parseInt( term_id ) ? ' selected' : '' ) + '>' + response.data[ term_id ] + '</option>' );
+						// fill in the options
+						$terms_field.html( options );
+					} else {
+						alert( response.data );
 					}
-
-					// fill in the options
-					$terms_field.html( options );
-				} else {
-					alert( response.data );
-				}
-			}, 'json' ).always( function () {
-				// re-enable the field
-				$terms_field.prop( 'disabled', false );
-				$this.prop( 'disabled', false );
-				$loading.removeClass( 'is-active' );
-			} );
+				}, 'json' ).always( function () {
+					// re-enable the field
+					$terms_field.prop( 'disabled', false );
+					$this.prop( 'disabled', false );
+					$loading.removeClass( 'is-active' );
+				} );
+			}
 		} );
 
 		// trigger change on load
