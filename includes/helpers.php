@@ -14,7 +14,14 @@ final class Helpers
 	 *
 	 * @var string
 	 */
-	static $text_domain = TRBS_DOMAIN;
+	public static $text_domain = TRBS_DOMAIN;
+
+	/**
+	 * Enqueue path
+	 *
+	 * @var string
+	 */
+	private static $enqueue_path;
 
 	/**
 	 * Check if the given URL is valid
@@ -183,6 +190,21 @@ final class Helpers
 	public static function is_script_debugging()
 	{
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
+	}
+
+	/**
+	 * Get Assets enqueue base path
+	 *
+	 * @return string
+	 */
+	public static function enqueue_path()
+	{
+		if ( null === self::$enqueue_path )
+		{
+			self::$enqueue_path = sprintf( '%s/assets/%s/', untrailingslashit( TRBS_URI ), self::is_script_debugging() ? 'src' : 'dist' );
+		}
+
+		return self::$enqueue_path;
 	}
 
 	/**

@@ -57,11 +57,8 @@ class Backend extends Component
 	 */
 	public function load_scripts()
 	{
-		// base loading path
-		$load_path = sprintf( '%s/assets/%s/', untrailingslashit( TRBS_URI ), Helpers::is_script_debugging() ? 'src' : 'dist' );
-
 		// main admin script
-		wp_enqueue_script( 'trbs-triggers', $load_path . 'js/admin.js', [ 'jquery' ], trbs_version(), true );
+		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [ 'jquery' ], trbs_version(), true );
 	}
 
 	/**

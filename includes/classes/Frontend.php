@@ -8,6 +8,13 @@
 class Frontend extends Component
 {
 	/**
+	 * Bagdes popover trigger
+	 *
+	 * @var string
+	 */
+	var $popover_trigger;
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -18,6 +25,45 @@ class Frontend extends Component
 
 		// BadgeOS achievement render
 		add_filter( 'badgeos_render_achievement', [ &$this, 'badge_render_output' ], 10, 2 );
+
+		// WP Styles printing action hook
+		add_action( 'wp_print_styles', [ &$this, 'badgeos_achievements_list_styling' ] );
+
+		$this->popover_trigger = function_exists( 'wp_is_mobile' ) ? ( wp_is_mobile() ? 'click' : 'hover' ) : 'click';
+	}
+
+	/**
+	 * Enqueue achievements extra styling when the main one
+	 *
+	 * @return void
+	 */
+	public function badgeos_achievements_list_styling()
+	{
+		if ( !wp_script_is( 'badgeos-achievements', 'enqueued' ) )
+		{
+			// skip un-related content
+			return;
+		}
+
+		// assets base path
+		$base_path = Helpers::enqueue_path();
+
+		// WebUI Poppver
+		wp_register_style( 'trbs-webui-popover', $base_path . 'css/jquery.webui-popover.css' );
+		wp_register_script( 'trbs-webui-popover', $base_path . 'js/jquery.webui-popover.js', [ 'jquery' ], '1.2.12', true );
+
+		// jQuety Livequery
+		wp_register_script( 'trbs-livequery', $base_path . 'js/jquery.livequery.js', [ 'jquery' ], '1.3.6', true );
+
+		// enqueue badges script and style
+		wp_enqueue_style( 'trbs-achievements', $base_path . 'css/achievements.css', [
+			'badgeos-front',
+			'trbs-webui-popover',
+		], trbs_version() );
+		wp_enqueue_script( 'trbs-achievements', $base_path . 'js/achievements.js', [
+			'trbs-webui-popover',
+			'trbs-livequery',
+		], trbs_version(), true );
 	}
 
 	/**
@@ -84,26 +130,25 @@ class Frontend extends Component
 			$earned_percentage = round( $steps_completed ? $steps_completed / $steps_count : 0 );
 		}
 
-		// Each Achievement
-		echo '<div id="badgeos-achievements-list-item-', $achievement_id, '" class="', implode( ' ', $css_classes ), '"', $credly_ID, '>';
-
-		// Achievement Image
-		echo '<div class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $achievement ), '</div>';
-
 		// Achievement Content
-		echo '<div class="badgeos-item-description">';
+		$popover_content = '<div id="badgeos-achievements-item-description-' . $achievement_id . '" class="badgeos-item-description">';
 
 		// Achievement Title
-		echo '<h2 class="badgeos-item-title">', get_the_title( $achievement ), '</h2>';
+		$popover_content .= '<h2 class="badgeos-item-title">' . get_the_title( $achievement ) . '</h2>';
 
 		// Achievement Short Description
-		$excerpt = !empty( $achievement->post_excerpt ) ? $achievement->post_excerpt : $achievement->post_content;
-		echo '<div class="badgeos-item-excerpt">',
-		'<span class="badgeos-percentage">', $earned_percentage, '&percnt;</span>',
-		wpautop( apply_filters( 'get_the_excerpt', $excerpt ) ), '</div>';
+		$excerpt = '' === $achievement->post_excerpt || empty( $achievement->post_excerpt ) ? $achievement->post_content : $achievement->post_excerpt;
+		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
+		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
+		$popover_content .= '<span class="badgeos-percentage-number">'. $earned_percentage . '&percnt;</span>';
+		$popover_content .= '</span></div><!-- .badgeos-item-description --></div><!-- .badgeos-item-description -->';
 
-		echo '</div><!-- .badgeos-item-description -->',
-		'</div><!-- .badgeos-achievements-list-item -->';
+		// Each Achievement
+		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $achievement_id, '" ',
+		'data-trigger="', $this->popover_trigger, '" data-content="', esc_attr( $popover_content ), '" data-placement="top" data-width="240" ',
+		'class="', implode( ' ', $css_classes ), '"', $credly_ID, '>';
+		// Achievement Image
+		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $achievement ), '</span></a><!-- .badgeos-achievements-list-item -->';
 
 		return ob_get_clean();
 	}
