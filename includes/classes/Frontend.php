@@ -29,6 +29,7 @@ class Frontend extends Component
 		// WP Styles printing action hook
 		add_action( 'wp_print_styles', [ &$this, 'badgeos_achievements_list_styling' ] );
 
+		// mobile request or not
 		$this->popover_trigger = function_exists( 'wp_is_mobile' ) ? ( wp_is_mobile() ? 'click' : 'hover' ) : 'click';
 	}
 
