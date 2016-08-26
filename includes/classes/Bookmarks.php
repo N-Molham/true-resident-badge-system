@@ -108,7 +108,9 @@ class Bookmarks extends Component
 					do_action_ref_array( 'true_resident_listing_new_check_in', $bookmark_data );
 				}
 
+				// clear cache
 				delete_transient( 'bookmark_count_' . $post_id );
+				delete_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id );
 			}
 		}
 
@@ -125,6 +127,44 @@ class Bookmarks extends Component
 
 			delete_transient( 'bookmark_count_' . $post_id );
 		}*/
+	}
+
+	/**
+	 * Get listing bookmarks count
+	 *
+	 * @param int $post_id
+	 * @param int $user_id , if set will get the bookmarks only made by that user
+	 *
+	 * @return int
+	 */
+	public function get_listing_bookmarks_count( $post_id, $user_id = 0 )
+	{
+		if ( 0 === $user_id )
+		{
+			// get count
+			return $this->wp_job_manager_bookmarks->bookmark_count( $post_id );
+		}
+
+		$cached = get_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id );
+		if ( false !== $cached )
+		{
+			// return the cached value
+			return $cached;
+		}
+
+		global $wpdb;
+
+		$table_name   = $this->table_name();
+		$count_sql    = "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d AND post_id = %d";
+		$count_params = [ $user_id, $post_id ];
+
+		// execute sql for the current count
+		$bookmark_count = absint( $wpdb->get_var( $wpdb->prepare( $count_sql, $count_params ) ) );
+
+		// caching
+		set_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id, $bookmark_count, WEEK_IN_SECONDS );
+
+		return $bookmark_count;
 	}
 
 	/**

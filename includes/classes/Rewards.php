@@ -4,7 +4,6 @@ use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger;
 use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
-use True_Resident\Badge_System\Triggers\SpecificListing_Check_In_Trigger;
 use True_Resident\Badge_System\Triggers\User_Register_Trigger;
 
 /**

@@ -86,3 +86,16 @@ if ( !function_exists( 'trbs_version' ) ):
 		return true_resident_badge_system()->version;
 	}
 endif;
+
+/**
+ * Get listing bookmarks count
+ *
+ * @param int $listing_id
+ * @param int $user_id , if set will get the bookmarks only made by that user
+ *
+ * @return int
+ */
+function trbs_get_listing_bookmarks_count( $listing_id, $user_id = 0 )
+{
+	return trbs_bookmarks()->get_listing_bookmarks_count( $listing_id, $user_id );
+}
