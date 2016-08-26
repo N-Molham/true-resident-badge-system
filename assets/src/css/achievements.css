@@ -19,6 +19,11 @@
 	padding: 0;
 }
 
+.badgeos-achievements-list-item.user-has-not-earned {
+	-webkit-filter: grayscale(1);
+	filter: grayscale(1);
+}
+
 .badgeos-item-description {
 	padding: 10px 0;
 }
