@@ -140,4 +140,9 @@ class Listings_Reviews_Trigger implements True_Resident_Trigger_Interface
 
 		return $comments_count ? round( ( $comments_count / $step_requirements['count'] ) * 100 ) : 0;
 	}
+
+	public function related_to_listing( $listing_id, $step_id )
+	{
+		return true;
+	}
 }

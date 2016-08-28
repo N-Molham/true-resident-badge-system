@@ -24,6 +24,26 @@ final class Helpers
 	private static $enqueue_path;
 
 	/**
+	 * Convert array to Select element options
+	 *
+	 * @param array      $array
+	 * @param int|string $selected
+	 *
+	 * @return string
+	 */
+	public static function array_to_options( $array, $selected = null )
+	{
+		$out = [];
+
+		foreach ( $array as $value => $label )
+		{
+			$out[] = '<option value="'. esc_attr( $value ) .'"'. selected( $selected, $value, false ) .'>'. esc_html( $label ) .'</option>';
+		}
+
+		return implode( '', $out );
+	}
+
+	/**
 	 * Check if the given URL is valid
 	 *
 	 * @param string $url

@@ -90,4 +90,14 @@ interface True_Resident_Trigger_Interface
 	 * @return int
 	 */
 	public function get_step_percentage( $step_id, $user_id );
+
+	/**
+	 * Check of step with this trigger is linked to listings or not
+	 *
+	 * @param int $listing_id
+	 * @param int $step_id
+	 *
+	 * @return boolean
+	 */
+	public function related_to_listing( $listing_id, $step_id );
 }

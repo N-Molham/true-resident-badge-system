@@ -154,6 +154,20 @@ class Plugin extends Singular
 
 		// plugin loaded hook
 		do_action_ref_array( 'trbs_loaded', [ &$this ] );
+
+		// WP Widgets initialization
+		add_action( 'widgets_init', [ &$this, 'register_widgets' ] );
+	}
+
+	/**
+	 * Register plugin widgets
+	 *
+	 * @return void
+	 */
+	public function register_widgets()
+	{
+		// listing's badges
+		register_widget( __NAMESPACE__ . '\Widgets\Listify_Listing_Badges' );
 	}
 
 	/**

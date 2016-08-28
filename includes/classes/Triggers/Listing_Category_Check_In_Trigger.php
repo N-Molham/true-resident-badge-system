@@ -127,7 +127,7 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 		if ( $this->activity_trigger() !== $trigger_type )
 		{
 			// not the same trigger type
-			return [ ];
+			return [];
 		}
 
 		return [
@@ -190,8 +190,8 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 		global $wpdb;
 
 		// vars
-		$table_name   = trbs_bookmarks()->table_name();
-		$count_sql    = "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d";
+		$table_name = trbs_bookmarks()->table_name();
+		$count_sql  = "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d";
 
 		if ( $category_id )
 		{
@@ -214,5 +214,14 @@ class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interfa
 
 		// execute sql for the current count
 		return absint( $wpdb->get_var( $wpdb->prepare( $count_sql, [ $user_id ] ) ) );
+	}
+
+	public function related_to_listing( $listing_id, $step_id )
+	{
+		// get step requirements
+		$requirements  = badgeos_get_step_requirements( $step_id );
+		$listing_terms = wp_get_post_terms( $listing_id, $this->category_taxonomy, [ 'fields' => 'ids' ] );
+
+		return is_array( $listing_terms ) && in_array( $requirements[ $this->category_field_name ], $listing_terms );
 	}
 }

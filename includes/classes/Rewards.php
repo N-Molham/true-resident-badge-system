@@ -112,6 +112,73 @@ class Rewards extends Component
 	}
 
 	/**
+	 * Load badges related to given listing
+	 *
+	 * @param int $listing_id
+	 *
+	 * @return array
+	 */
+	public function get_listings_badges( $listing_id )
+	{
+		// vars
+		$cache_id     = 'trbs_listing_' . $listing_id . '_badges';
+		$badges_found = get_transient( $cache_id );
+		if ( false !== $badges_found )
+		{
+			// load from cache
+			return $badges_found;
+		}
+
+		// not cached data, so calculate it.
+		$triggers          = $this->get_triggers();
+		$trigger_obj       = null;
+		$badge_id          = null;
+		$badge_steps       = null;
+		$badges_found      = [];
+		$step_trigger_type = null;
+
+		$registered_badges = get_posts( [
+			'post_type'          => 'badges',
+			'nopaging'           => true,
+			'trbs_listing_query' => true,
+			'fields'             => 'ids',
+		] );
+
+		// walk through all badges
+		for ( $i = 0, $badges_size = sizeof( $registered_badges ); $i < $badges_size; $i++ )
+		{
+			// badge required steps
+			$badge_id    = $registered_badges[ $i ];
+			$badge_steps = badgeos_get_required_achievements_for_achievement( $badge_id );
+			foreach ( $badge_steps as $step )
+			{
+				$step_trigger_type = get_post_meta( $step->ID, '_badgeos_trigger_type', true );
+				if ( !isset( $triggers[ $step_trigger_type ] ) )
+				{
+					// skip un-recognized trigger
+					continue;
+				}
+
+				$trigger_obj = $triggers[ $step_trigger_type ];
+				if ( $trigger_obj->related_to_listing( $listing_id, $step->ID ) )
+				{
+					// one of the steps are related to the listing so the badge is related also :)
+					$badges_found[] = $badge_id;
+					continue;
+				}
+			}
+		}
+
+		if ( sizeof( $badges_found ) > 0 )
+		{
+			// cache it for a day
+			set_transient( $cache_id, $badges_found, DAY_IN_SECONDS );
+		}
+
+		return $badges_found;
+	}
+
+	/**
 	 * List of new triggers
 	 *
 	 * @return array

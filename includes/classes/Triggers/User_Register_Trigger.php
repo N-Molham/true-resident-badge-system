@@ -87,7 +87,7 @@ class User_Register_Trigger implements True_Resident_Trigger_Interface
 
 		// step requirements
 		$requirements = badgeos_get_step_requirements( $achievement_id );
-		$return = 'any' === $requirements[ $this->field_name ];
+		$return       = 'any' === $requirements[ $this->field_name ];
 		if ( false === $return )
 		{
 			// user info
@@ -109,7 +109,7 @@ class User_Register_Trigger implements True_Resident_Trigger_Interface
 		if ( $this->activity_trigger() !== $trigger_type )
 		{
 			// not the same trigger type
-			return [ ];
+			return [];
 		}
 
 		return [
@@ -151,5 +151,10 @@ class User_Register_Trigger implements True_Resident_Trigger_Interface
 	public function get_step_percentage( $step_id, $user_id )
 	{
 		return 0;
+	}
+
+	public function related_to_listing( $listing_id, $step_id )
+	{
+		return false;
 	}
 }

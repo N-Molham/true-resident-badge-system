@@ -29,7 +29,7 @@ class Frontend extends Component
 		add_filter( 'badgeos_render_achievement', [ &$this, 'badge_render_output' ], 10, 2 );
 
 		// WP Styles printing action hook
-		add_action( 'wp_print_styles', [ &$this, 'badgeos_achievements_list_styling' ] );
+		add_action( 'wp_enqueue_scripts', [ &$this, 'badgeos_achievements_list_styling' ] );
 
 		// mobile request or not
 		$this->popover_trigger = function_exists( 'wp_is_mobile' ) ? ( wp_is_mobile() ? 'click' : 'hover' ) : 'click';
@@ -61,13 +61,24 @@ class Frontend extends Component
 		}
 
 		$per_page = $query->get( 'posts_per_page' );
-		if ( $per_page > 0 )
+		if ( $per_page > 0 || $query->get( 'trbs_listing_query' ) )
 		{
 			// skip un-related query
 			return;
 		}
 
 		$query->set( 'nopaging', true );
+
+		// check for related badges for a specific listing
+		$listing_id = isset( $_REQUEST['trbs_listing_id'] ) ? absint( $_REQUEST['trbs_listing_id'] ) : null;
+		if ( null === $listing_id || 0 === $listing_id )
+		{
+			// skip invalid passed listing ID
+			return;
+		}
+
+		// TEMP: load only these two badges
+		$query->set( 'post__in', trbs_rewards()->get_listings_badges( $listing_id ) );
 	}
 
 	/**
@@ -101,7 +112,7 @@ class Frontend extends Component
 		wp_enqueue_script( 'trbs-achievements', $base_path . 'js/achievements.js', [
 			'trbs-webui-popover',
 			'trbs-livequery',
-		], trbs_version(), true );
+		], trbs_version(), false );
 	}
 
 	/**

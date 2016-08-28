@@ -113,7 +113,7 @@ class Specific_Listing_Check_In_Trigger implements True_Resident_Trigger_Interfa
 		if ( $this->activity_trigger() !== $trigger_type )
 		{
 			// not the same trigger type
-			return [ ];
+			return [];
 		}
 
 		return [
@@ -156,5 +156,12 @@ class Specific_Listing_Check_In_Trigger implements True_Resident_Trigger_Interfa
 	public function get_step_percentage( $step_id, $user_id )
 	{
 		return 0;
+	}
+
+	public function related_to_listing( $listing_id, $step_id )
+	{
+		// get step requirements
+		$requirements = badgeos_get_step_requirements( $step_id );
+		return $listing_id === $requirements[ $this->listing_id_field_name ];
 	}
 }

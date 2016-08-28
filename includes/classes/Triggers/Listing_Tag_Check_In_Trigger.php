@@ -129,10 +129,10 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		if ( $this->activity_trigger() !== $trigger_type )
 		{
 			// not the same trigger type
-			return [ ];
+			return [];
 		}
 
-		$data = [ ];
+		$data = [];
 		foreach ( $this->field_names as $field_key => $field_name )
 		{
 			$data[ $field_name ] = get_post_meta( $step_id, $this->meta_keys[ $field_key ], true );
@@ -251,5 +251,14 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 
 		// execute sql for the current count
 		return absint( $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d AND post_id IN ({$term_posts})", [ $user_id ] ) ) );
+	}
+
+	public function related_to_listing( $listing_id, $step_id )
+	{
+		// get step requirements
+		$requirements  = badgeos_get_step_requirements( $step_id );
+		$listing_terms = wp_get_post_terms( $listing_id, $requirements[ $this->field_names['taxonomy'] ], [ 'fields' => 'ids' ] );
+
+		return is_array( $listing_terms ) && in_array( $requirements[ $this->field_names['term'] ], $listing_terms );
 	}
 }
