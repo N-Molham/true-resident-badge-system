@@ -153,7 +153,7 @@ class Rewards extends Component
 			foreach ( $badge_steps as $step )
 			{
 				$step_trigger_type = get_post_meta( $step->ID, '_badgeos_trigger_type', true );
-				if ( !isset( $triggers[ $step_trigger_type ] ) )
+				if ( empty( $step_trigger_type ) || !isset( $triggers[ $step_trigger_type ] ) )
 				{
 					// skip un-recognized trigger
 					continue;
@@ -173,6 +173,11 @@ class Rewards extends Component
 		{
 			// cache it for a day
 			set_transient( $cache_id, $badges_found, DAY_IN_SECONDS );
+		}
+		else
+		{
+			// nothing found
+			$badges_found = [ 0 ];
 		}
 
 		return $badges_found;
