@@ -172,7 +172,7 @@ class Rewards extends Component
 		if ( sizeof( $badges_found ) > 0 )
 		{
 			// cache it for a day
-			set_transient( $cache_id, $badges_found, DAY_IN_SECONDS );
+			set_transient( $cache_id, $badges_found, 12 * HOUR_IN_SECONDS );
 		}
 		else
 		{
