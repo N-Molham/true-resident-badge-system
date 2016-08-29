@@ -176,7 +176,9 @@ class Frontend extends Component
 				$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
 			}
 
-			$earned_percentage = round( $steps_completed ? $steps_completed / $steps_count : 0 );
+			// overall percentage ( positive and 100% max )
+			$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
+			$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
 		}
 
 		// Achievement Content
