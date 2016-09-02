@@ -28,7 +28,6 @@ class Backend extends Component
 		add_filter( 'badgeos_save_step', [ &$this, 'badgeos_save_step_triggers_options' ], 10, 3 );
 	}
 
-
 	/**
 	 * Save additional steps data
 	 *

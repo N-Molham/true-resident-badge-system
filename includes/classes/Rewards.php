@@ -21,6 +21,13 @@ class Rewards extends Component
 	protected $triggers_list;
 
 	/**
+	 * Session key
+	 *
+	 * @var array
+	 */
+	protected $session_key = 'trbs_force_reload';
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -46,6 +53,19 @@ class Rewards extends Component
 	 */
 	public function badgeos_load_triggers()
 	{
+		$force_reload_status = filter_input( INPUT_GET, $this->session_key, FILTER_SANITIZE_STRING );
+		switch ( $force_reload_status )
+		{
+			case 'reload':
+				// force to reload data and discard cache for the next session request
+				WC()->session->set( $this->session_key, true );
+				break;
+
+			case 'normal':
+				WC()->session->set( $this->session_key, false );
+				break;
+		}
+
 		$triggers = $this->get_triggers();
 		foreach ( $triggers as $trigger_name => $trigger )
 		{
@@ -123,7 +143,7 @@ class Rewards extends Component
 		// vars
 		$cache_id     = 'trbs_listing_' . $listing_id . '_badges';
 		$badges_found = get_transient( $cache_id );
-		if ( false !== $badges_found )
+		if ( false !== $badges_found && false === WC()->session->get( $this->session_key, false ) )
 		{
 			// load from cache
 			return $badges_found;
