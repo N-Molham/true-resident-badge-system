@@ -113,6 +113,12 @@ class Frontend extends Component
 			'trbs-webui-popover',
 			'trbs-livequery',
 		], trbs_version(), false );
+
+		wp_localize_script( 'trbs-achievements', 'trbs_badges', [
+			'filter_labels' => [
+				'not-completed' => __( 'Incomplete Badges', TRBS_DOMAIN ),
+			],
+		] );
 	}
 
 	/**

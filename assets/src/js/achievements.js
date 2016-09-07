@@ -9,6 +9,18 @@
 			return;
 		}
 
+		var $badges_filter = $( '#achievements_list_filter' );
+		if ( $badges_filter.length ) {
+			for ( option_value in trbs_badges.filter_labels ) {
+				if ( !trbs_badges.filter_labels.hasOwnProperty( option_value ) ) {
+					// skip non-properties index
+					continue;
+				}
+
+				$badges_filter.find( 'option[value="' + option_value + '"]' ).text( trbs_badges.filter_labels[ option_value ] );
+			}
+		}
+
 		// popover init
 		$( '.badgeos-achievements-list-item' ).livequery( function ( index, element ) {
 			$( element ).webuiPopover();

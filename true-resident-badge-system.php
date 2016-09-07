@@ -191,6 +191,16 @@ class Plugin extends Singular
 	}
 
 	/**
+	 * Whether plugin caching is disabled or not
+	 *
+	 * @return bool
+	 */
+	public function cache_disabled()
+	{
+		return defined( 'TRBS_DISABLE_CACHE' ) && TRBS_DISABLE_CACHE;
+	}
+
+	/**
 	 * Load view template
 	 *
 	 * @param string $view_name

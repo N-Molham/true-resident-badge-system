@@ -143,7 +143,7 @@ class Rewards extends Component
 		// vars
 		$cache_id     = 'trbs_listing_' . $listing_id . '_badges';
 		$badges_found = get_transient( $cache_id );
-		if ( false !== $badges_found && false === WC()->session->get( $this->session_key, false ) )
+		if ( false === true_resident_badge_system()->cache_disabled() && false !== $badges_found && false === WC()->session->get( $this->session_key, false ) )
 		{
 			// load from cache
 			return $badges_found;
