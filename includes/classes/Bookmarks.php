@@ -17,6 +17,16 @@ class Bookmarks extends Component
 	protected $wp_job_manager_bookmarks;
 
 	/**
+	 * Get WP Job Manager Bookmarks instance
+	 *
+	 * @return WP_Job_Manager_Bookmarks
+	 */
+	public function get_wp_job_manager_bookmarks()
+	{
+		return $this->wp_job_manager_bookmarks;
+	}
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
