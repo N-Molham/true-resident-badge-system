@@ -10,11 +10,11 @@ use WP_Query;
 class Frontend extends Component
 {
 	/**
-	 * Bagdes popover trigger
+	 * Badges popover args
 	 *
-	 * @var string
+	 * @var array
 	 */
-	var $popover_trigger;
+	var $popover_args;
 
 	/**
 	 * Constructor
@@ -31,8 +31,21 @@ class Frontend extends Component
 		// WP Styles printing action hook
 		add_action( 'wp_enqueue_scripts', [ &$this, 'badgeos_achievements_list_styling' ] );
 
-		// mobile request or not
-		$this->popover_trigger = function_exists( 'wp_is_mobile' ) ? ( wp_is_mobile() ? 'click' : 'hover' ) : 'click';
+		// vars
+		$this->popover_args = [
+			'trigger'   => 'hover',
+			'placement' => 'top',
+			'width'     => '240',
+			'closeable' => 'true',
+		];
+
+		if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() )
+		{
+			// mobile request or not
+			$this->popover_args['trigger']   = 'click';
+			$this->popover_args['placement'] = 'horizontal';
+			$this->popover_args['width']     = 'auto';
+		}
 
 		// Badges list pre-query
 		add_action( 'pre_get_posts', [ &$this, 'badgeos_query_list_all' ] );
@@ -202,7 +215,7 @@ class Frontend extends Component
 
 		// Each Achievement
 		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $achievement_id, '" ',
-		'data-trigger="', $this->popover_trigger, '" data-content="', esc_attr( $popover_content ), '" data-placement="top" data-width="240" ',
+		'data-content="', esc_attr( $popover_content ), '" ', Helpers::parse_attributes( $this->popover_args ),
 		'class="', implode( ' ', $css_classes ), '"', $credly_ID, '>';
 		// Achievement Image
 		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $achievement ), '</span></a><!-- .badgeos-achievements-list-item -->';

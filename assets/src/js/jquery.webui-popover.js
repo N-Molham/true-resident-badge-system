@@ -1,5 +1,5 @@
 /*
- *  webui popover plugin  - v1.2.12
+ *  webui popover plugin  - v1.2.16
  *  A lightWeight popover plugin with jquery ,enchance the  popover plugin of bootstrap with some awesome new features. It works well with bootstrap ,but bootstrap is not necessary!
  *  https://github.com/sandywalker/webui-popover
  *
@@ -31,6 +31,7 @@
             height: 'auto',
             trigger: 'click', //hover,click,sticky,manual
             style: '',
+            selector: false, // jQuery selector, if a selector is provided, popover objects will be delegated to the specified. 
             delay: {
                 show: null,
                 hide: 300
@@ -108,14 +109,18 @@
             $document.trigger('hiddenAll.' + pluginType);
         };
 
-        var isMobile = ('ontouchstart' in document.documentElement) && (/Mobi/.test(navigator.userAgent));
+        var hideOtherPops = function(currentPop) {
+            var pop = null;
+            for (var i = 0; i < _srcElements.length; i++) {
+                pop = getPopFromElement(_srcElements[i]);
+                if (pop && pop.id !== currentPop.id) {
+                    pop.hide(true);
+                }
+            }
+            $document.trigger('hiddenAll.' + pluginType);
+        };
 
-        //var removeAllTargets = function() {
-        // for (var i = 0; i < _srcElements.length; i++) {
-        //     var pop = getPopFromElement(_srcElements[i]);
-        //     console.log(pop.$target);
-        // }
-        //};
+        var isMobile = ('ontouchstart' in document.documentElement) && (/Mobi/.test(navigator.userAgent));
 
         var pointerEventToXY = function(e) {
             var out = {
@@ -152,27 +157,33 @@
             this._targetclick = false;
             this.init();
             _srcElements.push(this.$element);
+            return this;
 
         }
 
         WebuiPopover.prototype = {
             //init webui popover
             init: function() {
+                if (this.$element[0] instanceof document.constructor && !this.options.selector) {
+                    throw new Error('`selector` option must be specified when initializing ' + this.type + ' on the window.document object!');
+                }
+
                 if (this.getTrigger() !== 'manual') {
                     //init the event handlers
                     if (this.getTrigger() === 'click' || isMobile) {
-                        this.$element.off('click touchend').on('click touchend', $.proxy(this.toggle, this));
+                        this.$element.off('click touchend', this.options.selector).on('click touchend', this.options.selector, $.proxy(this.toggle, this));
                     } else if (this.getTrigger() === 'hover') {
                         this.$element
-                            .off('mouseenter mouseleave click')
-                            .on('mouseenter', $.proxy(this.mouseenterHandler, this))
-                            .on('mouseleave', $.proxy(this.mouseleaveHandler, this));
+                            .off('mouseenter mouseleave click', this.options.selector)
+                            .on('mouseenter', this.options.selector, $.proxy(this.mouseenterHandler, this))
+                            .on('mouseleave', this.options.selector, $.proxy(this.mouseleaveHandler, this));
                     }
                 }
                 this._poped = false;
                 this._inited = true;
                 this._opened = false;
                 this._idSeed = _globalIdSeed;
+                this.id = pluginName + this._idSeed;
                 // normalize container
                 this.options.container = $(this.options.container || document.body).first();
 
@@ -182,6 +193,12 @@
                 _globalIdSeed++;
                 if (this.getTrigger() === 'sticky') {
                     this.show();
+                }
+
+                if (this.options.selector) {
+                    this._options = $.extend({}, this.options, {
+                        selector: ''
+                    });
                 }
 
             },
@@ -210,18 +227,28 @@
                     this.$target.remove();
                 }
             },
+            getDelegateOptions: function() {
+                var options = {};
+
+                this._options && $.each(this._options, function(key, value) {
+                    if (defaults[key] !== value) {
+                        options[key] = value;
+                    }
+                });
+                return options;
+            },
             /*
                 param: force    boolean value, if value is true then force hide the popover
                 param: event    dom event,
             */
             hide: function(force, event) {
+
                 if (!force && this.getTrigger() === 'sticky') {
                     return;
                 }
                 if (!this._opened) {
                     return;
                 }
-
                 if (event) {
                     event.preventDefault();
                     event.stopPropagation();
@@ -268,15 +295,30 @@
                     }, autoHide);
                 }
             },
+            delegate: function(eventTarget) {
+                var self = $(eventTarget).data('plugin_' + pluginName);
+                if (!self) {
+                    self = new WebuiPopover(eventTarget, this.getDelegateOptions());
+                    $(eventTarget).data('plugin_' + pluginName, self);
+                }
+                return self;
+            },
             toggle: function(e) {
+                var self = this;
                 if (e) {
                     e.preventDefault();
                     e.stopPropagation();
+                    if (this.options.selector) {
+                        self = this.delegate(e.currentTarget);
+                    }
                 }
-                this[this.getTarget().hasClass('in') ? 'hide' : 'show']();
+                self[self.getTarget().hasClass('in') ? 'hide' : 'show']();
             },
             hideAll: function() {
                 hideAllPop();
+            },
+            hideOthers: function() {
+                hideOtherPops(this);
             },
             /*core method ,show popover */
             show: function() {
@@ -287,7 +329,7 @@
                 var
                     $target = this.getTarget().removeClass().addClass(pluginClass).addClass(this._customTargetClass);
                 if (!this.options.multi) {
-                    this.hideAll();
+                    this.hideOthers();
                 }
 
                 // use cache by default, if not cache setted  , reInit the contents
@@ -297,7 +339,6 @@
                     if (!this.options.closeable) {
                         $target.find('.close').off('click').remove();
                     }
-
                     if (!this.isAsync()) {
                         this.setContent(this.getContent());
                     } else {
@@ -408,6 +449,17 @@
                     }
                     this.$target.addClass('webui-no-padding');
                 }
+
+                // add maxHeight and maxWidth support by limodou@gmail.com 2016/10/1
+                if (this.options.maxHeight) {
+                    $targetContent.css('maxHeight', this.options.maxHeight);
+                }
+
+                if (this.options.maxWidth) {
+                    $targetContent.css('maxWidth', this.options.maxWidth);
+                }
+                // end
+
                 targetWidth = $target[0].offsetWidth;
                 targetHeight = $target[0].offsetHeight;
 
@@ -430,9 +482,6 @@
 
                     $iframe.width(iframeWidth).height(iframeHeight);
                 }
-
-
-
 
                 if (!this.options.arrow) {
                     this.$target.css({
@@ -480,12 +529,19 @@
                 if (!this.$target) {
                     var id = pluginName + this._idSeed;
                     this.$target = $(this.options.template)
-                        .attr('id', id)
-                        .data('trigger-element', this.getTriggerElement());
+                        .attr('id', id);
                     this._customTargetClass = this.$target.attr('class') !== pluginClass ? this.$target.attr('class') : null;
                     this.getTriggerElement().attr('data-target', id);
                 }
+                if (!this.$target.data('trigger-element')) {
+                    this.$target.data('trigger-element', this.getTriggerElement());
+                }
                 return this.$target;
+            },
+            removeTarget: function() {
+                this.$target.remove();
+                this.$target = null;
+                this.$contentElement = null;
             },
             getTitleElement: function() {
                 return this.getTarget().find('.' + pluginClass + '-title');
@@ -690,8 +746,13 @@
             },
 
             /* event handlers */
-            mouseenterHandler: function() {
+            mouseenterHandler: function(e) {
                 var self = this;
+
+                if (e && this.options.selector) {
+                    self = this.delegate(e.currentTarget);
+                }
+
                 if (self._timeout) {
                     clearTimeout(self._timeout);
                 }
@@ -855,11 +916,11 @@
                     }
                 } else if (placement === 'auto-right') {
                     if (pageY < clientHeight / 3) {
-                        placement = 'right-top';
+                        placement = 'right-bottom';
                     } else if (pageY < clientHeight * 2 / 3) {
                         placement = 'right';
                     } else {
-                        placement = 'right-bottom';
+                        placement = 'right-top';
                     }
                 }
                 return placement;
@@ -1072,7 +1133,7 @@
             };
             var _isCreated = function(selector) {
                 var created = true;
-                $(selector).each(function(item) {
+                $(selector).each(function(i, item) {
                     created = created && $(item).data('plugin_' + pluginName) !== undefined;
                 });
                 return created;
@@ -1087,12 +1148,60 @@
             var _hide = function(selector) {
                 $(selector).webuiPopover('hide');
             };
+
+            var _setDefaultOptions = function(options) {
+                defaults = $.extend({}, defaults, options);
+            };
+
+            var _updateContent = function(selector, content) {
+                var pop = $(selector).data('plugin_' + pluginName);
+                if (pop) {
+                    var cache = pop.getCache();
+                    pop.options.cache = false;
+                    pop.options.content = content;
+                    if (pop._opened) {
+                        pop._opened = false;
+                        pop.show();
+                    } else {
+                        if (pop.isAsync()) {
+                            pop.setContentASync(content);
+                        } else {
+                            pop.setContent(content);
+                        }
+                    }
+                    pop.options.cache = cache;
+                }
+            };
+
+            var _updateContentAsync = function(selector, url) {
+                var pop = $(selector).data('plugin_' + pluginName);
+                if (pop) {
+                    var cache = pop.getCache();
+                    var type = pop.options.type;
+                    pop.options.cache = false;
+                    pop.options.url = url;
+
+                    if (pop._opened) {
+                        pop._opened = false;
+                        pop.show();
+                    } else {
+                        pop.options.type = 'async';
+                        pop.setContentASync(pop.content);
+                    }
+                    pop.options.cache = cache;
+                    pop.options.type = type;
+                }
+            };
+
             return {
                 show: _show,
                 hide: _hide,
                 create: _create,
                 isCreated: _isCreated,
-                hideAll: _hideAll
+                hideAll: _hideAll,
+                updateContent: _updateContent,
+                updateContentAsync: _updateContentAsync,
+                setDefaultOptions: _setDefaultOptions
             };
         })();
         window.WebuiPopovers = webuiPopovers;
