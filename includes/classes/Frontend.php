@@ -90,8 +90,18 @@ class Frontend extends Component
 			return;
 		}
 
+		// vars
+		$listing_badges = trbs_rewards()->get_listings_badges( $listing_id );
+		$hidden_badges  = trbs_backend()->get_hidden_badges();
+
+		if ( isset( $hidden_badges[0] ) )
+		{
+			// exclude from list hidden badges from loading in the listing singular page
+			$listing_badges = array_values( array_diff( $listing_badges, $hidden_badges ) );
+		}
+
 		// TEMP: load only these two badges
-		$query->set( 'post__in', trbs_rewards()->get_listings_badges( $listing_id ) );
+		$query->set( 'post__in', $listing_badges );
 	}
 
 	/**

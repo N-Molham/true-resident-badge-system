@@ -7,6 +7,7 @@
  * @package True_Resident\Badge_System
  */
 
+use True_Resident\Badge_System\Backend;
 use True_Resident\Badge_System\Bookmarks;
 use True_Resident\Badge_System\Plugin;
 use True_Resident\Badge_System\Rewards;
@@ -32,6 +33,18 @@ if ( !function_exists( 'trbs_rewards' ) ):
 	function trbs_rewards()
 	{
 		return true_resident_badge_system()->rewards;
+	}
+endif;
+
+if ( !function_exists( 'trbs_backend' ) ):
+	/**
+	 * Get backend component
+	 *
+	 * @return Backend
+	 */
+	function trbs_backend()
+	{
+		return true_resident_badge_system()->backend;
 	}
 endif;
 
