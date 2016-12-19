@@ -33,18 +33,18 @@ class Frontend extends Component
 
 		// vars
 		$this->popover_args = [
-			'trigger'   => 'hover',
-			'placement' => 'top',
-			'width'     => '240',
-			'closeable' => 'true',
+			'data-trigger'   => 'hover',
+			'data-placement' => 'top',
+			'data-width'     => '240',
+			'data-closeable' => 'true',
 		];
 
 		if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() )
 		{
 			// mobile request or not
-			$this->popover_args['trigger']   = 'click';
-			$this->popover_args['placement'] = 'horizontal';
-			$this->popover_args['width']     = 'auto';
+			$this->popover_args['data-trigger']   = 'click';
+			$this->popover_args['data-placement'] = 'horizontal';
+			$this->popover_args['data-width']     = 'auto';
 		}
 
 		// Badges list pre-query
