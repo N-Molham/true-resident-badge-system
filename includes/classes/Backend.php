@@ -117,7 +117,7 @@ class Backend extends Component
 
 		// add the new field
 		$fields[] = [
-			'name' => __( 'Hide achievement from POI page', TRBS_DOMAIN ),
+			'name' => __( 'Hide Achievement From POI Page', TRBS_DOMAIN ),
 			'desc' => ' ' . __( 'Yes, will hide this achievement from loading in the POI singular page.', TRBS_DOMAIN ),
 			'id'   => $prefix . 'hide_from_listing',
 			'type' => 'checkbox',
