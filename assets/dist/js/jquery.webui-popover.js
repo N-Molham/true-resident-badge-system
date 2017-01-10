@@ -17,7 +17,7 @@ b(a.jQuery)}(function(d){
 function e(a,b){return this.$element=d(a),b&&("string"!==d.type(b.delay)&&"number"!==d.type(b.delay)||(b.delay={show:b.delay,hide:b.delay})),this.options=d.extend({},i,b),this._defaults=i,this._name=f,this._targetclick=!1,this.init(),k.push(this.$element),this}
 // Create the defaults once
 var f="webuiPopover",g="webui-popover",h="webui.popover",i={placement:"auto",container:null,width:"auto",height:"auto",trigger:"click",//hover,click,sticky,manual
-style:"",selector:!1,// jQuery selector, if a selector is provided, popover objects will be delegated to the specified. 
+style:"",selector:!1,// jQuery selector, if a selector is provided, popover objects will be delegated to the specified.
 delay:{show:null,hide:300},async:{type:"GET",before:null,//function(that, xhr){}
 success:null,//function(that, xhr){}
 error:null},cache:!0,multi:!1,arrow:!0,title:"",content:"",closeable:!1,padding:!0,url:"",type:"html",direction:"",// ltr,rtl
@@ -29,9 +29,9 @@ init:function(){if(this.$element[0]instanceof b.constructor&&!this.options.selec
 // normalize container
 this.options.container=d(this.options.container||b.body).first(),this.options.backdrop&&l.appendTo(this.options.container).hide(),m++,"sticky"===this.getTrigger()&&this.show(),this.options.selector&&(this._options=d.extend({},this.options,{selector:""}))},/* api methods and actions */
 destroy:function(){for(var a=-1,b=0;b<k.length;b++)if(k[b]===this.$element){a=b;break}k.splice(a,1),this.hide(),this.$element.data("plugin_"+f,null),"click"===this.getTrigger()?this.$element.off("click"):"hover"===this.getTrigger()&&this.$element.off("mouseenter mouseleave"),this.$target&&this.$target.remove()},getDelegateOptions:function(){var a={};return this._options&&d.each(this._options,function(b,c){i[b]!==c&&(a[b]=c)}),a},/*
-                param: force    boolean value, if value is true then force hide the popover
-                param: event    dom event,
-            */
+			 param: force    boolean value, if value is true then force hide the popover
+			 param: event    dom event,
+			 */
 hide:function(a,b){if((a||"sticky"!==this.getTrigger())&&this._opened){b&&(b.preventDefault(),b.stopPropagation()),this.xhr&&this.options.abortXHR===!0&&(this.xhr.abort(),this.xhr=null);var c=d.Event("hide."+h);if(this.$element.trigger(c,[this.$target]),this.$target){this.$target.removeClass("in").addClass(this.getHideAnimation());var e=this;setTimeout(function(){e.$target.hide(),e.getCache()||e.$target.remove()},e.getHideDelay())}this.options.backdrop&&l.hide(),this._opened=!1,this.$element.trigger("hidden."+h,[this.$target]),this.options.onHide&&this.options.onHide(this.$target)}},resetAutoHide:function(){var a=this,b=a.getAutoHide();b&&(a.autoHideHandler&&clearTimeout(a.autoHideHandler),a.autoHideHandler=setTimeout(function(){a.hide()},b))},delegate:function(a){var b=d(a).data("plugin_"+f);return b||(b=new e(a,this.getDelegateOptions()),d(a).data("plugin_"+f,b)),b},toggle:function(a){var b=this;a&&(a.preventDefault(),a.stopPropagation(),this.options.selector&&(b=this.delegate(a.currentTarget))),b[b.getTarget().hasClass("in")?"hide":"show"]()},hideAll:function(){s()},hideOthers:function(){t(this)},/*core method ,show popover */
 show:function(){if(!this._opened){
 //removeAllTargets();
@@ -79,10 +79,10 @@ this.options.cache?a.removeClass(g+"-content").appendTo(c):a.clone(!0,!0).remove
 mouseenterHandler:function(a){var b=this;a&&this.options.selector&&(b=this.delegate(a.currentTarget)),b._timeout&&clearTimeout(b._timeout),b._enterTimeout=setTimeout(function(){b.getTarget().is(":visible")||b.show()},this.getDelayShow())},mouseleaveHandler:function(){var a=this;clearTimeout(a._enterTimeout),
 //key point, set the _timeout  then use clearTimeout when mouse leave
 a._timeout=setTimeout(function(){a.hide()},this.getHideDelay())},escapeHandler:function(a){27===a.keyCode&&this.hideAll()},bodyClickHandler:function(a){n=!0;for(var b=!0,c=0;c<k.length;c++){var d=r(k[c]);if(d&&d._opened){var e=d.getTarget().offset(),f=e.left,g=e.top,h=e.left+d.getTarget().width(),i=e.top+d.getTarget().height(),j=v(a),l=j.x>=f&&j.x<=h&&j.y>=g&&j.y<=i;if(l){b=!1;break}}}b&&s()},/*
-            targetClickHandler: function() {
-                this._targetclick = true;
-            },
-            */
+			 targetClickHandler: function() {
+			 this._targetclick = true;
+			 },
+			 */
 //reset and init the target events;
 initTargetEvents:function(){"hover"===this.getTrigger()&&this.$target.off("mouseenter mouseleave").on("mouseenter",d.proxy(this.mouseenterHandler,this)).on("mouseleave",d.proxy(this.mouseleaveHandler,this)),this.$target.find(".close").off("click").on("click",d.proxy(this.hide,this,!0))},/* utils methods */
 //caculate placement of the popover
@@ -91,7 +91,7 @@ getPlacement:function(a){var b,c=this.options.container,d=c.innerWidth(),e=c.inn
 //if placement equals auto，caculate the placement by element information;
 b="function"==typeof this.options.placement?this.options.placement.call(this,this.getTarget()[0],this.$element[0]):this.$element.data("placement")||this.options.placement;var j="horizontal"===b,k="vertical"===b,l="auto"===b||j||k;
 //placement = pageY>targetHeight+arrowSize?'top-left':'bottom-left';
-return l?b=h<d/3?i<e/3?j?"right-bottom":"bottom-right":i<2*e/3?k?i<=e/2?"bottom-right":"top-right":"right":j?"right-top":"top-right":h<2*d/3?i<e/3?j?h<=d/2?"right-bottom":"left-bottom":"bottom":i<2*e/3?j?h<=d/2?"right":"left":i<=e/2?"bottom":"top":j?h<=d/2?"right-top":"left-top":"top":i<e/3?j?"left-bottom":"bottom-left":i<2*e/3?k?i<=e/2?"bottom-left":"top-left":"left":j?"left-top":"top-left":"auto-top"===b?b=h<d/3?"top-right":h<2*d/3?"top":"top-left":"auto-bottom"===b?b=h<d/3?"bottom-right":h<2*d/3?"bottom":"bottom-left":"auto-left"===b?b=i<e/3?"left-top":i<2*e/3?"left":"left-bottom":"auto-right"===b&&(b=i<e/3?"right-bottom":i<2*e/3?"right":"right-top"),b},getElementPosition:function(){
+return l?b=h<d/3?i<e/3?j?"right-bottom":"bottom-right":i<2*e/3?k?i<=e/2?"bottom-right":"top-right":"right":j?"right-top":"top-right":h<2*d/3?i<e/3?j?h<=d/2?"right-bottom":"left-bottom":"bottom":i<2*e/3?j?h<=d/2?"right":"left":i<=e/2?"bottom":"top":j?h<=d/2?"right-top":"left-top":"top":i<e/3?j?"left-bottom":"bottom-left":i<2*e/3?k?i<=e/2?"bottom-left":"top-left":"left":j?"left-top":"top-left":"auto-top"===b?b=h<d/3?"top-right":h+this.$contentElement.outerWidth()>d?"top-left":h<2*d/3?"top":"top-left":"auto-bottom"===b?b=h<d/3?"bottom-right":h<2*d/3?"bottom":"bottom-left":"auto-left"===b?b=i<e/3?"left-top":i<2*e/3?"left":"left-bottom":"auto-right"===b&&(b=i<e/3?"right-bottom":i<2*e/3?"right":"right-top"),b},getElementPosition:function(){
 // If the container is the body or normal conatiner, just use $element.offset()
 var a=this.$element[0].getBoundingClientRect(),c=this.options.container,e=c.css("position");if(c.is(b.body)||"static"===e)return d.extend({},this.$element.offset(),{width:this.$element[0].offsetWidth||a.width,height:this.$element[0].offsetHeight||a.height});if("fixed"===e){var f=c[0].getBoundingClientRect();return{top:a.top-f.top+c.scrollTop(),left:a.left-f.left+c.scrollLeft(),width:a.width,height:a.height}}return"relative"===e?{top:this.$element.offset().top-c.offset().top,left:this.$element.offset().left-c.offset().left,width:this.$element[0].offsetWidth||a.width,height:this.$element[0].offsetHeight||a.height}:void 0},getTargetPositin:function(a,c,d,e){var f=a,g=this.options.container,
 //clientWidth = container.innerWidth(),

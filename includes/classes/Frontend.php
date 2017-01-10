@@ -43,8 +43,8 @@ class Frontend extends Component
 		{
 			// mobile request or not
 			$this->popover_args['data-trigger']   = 'click';
-			$this->popover_args['data-placement'] = 'horizontal';
-			$this->popover_args['data-width']     = 'auto';
+			$this->popover_args['data-placement'] = 'auto-top';
+			// $this->popover_args['data-width']     = 'auto';
 		}
 
 		// Badges list pre-query
@@ -122,7 +122,7 @@ class Frontend extends Component
 
 		// WebUI Poppver
 		wp_register_style( 'trbs-webui-popover', $base_path . 'css/jquery.webui-popover.css' );
-		wp_register_script( 'trbs-webui-popover', $base_path . 'js/jquery.webui-popover.js', [ 'jquery' ], '1.2.12', true );
+		wp_register_script( 'trbs-webui-popover', $base_path . 'js/jquery.webui-popover.js', [ 'jquery' ], '1.2.16', true );
 
 		// jQuety Livequery
 		wp_register_script( 'trbs-livequery', $base_path . 'js/jquery.livequery.js', [ 'jquery' ], '1.3.6', true );
@@ -141,6 +141,7 @@ class Frontend extends Component
 			'filter_labels' => [
 				'not-completed' => __( 'Incomplete Badges', TRBS_DOMAIN ),
 			],
+			'is_mobile'     => wp_is_mobile(),
 		] );
 	}
 
