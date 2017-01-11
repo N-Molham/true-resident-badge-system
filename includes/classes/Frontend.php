@@ -44,7 +44,7 @@ class Frontend extends Component
 			// mobile request or not
 			$this->popover_args['data-trigger']   = 'click';
 			$this->popover_args['data-placement'] = 'auto-top';
-			// $this->popover_args['data-width']     = 'auto';
+			$this->popover_args['data-width']     = '200';
 		}
 
 		// Badges list pre-query
