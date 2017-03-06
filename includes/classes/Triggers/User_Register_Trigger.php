@@ -5,7 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class User_Register_Trigger implements True_Resident_Trigger_Interface
+class User_Register_Trigger implements Trigger_Interface
 {
 	/**
 	 * Step meta key for the selected user role

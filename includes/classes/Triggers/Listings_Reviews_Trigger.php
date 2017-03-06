@@ -5,7 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class Listings_Reviews_Trigger implements True_Resident_Trigger_Interface
+class Listings_Reviews_Trigger implements Trigger_Interface
 {
 	/**
 	 * Target listing post type

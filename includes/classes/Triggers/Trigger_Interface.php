@@ -1,11 +1,11 @@
 <?php namespace True_Resident\Badge_System\Triggers;
 
 /**
- * Interface True_Resident_Trigger_Interface
+ * Interface Trigger_Interface
  *
  * @package True_Resident\Badge_System\Triggers
  */
-interface True_Resident_Trigger_Interface
+interface Trigger_Interface
 {
 	/**
 	 * Trigger label

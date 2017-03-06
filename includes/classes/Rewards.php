@@ -1,10 +1,6 @@
 <?php namespace True_Resident\Badge_System;
 
-use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
-use True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger;
-use True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger;
-use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
-use True_Resident\Badge_System\Triggers\User_Register_Trigger;
+use ReflectionClass;
 
 /**
  * BadgeOS rewards logic
@@ -212,27 +208,36 @@ class Rewards extends Component
 	{
 		if ( null == $this->triggers_list )
 		{
-			// built-in triggers
-			$listings_category_trigger = new Listing_Category_Check_In_Trigger();
-			$listings_tag_trigger      = new Listing_Tag_Check_In_Trigger();
-			$specific_listing_trigger  = new Specific_Listing_Check_In_Trigger();
-			$listing_review_trigger    = new Listings_Reviews_Trigger();
-			$user_register_trigger     = new User_Register_Trigger();
-
 			/**
-			 * Filters the list of built-in triggers in the add-on
+			 * Filters the list of triggers' classes in the add-on
 			 *
 			 * @param array $triggers
 			 *
 			 * @return array
 			 */
-			$this->triggers_list = apply_filters( 'trbs_rewards_activity_triggers', [
-				$listings_category_trigger->activity_trigger() => &$listings_category_trigger,
-				$listings_tag_trigger->activity_trigger()      => &$listings_tag_trigger,
-				$specific_listing_trigger->activity_trigger()  => &$specific_listing_trigger,
-				$listing_review_trigger->activity_trigger()    => &$listing_review_trigger,
-				$user_register_trigger->activity_trigger()     => &$user_register_trigger,
+			$triggers_classes = apply_filters( 'trbs_rewards_activity_triggers', [
+				'True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger',
+				'True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger',
+				'True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger',
+				'True_Resident\Badge_System\Triggers\Listing_Challenges_Checklist_Trigger',
+				'True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger',
+				'True_Resident\Badge_System\Triggers\User_Register_Trigger',
 			] );
+
+			foreach ( $triggers_classes as $trigger_class )
+			{
+				if ( !class_exists( $trigger_class ) )
+				{
+					// trigger class not found!
+					continue;
+				}
+
+				// get instance
+				$trigger = ( new ReflectionClass( $trigger_class ) )->newInstance();
+
+				// append to list
+				$this->triggers_list[ $trigger->activity_trigger() ] = $trigger;
+			}
 		}
 
 		return $this->triggers_list;

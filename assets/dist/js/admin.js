@@ -2,6 +2,15 @@
  * Created by Nabeel on 2016-02-02.
  */
 !function(a,b,c){b(function(){
+// POI badge checklist
+/*(function () {
+		 if ( w.Select2 ) {
+		 // init select2 on the badges list
+		 $( '#_challenges_badge' ).select2();
+		 }
+		 })();*/
+// badge steps
+!function(){
 // vars
 var a=b("#steps_list"),c=".select-trigger-type",d=".true-resident-step-condition",e=".true-resident-tax-type";
 // when the trigger type changes
@@ -25,4 +34,4 @@ b(document).on("update_step_data",function(a,b,c){
 // get the give trigger type related conditions
 c.find(d+'[data-toggle="'+b.trigger_type+'"]').each(function(a,c){
 // setup condition name as step data property with input value
-b[c.getAttribute("name")]=c.value})})})}(window,jQuery);
+b[c.getAttribute("name")]=c.value})})}()})}(window,jQuery);

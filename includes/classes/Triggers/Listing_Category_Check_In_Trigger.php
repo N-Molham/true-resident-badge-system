@@ -5,7 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class Listing_Category_Check_In_Trigger implements True_Resident_Trigger_Interface
+class Listing_Category_Check_In_Trigger implements Trigger_Interface
 {
 	/**
 	 * Step meta key for category

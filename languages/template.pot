@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.2.1\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-01-11 19:23:15+00:00\n"
+"POT-Creation-Date: 2017-03-06 20:02:12+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -33,11 +33,23 @@ msgstr ""
 msgid "Invalid taxonomy."
 msgstr ""
 
-#: includes/classes/Backend.php:120
+#: includes/classes/Backend.php:72
+msgid "None"
+msgstr ""
+
+#: includes/classes/Backend.php:80
+msgid "Reward Badge"
+msgstr ""
+
+#: includes/classes/Backend.php:81
+msgid "Which badge do user earn by completing the POI challenges"
+msgstr ""
+
+#: includes/classes/Backend.php:149
 msgid "Hide Achievement From POI Page"
 msgstr ""
 
-#: includes/classes/Backend.php:121
+#: includes/classes/Backend.php:150
 msgid "Yes, will hide this achievement from loading in the POI singular page."
 msgstr ""
 
@@ -61,6 +73,19 @@ msgstr ""
 msgid "Any Category"
 msgstr ""
 
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:49
+msgid "True Resident Listing Challenges Checklist"
+msgstr ""
+
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:123
+#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:149
+msgid "Listing ID"
+msgstr ""
+
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:133
+msgid "Challenges Checklist, each point/challenge in new line"
+msgstr ""
+
 #: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:42
 msgid "True Resident Listing Tags Check-in"
 msgstr ""
@@ -79,10 +104,6 @@ msgstr ""
 
 #: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:33
 msgid "True Resident Specific Listing Check-in"
-msgstr ""
-
-#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:149
-msgid "Listing ID"
 msgstr ""
 
 #: includes/classes/Triggers/User_Register_Trigger.php:26

@@ -1,11 +1,13 @@
 <?php namespace True_Resident\Badge_System\Triggers;
 
+use True_Resident\Badge_System\Helpers;
+
 /**
- * Class Specific_Listing_Check_In_Trigger
+ * Class Listing_Challenges_Checklist_Trigger
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class Specific_Listing_Check_In_Trigger implements Trigger_Interface
+class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 {
 	/**
 	 * Step meta key for listing ID
@@ -13,6 +15,13 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 	 * @var string
 	 */
 	var $meta_key = '_trbs_listing_id';
+
+	/**
+	 * Step meta key for challenges checklist
+	 *
+	 * @var string
+	 */
+	var $checklist_meta_key = '_trbs_checklist';
 
 	/**
 	 * Target listing post type
@@ -26,79 +35,37 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 	 *
 	 * @var string
 	 */
-	var $listing_id_field_name = 'check_in_listing_id';
+	var $listing_id_field_name = 'challenges_checklist_listing_id';
+
+	/**
+	 * Challenges checklist field name
+	 *
+	 * @var string
+	 */
+	var $checklist_field_name = 'challenges_checklist_list';
 
 	public function label()
 	{
-		return __( 'True Resident Specific Listing Check-in', TRBS_DOMAIN );
+		return __( 'True Resident Listing Challenges Checklist', TRBS_DOMAIN );
 	}
 
 	public function trigger_action()
 	{
-		return 'true_resident_listing_new_check_in';
+		return 'true_resident_listing_challenge_checked';
 	}
 
 	public function activity_trigger()
 	{
-		return 'true_resident_specific_listing_check_in';
+		return 'true_resident_listing_challenges_checklist';
 	}
 
 	public function activity_hook()
 	{
-		global $wpdb;
 
-		// vars
-		$blog_id      = get_current_blog_id();
-		$user         = get_user_by( 'id', func_get_arg( 0 ) );
-		$post_id      = func_get_arg( 1 );
-		$this_trigger = $this->activity_trigger();
-
-		// update count
-		$trigger_count = badgeos_update_user_trigger_count( $user->ID, $this_trigger, $blog_id );
-
-		// Mark the count in the log entry
-		badgeos_post_log_entry( $post_id, $user->ID, $this_trigger, sprintf( __( '%1$s triggered %2$s (%3$dx)', TRBS_DOMAIN ), $user->display_name, $this_trigger, $trigger_count ) );
-
-		// load achievements
-		$achievements_ids = $wpdb->get_col( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %d", $this->meta_key, $post_id ) );
-		foreach ( $achievements_ids as $achievement_id )
-		{
-			// user reward if match
-			badgeos_maybe_award_achievement_to_user( $achievement_id, $user->ID, $this_trigger, $blog_id );
-		}
 	}
 
 	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
 	{
-		global $wpdb;
-
-		// If we're not dealing with a step, bail here
-		if ( 'step' != get_post_type( $achievement_id ) )
-		{
-			return $return;
-		}
-
-		// get step requirements
-		$requirements = badgeos_get_step_requirements( $achievement_id );
-		if ( !isset( $requirements[ $this->listing_id_field_name ] ) )
-		{
-			// skip un-related type
-			return $return;
-		}
-
-		// vars
-		$table_name   = trbs_bookmarks()->table_name();
-		$count_sql    = "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d AND post_id = %d";
-		$count_params = [ $user_id, $requirements[ $this->listing_id_field_name ] ];
-
-		// execute sql for the current count
-		$check_in_count = absint( $wpdb->get_var( $wpdb->prepare( $count_sql, $count_params ) ) );
-		if ( $check_in_count >= $requirements['count'] )
-		{
-			// target reached
-			$return = true;
-		}
-
 		return $return;
 	}
 
@@ -118,6 +85,7 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 
 		return [
 			$this->listing_id_field_name => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
+			$this->checklist_field_name  => get_post_meta( $step_id, $this->checklist_meta_key, true ),
 		];
 	}
 
@@ -129,13 +97,19 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 			return;
 		}
 
-		// save selected category
+		// save selected listing
 		update_post_meta( $step_id, $this->meta_key, absint( $step_data[ $this->listing_id_field_name ] ) );
+
+		// save checklist
+		update_post_meta( $step_id, $this->checklist_meta_key, Helpers::sanitize_text_field_with_linebreaks( $step_data[ $this->checklist_field_name ] ) );
 	}
 
 	public function user_interface( $step_id, $badge_id )
 	{
+		// values
+		$checklist  = get_post_meta( $step_id, $this->checklist_meta_key, true );
 		$listing_id = absint( get_post_meta( $step_id, $this->meta_key, true ) );
+
 		if ( 0 === $listing_id )
 		{
 			// no value was set
@@ -151,6 +125,16 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 			$this->listing_post_type,
 			$listing_id
 		);
+
+		// challenges checklist
+		printf( '<textarea type="text" name="%s" placeholder="%s" class="true-resident-autocomplete true-resident-step-condition" cols="58" rows="8"
+				data-toggle="%s" data-post-type="%s" data-return="id">%s</textarea>',
+			$this->checklist_field_name,
+			__( 'Challenges Checklist, each point/challenge in new line', TRBS_DOMAIN ),
+			$this->activity_trigger(),
+			$this->listing_post_type,
+			$checklist
+		);
 	}
 
 	public function get_step_percentage( $step_id, $user_id )
@@ -162,6 +146,7 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 	{
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $step_id );
+
 		return $listing_id === $requirements[ $this->listing_id_field_name ];
 	}
 }
