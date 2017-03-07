@@ -35,7 +35,8 @@ if ( !current_user_can( 'manage_options' ) || !wp_verify_nonce( filter_input( IN
 	wp_die( 'Permission denied!' );
 }
 
-$step_data = trbs_rewards()->badgeos_step_data_requirements( [], $step_id );
+$step_type = sanitize_key( filter_input( INPUT_GET, 'step_type', FILTER_SANITIZE_STRING ) );
+$step_data = trbs_rewards()->badgeos_step_data_requirements( [], $step_id, $step_type );
 
 // load page view
 trbs_view( 'admin/badges/challenges_checklist', compact( 'step_id', 'badge_id', 'step_data' ) );

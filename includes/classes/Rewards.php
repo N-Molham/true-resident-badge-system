@@ -88,13 +88,14 @@ class Rewards extends Component
 	 *
 	 * @param  array   $requirements The current step requirements
 	 * @param  integer $step_id The given step's post ID
+	 * @param  string  $trigger_type step trigger type
 	 *
 	 * @return array
 	 */
-	public function badgeos_step_data_requirements( $requirements, $step_id )
+	public function badgeos_step_data_requirements( $requirements, $step_id, $trigger_type = '' )
 	{
 		// vars
-		$trigger_type = $this->get_step_type( $step_id );
+		$trigger_type = '' === $trigger_type || empty( $trigger_type ) ? $this->get_step_type( $step_id ) : $trigger_type;
 		$triggers     = $this->get_triggers();
 
 		if ( isset( $triggers[ $trigger_type ] ) )

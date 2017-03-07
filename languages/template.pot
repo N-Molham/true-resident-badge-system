@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-03-07 17:02:49+00:00\n"
+"POT-Creation-Date: 2017-03-07 18:05:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -70,7 +70,7 @@ msgstr ""
 msgid "Listing ID"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:188
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:189
 msgid "Manage Checklist"
 msgstr ""
 

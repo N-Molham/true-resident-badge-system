@@ -177,6 +177,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 			add_query_arg( [
 				'step_id'   => $step_id,
 				'badge_id'  => $badge_id,
+				'step_type' => $this->activity_trigger(),
 				'nonce'     => wp_create_nonce( 'trbs_manage_challenges_checklist_' . $step_id ),
 				'TB_iframe' => 'true',
 				'width'     => '600',
