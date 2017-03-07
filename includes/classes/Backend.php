@@ -150,6 +150,12 @@ class Backend extends Component
 	{
 		// main admin script
 		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [ 'jquery' ], Helpers::assets_version(), true );
+
+		// load checkbox
+		add_thickbox();
+
+		// main css
+		wp_enqueue_style( 'trbs-triggers', Helpers::enqueue_path() . 'css/admin.css', null, Helpers::assets_version() );
 	}
 
 	/**

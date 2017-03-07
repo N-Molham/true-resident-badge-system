@@ -17,6 +17,12 @@ if ( !defined( 'WPINC' ) )
 	die();
 }
 
+if ( '' === session_id() )
+{
+	// start session of not there
+	session_start();
+}
+
 /**
  * Constants
  */

@@ -5,12 +5,17 @@
 	$( function () {
 
 		// POI badge checklist
-		/*(function () {
-		 if ( w.Select2 ) {
-		 // init select2 on the badges list
-		 $( '#_challenges_badge' ).select2();
-		 }
-		 })();*/
+		(function () {
+			var $checklist_form = $( '#checklist-form' );
+
+			if ( 0 === $checklist_form.length ) {
+				// skip
+				return false;
+			}
+
+			// repeatable init
+			$checklist_form.find( '.checklist-repeatable' ).repeatable_item();
+		})();
 
 		// badge steps
 		(function () {

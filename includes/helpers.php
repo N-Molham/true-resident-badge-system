@@ -24,6 +24,13 @@ final class Helpers
 	private static $enqueue_path;
 
 	/**
+	 * Enqueue assets version
+	 *
+	 * @var string
+	 */
+	private static $assets_version;
+
+	/**
 	 * Convert array to Select element options
 	 *
 	 * @param array      $array
@@ -37,7 +44,7 @@ final class Helpers
 
 		foreach ( $array as $value => $label )
 		{
-			$out[] = '<option value="'. esc_attr( $value ) .'"'. selected( $selected, $value, false ) .'>'. esc_html( $label ) .'</option>';
+			$out[] = '<option value="' . esc_attr( $value ) . '"' . selected( $selected, $value, false ) . '>' . esc_html( $label ) . '</option>';
 		}
 
 		return implode( '', $out );
@@ -234,16 +241,21 @@ final class Helpers
 	 */
 	public static function assets_version()
 	{
-		// assets version
-		$version_file   = TRBS_DIR . 'assets/last_update';
-		$assets_version = file_exists( $version_file ) && is_readable( $version_file ) ? sanitize_key( file_get_contents( $version_file ) ) : null;
-		if ( empty( $assets_version ) )
+		if ( null === self::$assets_version )
 		{
-			// fallback to plugin version
-			$assets_version = trsc_version();
+			// assets version file
+			$version_file = TRBS_DIR . 'assets/last_update';
+
+			// read from file
+			self::$assets_version = file_exists( $version_file ) && is_readable( $version_file ) ? sanitize_key( file_get_contents( $version_file ) ) : null;
+			if ( empty( self::$assets_version ) )
+			{
+				// fallback to plugin version
+				self::$assets_version = trsc_version();
+			}
 		}
 
-		return $assets_version;
+		return self::$assets_version;
 	}
 
 	/**

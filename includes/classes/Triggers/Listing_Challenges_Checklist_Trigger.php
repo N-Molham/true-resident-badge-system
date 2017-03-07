@@ -42,7 +42,57 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 	 *
 	 * @var string
 	 */
-	var $checklist_field_name = 'challenges_checklist_list';
+	var $checklist_field_name = 'challenges_checklist';
+
+	/**
+	 * Listing_Challenges_Checklist_Trigger constructor.
+	 */
+	public function __construct()
+	{
+		// store WP path for later
+		$_SESSION['trbs_wp_path'] = ABSPATH;
+
+		if (
+			'save_checklist' === filter_input( INPUT_POST, 'trbs_action', FILTER_SANITIZE_STRING ) &&
+			wp_verify_nonce( filter_input( INPUT_POST, '_wpnonce', FILTER_SANITIZE_STRING ), 'trbs_save_challenges_checklist' )
+		)
+		{
+			// target step
+			$step_id  = absint( filter_input( INPUT_POST, 'checklist_step', FILTER_SANITIZE_NUMBER_INT ) );
+			$badge_id = absint( filter_input( INPUT_POST, 'checklist_badge', FILTER_SANITIZE_NUMBER_INT ) );
+
+			// posted checklist points
+			$checklist = array_map( 'sanitize_text_field', (array) filter_input( INPUT_POST, 'checklist_points', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY ) );
+
+			$this->save_checklist( $checklist, $step_id, $badge_id );
+		}
+	}
+
+	/**
+	 * Save step/trigger challenges checklist
+	 *
+	 * @param array $checklist
+	 * @param int   $step_id
+	 * @param int   $badge_id
+	 *
+	 * @return void
+	 */
+	public function save_checklist( $checklist, $step_id, $badge_id = 0 )
+	{
+		/**
+		 * Filter badge step challenges checklist
+		 *
+		 * @param array $checklist
+		 * @param int   $step_id
+		 * @param int   $badge_id
+		 *
+		 * @return array
+		 */
+		$checklist = apply_filters( 'trbs_save_step_challenges_checklist', $checklist, $step_id, $badge_id );
+
+		// save meta
+		update_post_meta( $step_id, $this->checklist_meta_key, $checklist );
+	}
 
 	public function label()
 	{
@@ -85,7 +135,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 		return [
 			$this->listing_id_field_name => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
-			$this->checklist_field_name  => get_post_meta( $step_id, $this->checklist_meta_key, true ),
+			$this->checklist_field_name  => array_filter( (array) get_post_meta( $step_id, $this->checklist_meta_key, true ) ),
 		];
 	}
 
@@ -99,15 +149,11 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 		// save selected listing
 		update_post_meta( $step_id, $this->meta_key, absint( $step_data[ $this->listing_id_field_name ] ) );
-
-		// save checklist
-		update_post_meta( $step_id, $this->checklist_meta_key, Helpers::sanitize_text_field_with_linebreaks( $step_data[ $this->checklist_field_name ] ) );
 	}
 
 	public function user_interface( $step_id, $badge_id )
 	{
 		// values
-		$checklist  = get_post_meta( $step_id, $this->checklist_meta_key, true );
 		$listing_id = absint( get_post_meta( $step_id, $this->meta_key, true ) );
 
 		if ( 0 === $listing_id )
@@ -126,14 +172,20 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 			$listing_id
 		);
 
-		// challenges checklist
-		printf( '<textarea type="text" name="%s" placeholder="%s" class="true-resident-autocomplete true-resident-step-condition" cols="58" rows="8"
-				data-toggle="%s" data-post-type="%s" data-return="id">%s</textarea>',
-			$this->checklist_field_name,
-			__( 'Challenges Checklist, each point/challenge in new line', TRBS_DOMAIN ),
+		// challenges checklist button
+		printf( '<a href="%s" title="%5$s" class="button thickbox true-resident-step-condition" data-toggle="%s" data-step="%d" data-badge="%d">%5$s</a>',
+			add_query_arg( [
+				'step_id'   => $step_id,
+				'badge_id'  => $badge_id,
+				'nonce'     => wp_create_nonce( 'trbs_manage_challenges_checklist_' . $step_id ),
+				'TB_iframe' => 'true',
+				'width'     => '600',
+				'height'    => '550',
+			], TRBS_URI . 'views/external/manage_checklist.php' ),
 			$this->activity_trigger(),
-			$this->listing_post_type,
-			$checklist
+			$step_id,
+			$badge_id,
+			esc_attr( __( 'Manage Checklist', TRBS_DOMAIN ) )
 		);
 	}
 

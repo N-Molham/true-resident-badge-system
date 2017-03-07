@@ -3,14 +3,11 @@
  */
 !function(a,b,c){b(function(){
 // POI badge checklist
-/*(function () {
-		 if ( w.Select2 ) {
-		 // init select2 on the badges list
-		 $( '#_challenges_badge' ).select2();
-		 }
-		 })();*/
+!function(){var a=b("#checklist-form");
+// repeatable init
+return 0!==a.length&&void a.find(".checklist-repeatable").repeatable_item()}(),
 // badge steps
-!function(){
+function(){
 // vars
 var a=b("#steps_list"),c=".select-trigger-type",d=".true-resident-step-condition",e=".true-resident-tax-type";
 // when the trigger type changes
