@@ -17,6 +17,9 @@ var plugin_args = {
 	}
 };
 
+// requires
+var fs = require( 'fs' );
+
 /**
  * Grunt tasks
  */
@@ -89,6 +92,17 @@ module.exports = function ( grunt ) {
 	grunt.loadNpmTasks( 'grunt-contrib-uglify' );
 	grunt.loadNpmTasks( 'grunt-contrib-cssmin' );
 	grunt.loadNpmTasks( 'grunt-contrib-watch' );
+
+	// when the watch task triggers
+	grunt.event.on( 'watch', function ( action, filepath, target ) {
+		fs.writeFile( "assets/last_update", (new Date()).toISOString().replace( /[^0-9]/g, '' ), function ( err ) {
+			if ( err ) {
+				return console.log( err );
+			}
+
+			console.log( "The file was saved!" );
+		} );
+	} );
 
 	// Default task(s).
 	grunt.registerTask( 'default', [ 'watch:all' ] );

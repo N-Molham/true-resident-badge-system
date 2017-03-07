@@ -50,41 +50,6 @@ class Backend extends Component
 
 		// WP post data save action
 		add_action( 'save_post_badges', [ &$this, 'store_hidden_badges_as_option' ], 100 );
-
-		// Listing data fields filter
-		// add_filter( 'job_manager_job_listing_data_fields', [ &$this, 'add_listing_challenges_fields' ], 100 );
-	}
-
-	/**
-	 * Add listing challenges data fields
-	 *
-	 * @return array
-	 */
-	public function add_listing_challenges_fields( $fields )
-	{
-		// query badges
-		$badges = get_posts( [
-			'post_type' => 'badges',
-			'nopaging'  => true,
-		] );
-
-		// prepare badges list
-		$badges_list = [ 'none' => __( 'None', TRBS_DOMAIN ) ];
-		for ( $i = 0, $len = count( $badges ); $i < $len; $i++ )
-		{
-			// append badge to list
-			$badges_list[ $badges[ $i ]->ID ] = $badges[ $i ]->post_title;
-		}
-
-		$fields['_challenges_badge'] = [
-			'label'       => __( 'Reward Badge', TRBS_DOMAIN ),
-			'description' => __( 'Which badge do user earn by completing the POI challenges', TRBS_DOMAIN ),
-			'priority'    => 100,
-			'type'        => 'select',
-			'options'     => $badges_list,
-		];
-
-		return $fields;
 	}
 
 	/**
@@ -184,7 +149,7 @@ class Backend extends Component
 	public function load_scripts()
 	{
 		// main admin script
-		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [ 'jquery' ], trbs_version(), true );
+		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [ 'jquery' ], Helpers::assets_version(), true );
 	}
 
 	/**

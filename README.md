@@ -1,2 +1,2 @@
-# wp-plugins-boilerplate
-My WordPress plugin boilerplate
+# True Resident BadgeOS Customization
+Customize badeOS plugin with website badge system functions
