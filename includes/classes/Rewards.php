@@ -39,7 +39,15 @@ class Rewards extends Component
 		add_filter( 'badgeos_get_step_requirements', [ &$this, 'badgeos_step_data_requirements' ], 10, 2 );
 
 		// WP Initialization
+		add_action( 'init', [ &$this, 'setup_db_tables_names' ], 1 );
 		add_action( 'init', [ &$this, 'badgeos_load_triggers' ] );
+	}
+
+	public function setup_db_tables_names()
+	{
+		global $wpdb;
+
+		$wpdb->checklist_marks = $wpdb->prefix . 'checklist_marks';
 	}
 
 	/**

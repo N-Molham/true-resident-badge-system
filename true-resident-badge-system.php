@@ -55,7 +55,7 @@ class Plugin extends Singular
 	 *
 	 * @var string
 	 */
-	var $version = '1.0.0';
+	var $version = '1.4.0';
 
 	/**
 	 * Backend
@@ -163,6 +163,20 @@ class Plugin extends Singular
 
 		// WP Widgets initialization
 		add_action( 'widgets_init', [ &$this, 'register_widgets' ] );
+
+		// plugin activation
+		register_activation_hook( TRBS_MAIN_FILE, [ &$this, 'plugin_activation_setups' ] );
+	}
+
+	/**
+	 * Trigger plugin setups upon activation
+	 *
+	 * @return void
+	 */
+	public function plugin_activation_setups()
+	{
+		// Database tables
+		$this->backend->update_db_tables();
 	}
 
 	/**

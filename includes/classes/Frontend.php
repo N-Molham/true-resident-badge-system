@@ -182,16 +182,12 @@ class Frontend extends Component
 			$credly_ID     = 'data-credlyid="' . $achievement_id . '"';
 		}
 
-		// buffer start
-		ob_start();
-
 		if ( false === $is_earned )
 		{
 			// badge steps
-			$steps            = badgeos_get_required_achievements_for_achievement( $achievement_id );
-			$steps_count      = count( $steps );
-			$steps_percentage = $steps_count * 100;
-			$steps_completed  = 0;
+			$steps           = badgeos_get_required_achievements_for_achievement( $achievement_id );
+			$steps_count     = count( $steps );
+			$steps_completed = 0;
 
 			for ( $i = 0; $i < $steps_count; $i++ )
 			{
@@ -210,6 +206,9 @@ class Frontend extends Component
 			$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
 			$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
 		}
+
+		// buffer start
+		ob_start();
 
 		// Achievement Content
 		$popover_content = '<div id="badgeos-achievements-item-description-' . $achievement_id . '" class="badgeos-item-description">';

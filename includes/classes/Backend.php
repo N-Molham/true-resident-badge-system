@@ -22,6 +22,13 @@ class Backend extends Component
 	protected $hidden_badges_option;
 
 	/**
+	 * List of admin dashboard messages to display
+	 *
+	 * @var array
+	 */
+	protected $dashboard_messages;
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -31,7 +38,11 @@ class Backend extends Component
 		parent::init();
 
 		// vars
+		$this->dashboard_messages   = [];
 		$this->hidden_badges_option = '_trbs_hidden_badges';
+
+		// WP admin dashboard messages area
+		add_action( 'admin_notices', [ &$this, 'display_notice_messages' ] );
 
 		// WP initiation action hook
 		add_action( 'init', [ &$this, 'badgeos_rewards_triggers_ui' ] );
@@ -50,6 +61,55 @@ class Backend extends Component
 
 		// WP post data save action
 		add_action( 'save_post_badges', [ &$this, 'store_hidden_badges_as_option' ], 100 );
+
+		// WP admin dashboard action
+		add_action( 'admin_action_trbs_run_command', [ &$this, 'manually_trigger_command' ] );
+	}
+
+	/**
+	 * Manually trigger specific command
+	 *
+	 * @return void
+	 */
+	public function manually_trigger_command()
+	{
+		// target command
+		$cmd_name = sanitize_key( filter_input( INPUT_GET, 'command_name', FILTER_SANITIZE_STRING ) );
+
+		if ( method_exists( $this, $cmd_name ) )
+		{
+			// run command if found
+			call_user_func( [ &$this, $cmd_name ] );
+		}
+	}
+
+	/**
+	 * Update custom database table(s) schema
+	 *
+	 * @return void
+	 */
+	public function update_db_tables()
+	{
+		// load db API
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		global $wpdb;
+
+		$sql = "CREATE TABLE {$wpdb->checklist_marks} (
+          mark_id bigint(20) unsigned NOT NULL auto_increment,
+          user_id bigint(20) unsigned NOT NULL,
+          point_id bigint(20) unsigned NOT NULL,
+          step_id bigint(20) unsigned NOT NULL,
+          badge_id bigint(20) unsigned NOT NULL default '0',
+          mark_date datetime NOT NULL default '0000-00-00 00:00:00',
+          PRIMARY KEY  (mark_id),
+          KEY user_id (user_id),
+          KEY step_id (step_id),
+          KEY point_id (point_id)
+     ) {$wpdb->get_charset_collate()}; ";
+
+		dbDelta( $sql );
+
+		$this->add_notice_message( 'Database custom table updated', 10, false, true );
 	}
 
 	/**
@@ -181,5 +241,44 @@ class Backend extends Component
 	public function get_hidden_badges()
 	{
 		return array_values( get_option( $this->hidden_badges_option, [] ) );
+	}
+
+	/**
+	 * Add/Register new admin notice message
+	 *
+	 * @param string $body
+	 * @param int    $priority priority in display order, lower means show first
+	 * @param bool   $is_error
+	 * @param bool   $is_dismissible
+	 *
+	 * @return void
+	 */
+	public function add_notice_message( $body, $priority = 10, $is_error = false, $is_dismissible = false )
+	{
+		$this->dashboard_messages[] = compact( 'body', 'priority', 'is_error', 'is_dismissible' );
+	}
+
+	/**
+	 * Display admin messages
+	 *
+	 * @return void
+	 */
+	public function display_notice_messages()
+	{
+		// sort by higher priority
+		usort( $this->dashboard_messages, function ( $a, $b )
+		{
+			return $a['priority'] - $b['priority'];
+		} );
+
+		foreach ( $this->dashboard_messages as $message )
+		{
+			// message css classes
+			$css_classes   = [ 'notice' ];
+			$css_classes[] = $message['is_error'] ? 'error' : 'updated';
+			$css_classes[] = $message['is_dismissible'] ? 'is-dismissible' : '';
+
+			echo '<div class="', esc_attr( implode( ' ', $css_classes ) ), '"><p>', $message['body'], '</p></div>';
+		}
 	}
 }

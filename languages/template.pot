@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-03-07 18:05:38+00:00\n"
+"POT-Creation-Date: 2017-03-08 15:02:42+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -33,11 +33,11 @@ msgstr ""
 msgid "Invalid taxonomy."
 msgstr ""
 
-#: includes/classes/Backend.php:114
+#: includes/classes/Backend.php:174
 msgid "Hide Achievement From POI Page"
 msgstr ""
 
-#: includes/classes/Backend.php:115
+#: includes/classes/Backend.php:175
 msgid "Yes, will hide this achievement from loading in the POI singular page."
 msgstr ""
 
@@ -168,13 +168,13 @@ msgstr ""
 msgid "Listing Badges"
 msgstr ""
 
-#: true-resident-badge-system.php:195
+#: true-resident-badge-system.php:209
 msgid ""
 "<b>[True Resident BadgeOS Customization]</b> Missing dependency plugins: "
 "<b>%s</b>"
 msgstr ""
 
-#: true-resident-badge-system.php:225
+#: true-resident-badge-system.php:239
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
 msgstr ""
 
