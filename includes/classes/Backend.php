@@ -100,16 +100,16 @@ class Backend extends Component
           point_id bigint(20) unsigned NOT NULL,
           step_id bigint(20) unsigned NOT NULL,
           badge_id bigint(20) unsigned NOT NULL default '0',
-          mark_date datetime NOT NULL default '0000-00-00 00:00:00',
+          mark_datetime datetime NOT NULL default '0000-00-00 00:00:00',
           PRIMARY KEY  (mark_id),
           KEY user_id (user_id),
           KEY step_id (step_id),
           KEY point_id (point_id)
      ) {$wpdb->get_charset_collate()}; ";
 
-		dbDelta( $sql );
+		$sql_results = dbDelta( $sql );
 
-		$this->add_notice_message( 'Database custom table updated', 10, false, true );
+		$this->add_notice_message( 'Database custom table(s) updated: <code>' . implode( ', ', $sql_results ) . '</code>', 10, false, true );
 	}
 
 	/**
