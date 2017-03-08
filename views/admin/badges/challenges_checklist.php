@@ -42,6 +42,7 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 				<ul class="checklist-repeatable list-unstyled" data-empty-list-message="item" data-add-button-class="btn btn-default"
 				    data-confirm-remove="yes" data-add-button-label="<?php esc_attr_e( 'Add New', TRBS_DOMAIN ); ?>"
 				    data-confirm-remove-message="<?php esc_attr_e( 'Are you sure?', TRBS_DOMAIN ); ?>"
+				    data-start-index="<?php echo esc_attr( $step_data['checklist_max_index'] ); ?>"
 				    data-values="<?php echo esc_attr( json_encode( $step_data['challenges_checklist'] ) ); ?>">
 					<li data-template="yes" class="list-item">
 						<div class="row">

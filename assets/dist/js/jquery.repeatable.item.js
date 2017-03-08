@@ -1,5 +1,5 @@
 /*!
- * Repeatable list item 1.6.5 (http://n-molham.github.io/jquery.repeatable.item/)
+ * Repeatable list item 1.6.6 (http://n-molham.github.io/jquery.repeatable.item/)
  * Copyright 2014 Nabeel Molham (http://nabeel.molham.me).
  * Licensed under MIT License (http://opensource.org/licenses/MIT)
  */
@@ -10,23 +10,23 @@ if("object"!=typeof doT)throw"Repeatable Exception: doT.js Template engine not f
 b=a.extend({init:function(){},completed:function(){},new_item:function(){},removed:function(){}},b);
 // plugins methods
 var c={/**
-					 * Clean final item layout from placeholders
-					 * 
-					 * @param {string} layout
-					 * @return {string}
-					 */
+				 * Clean final item layout from placeholders
+				 *
+				 * @param {string} layout
+				 * @return {string}
+				 */
 clean_template_holders:function(a){
 // index/value cleanup
 var b=a.replace(/\{[a-zA-Z0-9_\-]+\}/g,"");
 // clean template placeholders
 return b=b.replace(doT.templateSettings.evaluate,""),b=b.replace(doT.templateSettings.interpolate,""),b=b.replace(doT.templateSettings.encode,""),b=b.replace(doT.templateSettings.use,""),b=b.replace(doT.templateSettings.define,""),b=b.replace(doT.templateSettings.conditional,""),b=b.replace(doT.templateSettings.iterate,"")},/**
-					 * Add new list item
-					 * 
-					 * @param {Object} $list
-					 * @param {Number} index
-					 * @param {any} data
-					 * @return void
-					 */
+				 * Add new list item
+				 *
+				 * @param {Object} $list
+				 * @param {Number} index
+				 * @param {any} data
+				 * @return void
+				 */
 add_item:function(d,e,f){f=f||!1,
 // check empty item
 d.settings.is_empty&&(d.settings.is_empty=!1,d.find(".repeatable-empty").remove());
@@ -51,20 +51,20 @@ d.trigger("repeatable-new-item",[d,h,e,f]),b.new_item(d,h,e,f)}};
 // chaining
 // element loop
 return this.each(function(d,e){var f=a(e);
-// repeatable item template
-if(
 // trigger event: initialize
 f.trigger("repeatable-init"),b.init(f),
 // settings
 f.settings=a.extend({startIndex:0,templateSelector:"",indexKeyName:"index",valueKeyName:"value",addButtonLabel:"Add New",addButtonClass:"btn btn-primary",wrapperClass:"repeatable-wrapper",confirmRemoveMessage:"Are Your Sure ?",confirmRemove:"no",emptyListMessage:"<li>No Items Found</li>",defaultItem:{},values:[],is_empty:!0},f.data()),
 // wrap list
-f.wrap('<div class="'+f.settings.wrapperClass+'" />'),
+f.wrap('<div class="'+f.settings.wrapperClass+'" />');
 // index parsing
-f.settings.startIndex=parseInt(f.settings.startIndex),""==f.settings.templateSelector)
+var g=parseInt(f.settings.startIndex);
+// repeatable item template
+if(""==f.settings.templateSelector)
 // use internal template
 f.item_template=f.find("> [data-template=yes]").removeAttr("data-template").remove();else
 // use external template from query selector
-try{f.item_template=a(a(f.settings.templateSelector).html())}catch(g){throw"Repeatable Exception: Invalid item template selector <"+f.settings.templateSelector+">"}if(1!==f.item_template.size())
+try{f.item_template=a(a(f.settings.templateSelector).html())}catch(h){throw"Repeatable Exception: Invalid item template selector <"+f.settings.templateSelector+">"}if(1!==f.item_template.size())
 // throw exception cause the template item not set
 throw"Repeatable Exception: Template item not found.";
 // add values if any
@@ -80,13 +80,13 @@ f.add_new_btn=a('<p class="add-wrapper"><a href="#" class="'+f.settings.addButto
 // add new item
 c.add_item(f,f.settings.startIndex)}),"object"==typeof f.settings.values){
 // loop items for appending indexes
-var h=[];a.each(f.settings.values,function(a,b){"undefined"!=typeof b.order_index&&(
+var i=[];if(a.each(f.settings.values,function(a,b){"undefined"!=typeof b.order_index&&(
 // use index from item data if exists
-a=parseInt(b.order_index)),h.push(a),
+a=parseInt(b.order_index)),i.push(a),
 // add new item
-c.add_item(f,a,b),f.settings.is_empty=!1}),h.length&&(
+c.add_item(f,a,b),f.settings.is_empty=!1}),i.length){
 // calculate next index
-f.settings.startIndex=Math.max.apply(Math,h)+1)}f.settings.is_empty&&f.settings.emptyListMessage.length&&("item"==f.settings.emptyListMessage?
+var j=Math.max.apply(Math,i);f.settings.startIndex=(j>g?j:g)+1}}f.settings.is_empty&&f.settings.emptyListMessage.length&&("item"==f.settings.emptyListMessage?
 // empty list label if is set
 f.add_new_btn.trigger("repeatable-add-click"):
 // empty list label if is set

@@ -156,16 +156,17 @@ class Frontend extends Component
 	public function badge_render_output( $output, $achievement_id )
 	{
 		// vars
-		$user_id     = get_current_user_id();
-		$achievement = get_post( $achievement_id );
+		$user_id        = get_current_user_id();
+		$achievement    = get_post( $achievement_id );
+		$has_challenges = false;
+		$steps_data     = [];
 
 		// check if user has earned this Achievement, and add an 'earned' class
-		$is_earned         = count( badgeos_get_user_achievements( [
+		$is_earned     = count( badgeos_get_user_achievements( [
 				'user_id'        => $user_id,
 				'achievement_id' => $achievement_id,
 			] ) ) > 0;
-		$earned_status     = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
-		$earned_percentage = $is_earned ? 100 : 0;
+		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
 
 		$css_classes = [
 			'badgeos-achievements-list-item',
@@ -178,33 +179,45 @@ class Frontend extends Component
 		// If the achievement is earned and givable, override our credly classes
 		if ( 'user-has-earned' == $earned_status && $giveable = credly_is_achievement_giveable( $achievement_id, $user_id ) )
 		{
-			$css_classes[] = 'share-credly addCredly';
-			$credly_ID     = 'data-credlyid="' . $achievement_id . '"';
+			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
+			$credly_ID   = 'data-credlyid="' . $achievement_id . '"';
 		}
 
-		if ( false === $is_earned )
+		// badge steps
+		$steps           = badgeos_get_required_achievements_for_achievement( $achievement_id );
+		$steps_count     = count( $steps );
+		$steps_completed = 0;
+
+		for ( $i = 0; $i < $steps_count; $i++ )
 		{
-			// badge steps
-			$steps           = badgeos_get_required_achievements_for_achievement( $achievement_id );
-			$steps_count     = count( $steps );
-			$steps_completed = 0;
+			// vars
+			$step_id        = $steps[ $i ]->ID;
+			$step_type      = trbs_rewards()->get_step_type( $step_id );
+			$step_completed = count( badgeos_get_user_achievements( [
+					'user_id'        => $user_id,
+					'achievement_id' => $step_id,
+					'since'          => absint( badgeos_achievement_last_user_activity( $achievement_id, $user_id ) ),
+				] ) ) > 0;
 
-			for ( $i = 0; $i < $steps_count; $i++ )
+			$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
+
+			if ( false === $has_challenges )
 			{
-				// vars
-				$step_id        = $steps[ $i ]->ID;
-				$step_completed = count( badgeos_get_user_achievements( [
-						'user_id'        => $user_id,
-						'achievement_id' => $step_id,
-						'since'          => absint( badgeos_achievement_last_user_activity( $achievement_id, $user_id ) ),
-					] ) ) > 0;
-
-				$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
+				// check if badge has challenges checklist step or not
+				$has_challenges = trbs_rewards()->is_checklist_step( $step_id, $step_type );
 			}
 
-			// overall percentage ( positive and 100% max )
-			$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
-			$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
+			$steps_data[ $step_id ] = trbs_rewards()->get_step_data( $step_id, $step_type );
+		}
+
+		// overall percentage ( positive and 100% max )
+		$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
+		$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
+
+		if ( $has_challenges )
+		{
+			// Challenges badge mark
+			$css_classes[] = 'badgeos-achievements-challenges-item';
 		}
 
 		// buffer start
@@ -226,7 +239,7 @@ class Frontend extends Component
 		// Each Achievement
 		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $achievement_id, '" ',
 		'data-content="', esc_attr( $popover_content ), '" ', Helpers::parse_attributes( $this->popover_args ),
-		'class="', implode( ' ', $css_classes ), '"', $credly_ID, '>';
+		'class="', implode( ' ', $css_classes ), '"', $credly_ID, ' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '">';
 		// Achievement Image
 		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $achievement ), '</span></a><!-- .badgeos-achievements-list-item -->';
 

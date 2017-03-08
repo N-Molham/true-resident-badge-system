@@ -90,6 +90,16 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 		 */
 		$checklist = apply_filters( 'trbs_save_step_challenges_checklist', $checklist, $step_id, $badge_id );
 
+		// vars
+		$max_index = max( array_keys( $checklist ) );
+		$step_data = $this->get_data( $step_id );
+
+		if ( $max_index > $step_data['checklist_max_index'] )
+		{
+			// update new max index
+			update_post_meta( $step_id, '_trbs_checklist_max', $max_index );
+		}
+
 		// save meta
 		update_post_meta( $step_id, $this->checklist_meta_key, $checklist );
 	}
@@ -136,6 +146,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 		return [
 			$this->listing_id_field_name => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
 			$this->checklist_field_name  => array_filter( (array) get_post_meta( $step_id, $this->checklist_meta_key, true ) ),
+			'checklist_max_index'        => absint( get_post_meta( $step_id, '_trbs_checklist_max', true ) ),
 		];
 	}
 
@@ -201,5 +212,19 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 		$requirements = badgeos_get_step_requirements( $step_id );
 
 		return $listing_id === $requirements[ $this->listing_id_field_name ];
+	}
+
+	/**
+	 * Check if given step is checklist trigger type of not
+	 *
+	 * @param int $step_id
+	 *
+	 * @return bool
+	 */
+	public function is_checklist_step( $step_id )
+	{
+		$step_data = $this->get_data( $step_id, $this->activity_trigger() );
+
+		return array_key_exists( $this->checklist_field_name, $step_data );
 	}
 }

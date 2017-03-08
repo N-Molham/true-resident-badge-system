@@ -1,6 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
 use ReflectionClass;
+use True_Resident\Badge_System\Triggers\Trigger_Interface;
 
 /**
  * BadgeOS rewards logic
@@ -288,5 +289,68 @@ class Rewards extends Component
 	public function get_step_type( $step_id )
 	{
 		return get_post_meta( $step_id, '_badgeos_trigger_type', true );
+	}
+
+	/**
+	 * Get step data
+	 *
+	 * @param int    $step_id
+	 * @param string $step_type
+	 *
+	 * @return array|bool
+	 */
+	public function get_step_data( $step_id, $step_type = '' )
+	{
+		$trigger = $this->get_step_trigger_object( $step_id, $step_type );
+		if ( false === $trigger )
+		{
+			// unknown trigger type
+			return false;
+		}
+
+		return $trigger->get_data( $step_id, $step_type );
+	}
+
+	/**
+	 * Check if given step is checklist trigger type of not
+	 *
+	 * @param int    $step_id
+	 * @param string $step_type
+	 *
+	 * @return bool
+	 */
+	public function is_checklist_step( $step_id, $step_type = '' )
+	{
+		$trigger = $this->get_step_trigger_object( $step_id, $step_type );
+		if ( false === $trigger || false === method_exists( $trigger, 'is_checklist_step' ) )
+		{
+			// wrong step type
+			return false;
+		}
+
+		return $trigger->is_checklist_step( $step_id );
+	}
+
+	/**'
+	 * Get given step trigger object
+	 *
+	 * @param        $step_id
+	 * @param string $step_type
+	 *
+	 * @return Trigger_Interface|boolean
+	 */
+	public function get_step_trigger_object( $step_id, $step_type = '' )
+	{
+		$step_type = '' === $step_type || empty( $step_type ) ? $this->get_step_type( $step_id ) : $step_type;
+
+		$triggers = $this->get_triggers();
+		if ( !isset( $triggers[ $step_type ] ) )
+		{
+			// unknown step type
+			return false;
+		}
+
+		// step type object
+		return $triggers[ $step_type ];
 	}
 }
