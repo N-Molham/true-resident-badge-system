@@ -59,6 +59,9 @@ class Listify_Listing_Badges extends WP_Widget
 
 		echo do_shortcode( $badges_shortcode );
 
+		// Challenges checklist template
+		trbs_view( 'frontend/badges/challenges' );
+
 		// widget after layout
 		echo $args['after_widget'];
 	}

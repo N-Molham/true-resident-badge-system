@@ -118,11 +118,15 @@ class Frontend extends Component
 		}
 
 		// assets base path
-		$base_path = Helpers::enqueue_path();
+		$base_path      = Helpers::enqueue_path();
+		$assets_version = Helpers::assets_version();
 
 		// WebUI Poppver
 		wp_register_style( 'trbs-webui-popover', $base_path . 'css/jquery.webui-popover.css' );
 		wp_register_script( 'trbs-webui-popover', $base_path . 'js/jquery.webui-popover.js', [ 'jquery' ], '1.2.16', true );
+
+		// doT template engine
+		wp_register_script( 'trbs-dot-engine', $base_path . 'js/doT.js', null, '1.0.3', true );
 
 		// jQuety Livequery
 		wp_register_script( 'trbs-livequery', $base_path . 'js/jquery.livequery.js', [ 'jquery' ], '1.3.6', true );
@@ -131,11 +135,12 @@ class Frontend extends Component
 		wp_enqueue_style( 'trbs-achievements', $base_path . 'css/achievements.css', [
 			'badgeos-front',
 			'trbs-webui-popover',
-		], trbs_version() );
+		], $assets_version );
 		wp_enqueue_script( 'trbs-achievements', $base_path . 'js/achievements.js', [
 			'trbs-webui-popover',
 			'trbs-livequery',
-		], trbs_version(), false );
+			'trbs-dot-engine',
+		], $assets_version, false );
 
 		wp_localize_script( 'trbs-achievements', 'trbs_badges', [
 			'filter_labels' => [
@@ -207,7 +212,11 @@ class Frontend extends Component
 				$has_challenges = trbs_rewards()->is_checklist_step( $step_id, $step_type );
 			}
 
+			// get step data
 			$steps_data[ $step_id ] = trbs_rewards()->get_step_data( $step_id, $step_type );
+
+			// with step title
+			$steps_data[ $step_id ]['title'] = $steps[ $i ]->post_title;
 		}
 
 		// overall percentage ( positive and 100% max )

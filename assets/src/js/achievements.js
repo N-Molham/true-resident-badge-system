@@ -3,20 +3,65 @@
  */
 (function ( w, $, doc, undefined ) {
 	$( function () {
-		var $badges = $( '#badgeos-achievements-container' );
-		if ( $badges.length < 1 ) {
+		var $container = $( '#badgeos-achievements-container' );
+		if ( $container.length < 1 ) {
 			// stop if badges list not found
 			return;
 		}
 
+		// vars
+		var listing_id   = '',
+		    body_classes = doc.body.className,
+		    is_single    = body_classes.indexOf( 'single-job_listing' ) > -1 && body_classes.indexOf( 'single' ) > -1;
+
 		// badges with challenges checklist
 		(function () {
-			// badges click
-			$badges.on( 'click', '.badgeos-achievements-challenges-item', function ( e ) {
-				var $this      = $( e.currentTarget ),
-				    steps_data = $this.data( 'steps-data' );
+			if ( false === is_single ) {
+				// skip non-single page for a listing
+				return;
+			}
 
-				console.log( steps_data );
+			// compile checklist template
+			var render_checklist  = doT.template( $( '#trbs-checklist-template' ).html() ),
+			    $badge_challenges = $( '#trbs-badges-challenges' ),
+			    challenges        = [];
+
+			// badges click
+			$container.on( 'click', '.badgeos-achievements-challenges-item', function ( e ) {
+				var badge      = $( e.currentTarget ),
+				    steps_data = badge.data( 'steps-data' );
+
+				// reset
+				challenges = [];
+
+				for ( var step_id in steps_data ) {
+					if ( !steps_data.hasOwnProperty( step_id ) ) {
+						// skip non properties
+						continue;
+					}
+
+					// current step
+					var badge_step = steps_data[ step_id ];
+
+					// pass on the ID
+					badge_step.id = step_id;
+
+					if ( !( 'challenges_checklist_listing_id' in badge_step ) || badge_step.challenges_checklist_listing_id.toString() !== listing_id.toString() ) {
+						// skip if these challenges aren't for the current listing
+						continue;
+					}
+
+					if ( !( 'challenges_checklist' in badge_step ) || $.isEmptyObject( badge_step.challenges_checklist ) ) {
+						//
+						continue;
+					}
+
+					// render badge's step checklist
+					challenges.push( render_checklist( badge_step ) );
+				}
+
+				// output checklist(s)
+				$badge_challenges.html( challenges.join( '' ) );
 			} );
 		})();
 
@@ -44,8 +89,7 @@
 
 		// badges for current open listing
 		(function () {
-			var body_classes = doc.body.className;
-			if ( body_classes.indexOf( 'single' ) < 0 || body_classes.indexOf( 'single-job_listing' ) < 0 ) {
+			if ( false === is_single ) {
 				// skip non-single page for a listing
 				return;
 			}
@@ -57,15 +101,15 @@
 			}
 
 			// loaded listing ID in the current page
-			var post_id = parseInt( ids_match[ 0 ].replace( 'postid-', '' ) );
-			if ( isNaN( post_id ) ) {
+			listing_id = parseInt( ids_match[ 0 ].replace( 'postid-', '' ) );
+			if ( isNaN( listing_id ) ) {
 				// skip invalid- post id
 				return;
 			}
 
 			$.ajaxSetup( {
 				data: {
-					trbs_listing_id: post_id
+					trbs_listing_id: listing_id
 				}
 			} );
 		})();

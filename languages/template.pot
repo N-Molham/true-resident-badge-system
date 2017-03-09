@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-03-08 18:50:06+00:00\n"
+"POT-Creation-Date: 2017-03-09 18:52:31+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Yes, will hide this achievement from loading in the POI singular page."
 msgstr ""
 
-#: includes/classes/Frontend.php:142
+#: includes/classes/Frontend.php:147
 msgid "Incomplete Badges"
 msgstr ""
 
@@ -112,59 +112,59 @@ msgstr ""
 msgid "True Resident Listings Badges"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:77
+#: includes/classes/Widgets/Listify_Listing_Badges.php:80
 msgid "Widget Title"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:82
+#: includes/classes/Widgets/Listify_Listing_Badges.php:85
 msgid "Order By"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:87
+#: includes/classes/Widgets/Listify_Listing_Badges.php:90
 msgid "Order"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:90
+#: includes/classes/Widgets/Listify_Listing_Badges.php:93
 msgid "Ascending"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:91
+#: includes/classes/Widgets/Listify_Listing_Badges.php:94
 msgid "Descending"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:95
+#: includes/classes/Widgets/Listify_Listing_Badges.php:98
 msgid "Limit"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:129
+#: includes/classes/Widgets/Listify_Listing_Badges.php:132
 msgid "Menu Order"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:130
+#: includes/classes/Widgets/Listify_Listing_Badges.php:133
 msgid "ID"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:131
+#: includes/classes/Widgets/Listify_Listing_Badges.php:134
 msgid "Title"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:132
+#: includes/classes/Widgets/Listify_Listing_Badges.php:135
 msgid "Published Date"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:133
+#: includes/classes/Widgets/Listify_Listing_Badges.php:136
 msgid "Last Modified Date"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:134
+#: includes/classes/Widgets/Listify_Listing_Badges.php:137
 msgid "Author"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:135
+#: includes/classes/Widgets/Listify_Listing_Badges.php:138
 msgid "Random"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:147
+#: includes/classes/Widgets/Listify_Listing_Badges.php:150
 msgid "Listing Badges"
 msgstr ""
 

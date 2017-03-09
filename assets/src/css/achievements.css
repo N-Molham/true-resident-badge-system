@@ -70,3 +70,60 @@
 	color: #fff;
 	line-height: 22px;
 }
+
+.trbs-checklist-container {
+	padding-top: 14px;
+}
+
+li.trbs-checklist-item label {
+	font-size: 1.2em;
+}
+
+li.trbs-checklist-item label,
+li.trbs-checklist-item span {
+	display: inline-block;
+}
+
+li.trbs-checklist-item span {
+	position: relative;
+}
+
+li.trbs-checklist-item span span {
+	display: inline;
+	position: static;
+}
+
+li.trbs-checklist-item input {
+	display: none;
+}
+
+li.trbs-checklist-item span::before {
+	font-family: Ionicons;
+	speak: none;
+	font-style: normal;
+	font-weight: 400;
+	font-variant: normal;
+	text-transform: none;
+	text-rendering: auto;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	margin-right: 8px;
+	vertical-align: middle;
+	content: "\f128";
+	font-size: 1.6em;
+}
+
+li.trbs-checklist-item input:checked + span::before {
+	content: "\f120";
+	color: #16B80A;
+}
+
+li.trbs-checklist-item input:checked + span span.trbs-text {
+	text-decoration: line-through;
+}
+
+li.trbs-checklist-item span span::before,
+li.trbs-checklist-item input:checked + span span::before {
+	display: none;
+}
