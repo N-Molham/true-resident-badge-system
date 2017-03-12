@@ -28,8 +28,9 @@
 
 			// badges click
 			$container.on( 'click', '.badgeos-achievements-challenges-item', function ( e ) {
-				var badge      = $( e.currentTarget ),
-				    steps_data = badge.data( 'steps-data' );
+				var $badge     = $( e.currentTarget ),
+				    steps_data = $badge.data( 'steps-data' ),
+				    badge_id   = $badge.data( 'id' );
 
 				// reset
 				challenges = [];
@@ -41,10 +42,10 @@
 					}
 
 					// current step
-					var badge_step = steps_data[ step_id ];
-
-					// pass on the ID
-					badge_step.id = step_id;
+					var badge_step = $.extend( {}, steps_data[ step_id ], {
+						step_id : step_id,
+						badge_id: badge_id
+					} );
 
 					if ( !( 'challenges_checklist_listing_id' in badge_step ) || badge_step.challenges_checklist_listing_id.toString() !== listing_id.toString() ) {
 						// skip if these challenges aren't for the current listing
@@ -52,12 +53,23 @@
 					}
 
 					if ( !( 'challenges_checklist' in badge_step ) || $.isEmptyObject( badge_step.challenges_checklist ) ) {
-						//
+						// step has not checklist!
 						continue;
 					}
 
 					// render badge's step checklist
 					challenges.push( render_checklist( badge_step ) );
+				}
+
+				if ( challenges.length < 1 ) {
+					// no challenges found!
+					return true;
+				}
+
+				// user needs to login first
+				if ( false === is_user_logged_in() ) {
+					$( '#secondary-nav-menu' ).find( '.overlay-login' ).trigger( 'tr-click' );
+					return true;
 				}
 
 				// output checklist(s)
@@ -113,5 +125,14 @@
 				}
 			} );
 		})();
+
+		/**
+		 * Check if there is logged in user or not
+		 *
+		 * @return {boolean}
+		 */
+		function is_user_logged_in() {
+			return Boolean( listify_child_overlays && 'is_user_logged_in' in listify_child_overlays ? listify_child_overlays.is_user_logged_in : trbs_badges.is_logged_in );
+		}
 	} );
 })( window, jQuery, document );

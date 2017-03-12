@@ -147,6 +147,7 @@ class Frontend extends Component
 				'not-completed' => __( 'Incomplete Badges', TRBS_DOMAIN ),
 			],
 			'is_mobile'     => wp_is_mobile(),
+			'is_logged_in'  => is_user_logged_in(),
 		] );
 	}
 
@@ -154,22 +155,22 @@ class Frontend extends Component
 	 * BadgeOS achievement updated render
 	 *
 	 * @param string $output
-	 * @param int    $achievement_id
+	 * @param int    $badge_id
 	 *
 	 * @return string
 	 */
-	public function badge_render_output( $output, $achievement_id )
+	public function badge_render_output( $output, $badge_id )
 	{
 		// vars
 		$user_id        = get_current_user_id();
-		$achievement    = get_post( $achievement_id );
+		$badge          = get_post( $badge_id );
 		$has_challenges = false;
 		$steps_data     = [];
 
 		// check if user has earned this Achievement, and add an 'earned' class
 		$is_earned     = count( badgeos_get_user_achievements( [
 				'user_id'        => $user_id,
-				'achievement_id' => $achievement_id,
+				'achievement_id' => $badge_id,
 			] ) ) > 0;
 		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
 
@@ -182,14 +183,14 @@ class Frontend extends Component
 		$credly_ID = '';
 
 		// If the achievement is earned and givable, override our credly classes
-		if ( 'user-has-earned' == $earned_status && $giveable = credly_is_achievement_giveable( $achievement_id, $user_id ) )
+		if ( 'user-has-earned' == $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) )
 		{
 			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
-			$credly_ID   = 'data-credlyid="' . $achievement_id . '"';
+			$credly_ID   = 'data-credlyid="' . $badge_id . '"';
 		}
 
 		// badge steps
-		$steps           = badgeos_get_required_achievements_for_achievement( $achievement_id );
+		$steps           = badgeos_get_required_achievements_for_achievement( $badge_id );
 		$steps_count     = count( $steps );
 		$steps_completed = 0;
 
@@ -201,7 +202,7 @@ class Frontend extends Component
 			$step_completed = count( badgeos_get_user_achievements( [
 					'user_id'        => $user_id,
 					'achievement_id' => $step_id,
-					'since'          => absint( badgeos_achievement_last_user_activity( $achievement_id, $user_id ) ),
+					'since'          => absint( badgeos_achievement_last_user_activity( $badge_id, $user_id ) ),
 				] ) ) > 0;
 
 			$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
@@ -214,6 +215,9 @@ class Frontend extends Component
 
 			// get step data
 			$steps_data[ $step_id ] = trbs_rewards()->get_step_data( $step_id, $step_type );
+
+			// clear un-wanted data
+			unset( $steps_data[ $step_id ]['checklist_max_index'] );
 
 			// with step title
 			$steps_data[ $step_id ]['title'] = $steps[ $i ]->post_title;
@@ -233,24 +237,24 @@ class Frontend extends Component
 		ob_start();
 
 		// Achievement Content
-		$popover_content = '<div id="badgeos-achievements-item-description-' . $achievement_id . '" class="badgeos-item-description">';
+		$popover_content = '<div id="badgeos-achievements-item-description-' . $badge_id . '" class="badgeos-item-description">';
 
 		// Achievement Title
-		$popover_content .= '<h2 class="badgeos-item-title">' . get_the_title( $achievement ) . '</h2>';
+		$popover_content .= '<h2 class="badgeos-item-title">' . get_the_title( $badge ) . '</h2>';
 
 		// Achievement Short Description
-		$excerpt = '' === $achievement->post_excerpt || empty( $achievement->post_excerpt ) ? $achievement->post_content : $achievement->post_excerpt;
+		$excerpt = '' === $badge->post_excerpt || empty( $badge->post_excerpt ) ? $badge->post_content : $badge->post_excerpt;
 		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
 		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
 		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span>';
 		$popover_content .= '</span></div><!-- .badgeos-item-description --></div><!-- .badgeos-item-description -->';
 
 		// Each Achievement
-		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $achievement_id, '" ',
+		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $badge_id, '" data-id="', $badge_id, '" ',
 		'data-content="', esc_attr( $popover_content ), '" ', Helpers::parse_attributes( $this->popover_args ),
 		'class="', implode( ' ', $css_classes ), '"', $credly_ID, ' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '">';
 		// Achievement Image
-		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $achievement ), '</span></a><!-- .badgeos-achievements-list-item -->';
+		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $badge ), '</span></a><!-- .badgeos-achievements-list-item -->';
 
 		return ob_get_clean();
 	}
