@@ -104,7 +104,8 @@ class Backend extends Component
           PRIMARY KEY  (mark_id),
           KEY user_id (user_id),
           KEY step_id (step_id),
-          KEY point_id (point_id)
+          KEY point_id (point_id),
+          KEY badge_id (badge_id)
      ) {$wpdb->get_charset_collate()}; ";
 
 		$sql_results = dbDelta( $sql );

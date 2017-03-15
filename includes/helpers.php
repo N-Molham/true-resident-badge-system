@@ -31,6 +31,18 @@ final class Helpers
 	private static $assets_version;
 
 	/**
+	 * Get last DB SQL query
+	 *
+	 * @return array|string
+	 */
+	public static function get_last_query()
+	{
+		global $wpdb;
+
+		return $wpdb->last_query;
+	}
+
+	/**
 	 * Convert array to Select element options
 	 *
 	 * @param array      $array

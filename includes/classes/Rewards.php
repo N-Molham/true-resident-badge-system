@@ -2,6 +2,8 @@
 
 use ReflectionClass;
 use True_Resident\Badge_System\Triggers\Trigger_Interface;
+use WP_Error;
+use WP_Post;
 
 /**
  * BadgeOS rewards logic
@@ -44,6 +46,11 @@ class Rewards extends Component
 		add_action( 'init', [ &$this, 'badgeos_load_triggers' ] );
 	}
 
+	/**
+	 * Set checklist marks database table name
+	 *
+	 * @return void
+	 */
 	public function setup_db_tables_names()
 	{
 		global $wpdb;
@@ -352,5 +359,198 @@ class Rewards extends Component
 
 		// step type object
 		return $triggers[ $step_type ];
+	}
+
+	/**
+	 * @param $args
+	 *
+	 * @return WP_Error|boolean
+	 */
+	public function update_checklist_mark( $args )
+	{
+		global $wpdb;
+
+		// query badge info
+		$badge = $this->get_badge( $args['badge'] );
+		if ( is_wp_error( $badge ) )
+		{
+			// badge error!
+			return $badge;
+		}
+
+		// Grab our Badge's required steps
+		$badge_steps = $this->get_badge_steps( $badge, true );
+		if ( 0 === count( $badge_steps ) )
+		{
+			// badge doesn't have any steps!
+			return new WP_Error( 'trbs_badge_has_no_steps', __( 'Badge has not steps!', TRBS_DOMAIN ) );
+		}
+
+		// get the target step
+		$target_step = null;
+		foreach ( $badge_steps as $badge_step )
+		{
+			if ( $badge_step->ID === $args['step'] )
+			{
+				$target_step = $badge_step;
+				break;
+			}
+		}
+
+		if ( null === $target_step )
+		{
+			// step not found!
+			return new WP_Error( 'trbs_step_not_found', __( 'Badge step not found!', TRBS_DOMAIN ) );
+		}
+
+		if (
+			!isset( $target_step->step_data ) ||
+			!isset( $target_step->step_data['challenges_checklist'] ) ||
+			!isset( $target_step->step_data['challenges_checklist'][ $args['point'] ] )
+		)
+		{
+			// checklist point not found!
+			return new WP_Error( 'trbs_checklist_point_not_found', __( 'Checklist point not foudn!', TRBS_DOMAIN ) );
+		}
+
+		// last mark for that point
+		$mark_sql = "SELECT mark_id FROM $wpdb->checklist_marks WHERE user_id = %d AND point_id = %d AND step_id = %d AND badge_id = %d ORDER BY mark_datetime DESC LIMIT 1";
+		$mark_id  = $wpdb->get_var( $wpdb->prepare( $mark_sql, $args['user'], $args['point'], $args['step'], $args['badge'] ) );
+
+		if ( null === $mark_id && $args['checked'] )
+		{
+			/**
+			 * Filter new checklist mark fields' data
+			 *
+			 * @param array $mark_fields
+			 *
+			 * @return array
+			 */
+			$mark_fields = apply_filters( 'trbs_new_mark_fields', [
+				'user_id'       => $args['user'],
+				'point_id'      => $args['point'],
+				'step_id'       => $args['step'],
+				'badge_id'      => $args['badge'],
+				'mark_datetime' => current_time( 'mysql' ),
+			] );
+
+			// add/insert check
+			if ( false === $wpdb->insert( $wpdb->checklist_marks, $mark_fields, [ '%d', '%d', '%d', '%d', '%s' ] ) )
+			{
+				// DB error trying to add the new mark
+				return new WP_Error( 'trbs_error_adding_mark', __( 'Error adding checklist mark!', TRBS_DOMAIN ) );
+			}
+
+			$mark_id = $wpdb->insert_id;
+
+			/**
+			 * New challenges checklist mark added
+			 *
+			 * @param int   $mark_id
+			 * @param array $mark_fields
+			 */
+			do_action( 'trbs_checklist_mark_added', $mark_id, $mark_fields );
+		}
+
+		if ( null !== $mark_id && false === $args['checked'] )
+		{
+			// remove/delete mark
+			$delete_mark = $wpdb->delete( $wpdb->checklist_marks, [ 'mark_id' => $mark_id ], [ '%d' ] );
+			if ( false === $delete_mark || 0 === $delete_mark )
+			{
+				// DB error trying to delete the mark
+				return new WP_Error( 'trbs_error_removing_mark', __( 'Error removing checklist mark!', TRBS_DOMAIN ) );
+			}
+
+			/**
+			 * Challenges checklist mark removed
+			 *
+			 * @param int $mark_id
+			 */
+			do_action( 'trbs_checklist_mark_removed', $mark_id );
+		}
+
+		return true;
+	}
+
+	/**
+	 * Grab given Badge's required steps
+	 *
+	 * @param WP_Post $badge
+	 * @param boolean $with_extra
+	 *
+	 * @return array
+	 */
+	public function get_badge_steps( $badge, $with_extra = false )
+	{
+		$required_steps = get_posts( [
+			'post_type'           => 'step',
+			'posts_per_page'      => -1,
+			'suppress_filters'    => false,
+			'connected_direction' => 'to',
+			'connected_type'      => 'step-to-' . $badge->post_type,
+			'connected_items'     => $badge->ID,
+		] );
+
+		// Loop through steps
+		foreach ( $required_steps as $step_index => $required_step )
+		{
+			if ( !isset( $required_step->p2p_to ) || $badge->ID !== absint( $required_step->p2p_to ) )
+			{
+				// step is not for the badge
+				unset( $required_steps[ $step_index ] );
+				continue;
+			}
+
+			// set sort order
+			$required_step->order = get_step_menu_order( $required_step->ID );
+
+			if ( $with_extra )
+			{
+				// step trigger object
+				$required_step->trigger = $this->get_step_trigger_object( $required_step->ID );
+
+				// step data
+				$required_step->step_data = $this->get_step_data( $required_step->ID );
+			}
+		}
+
+		// Sort the steps by their order
+		uasort( $required_steps, 'badgeos_compare_step_order' );
+
+		/**
+		 * Filter badge required steps
+		 *
+		 * @param array   $required_steps
+		 * @param WP_Post $badge
+		 *
+		 * @return array
+		 */
+		return apply_filters( 'trbs_required_badge_steps', $required_steps, $badge );
+	}
+
+	/**
+	 * Get badge object
+	 *
+	 * @param int $badge_id
+	 *
+	 * @return WP_Error|WP_Post
+	 */
+	public function get_badge( $badge_id )
+	{
+		$badge = get_post( $badge_id );
+		if ( null === $badge )
+		{
+			// badge not found
+			return new WP_Error( 'trbs_badge_not_found', __( 'Badge not found!', TRBS_DOMAIN ) );
+		}
+
+		if ( 'badges' !== $badge->post_type || 'publish' !== $badge->post_status )
+		{
+			// invalid badge post type
+			return new WP_Error( 'trbs_invalid_badge', __( 'Invalid badge!', TRBS_DOMAIN ) );
+		}
+
+		return $badge;
 	}
 }

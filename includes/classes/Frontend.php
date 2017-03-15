@@ -143,11 +143,12 @@ class Frontend extends Component
 		], $assets_version, false );
 
 		wp_localize_script( 'trbs-achievements', 'trbs_badges', [
-			'filter_labels' => [
+			'filter_labels'   => [
 				'not-completed' => __( 'Incomplete Badges', TRBS_DOMAIN ),
 			],
-			'is_mobile'     => wp_is_mobile(),
-			'is_logged_in'  => is_user_logged_in(),
+			'is_mobile'       => wp_is_mobile(),
+			'is_logged_in'    => is_user_logged_in(),
+			'checklist_nonce' => wp_create_nonce( 'trbs_challenges_checklist_change' ),
 		] );
 	}
 

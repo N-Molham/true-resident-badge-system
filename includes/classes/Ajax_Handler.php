@@ -27,6 +27,44 @@ class Ajax_Handler extends Component
 		}
 	}
 
+	public function challenges_checklist_update()
+	{
+		// security check
+		check_admin_referer( 'trbs_challenges_checklist_change', 'nonce' );
+
+		// mark args/inputs
+		$mark_args = filter_input_array( INPUT_POST, [
+			'badge'   => FILTER_VALIDATE_INT,
+			'checked' => [
+				'filter'  => FILTER_CALLBACK,
+				'options' => function ( $value )
+				{
+					return 'true' === sanitize_key( $value );
+				},
+			],
+			'point'   => FILTER_VALIDATE_INT,
+			'step'    => FILTER_VALIDATE_INT,
+		] );
+
+		if ( false !== array_search( null, $mark_args, true ) )
+		{
+			// missing data
+			$this->error( __( 'Missing or Invalid input!', TRBS_DOMAIN ) );
+		}
+
+		$mark_args['user'] = get_current_user_id();
+
+		// update mark
+		$update_point_mark = trbs_rewards()->update_checklist_mark( $mark_args );
+		if ( is_wp_error( $update_point_mark ) )
+		{
+			// error occurred
+			$this->error( $update_point_mark->get_error_message() );
+		}
+
+		$this->success( true );
+	}
+
 	/**
 	 * Get taxonomy terms
 	 *

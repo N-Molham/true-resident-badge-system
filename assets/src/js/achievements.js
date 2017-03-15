@@ -10,7 +10,8 @@
 		}
 
 		// vars
-		var listing_id   = '',
+		var $body        = $( doc.body ),
+		    listing_id   = '',
 		    body_classes = doc.body.className,
 		    is_single    = body_classes.indexOf( 'single-job_listing' ) > -1 && body_classes.indexOf( 'single' ) > -1;
 
@@ -25,6 +26,28 @@
 			var render_checklist  = doT.template( $( '#trbs-checklist-template' ).html() ),
 			    $badge_challenges = $( '#trbs-badges-challenges' ),
 			    challenges        = [];
+
+			// when ajax login is successful
+			$body.on( 'tr-login-register-ajax-success', function () {
+				// force reload the page
+				w.location.reload( true );
+			} );
+
+			// challenges checklist item checked/unchecked
+			$badge_challenges.on( 'change', '.trbs-checklist-item input[type=checkbox]', function ( e ) {
+				var $this = $( e.currentTarget );
+
+				$.post( listifySettings.ajaxurl, $.extend( {}, $( this ).data(), {
+					point  : e.currentTarget.value,
+					checked: e.currentTarget.checked,
+					nonce  : trbs_badges.checklist_nonce,
+					action : 'challenges_checklist_update'
+				} ), function ( response ) {
+					if ( false === response.success ) {
+						$this.prop( 'checked', !$this.prop( 'checked' ) );
+					}
+				}, 'json' );
+			} );
 
 			// badges click
 			$container.on( 'click', '.badgeos-achievements-challenges-item', function ( e ) {

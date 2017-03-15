@@ -15,7 +15,8 @@
 			{{ for ( var point_index in it.challenges_checklist ) { }}
 			<li class="trbs-checklist-item">
 				<label>
-					<input type="checkbox" value="{{=point_index}}" /><span><span class="trbs-text">{{=it.challenges_checklist[point_index]}}</span></span>
+					<input type="checkbox" value="{{=point_index}}" data-badge="{{=it.badge_id}}" data-step="{{=it.step_id}}" />
+					<span><span class="trbs-text">{{=it.challenges_checklist[point_index]}}</span></span>
 				</label>
 			</li>
 			{{ } }}
