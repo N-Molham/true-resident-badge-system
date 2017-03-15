@@ -205,7 +205,6 @@ class Frontend extends Component
 					'achievement_id' => $step_id,
 					'since'          => absint( badgeos_achievement_last_user_activity( $badge_id, $user_id ) ),
 				] ) ) > 0;
-
 			$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
 
 			if ( false === $has_challenges )
@@ -224,6 +223,9 @@ class Frontend extends Component
 			$steps_data[ $step_id ]['title'] = $steps[ $i ]->post_title;
 		}
 
+		// clear
+		unset( $step_id, $step_type, $step_completed );
+
 		// overall percentage ( positive and 100% max )
 		$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
 		$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
@@ -232,6 +234,32 @@ class Frontend extends Component
 		{
 			// Challenges badge mark
 			$css_classes[] = 'badgeos-achievements-challenges-item';
+
+			foreach ( $steps_data as $step_id => &$step_data )
+			{
+				if ( !isset( $step_data['challenges_checklist'] ) )
+				{
+					// skip
+					continue;
+				}
+
+				$step_data['challenges_checklist_marks'] = [];
+
+				// get points' marks
+				$points_indexes = array_keys( $step_data['challenges_checklist'] );
+				foreach ( $points_indexes as $point_id )
+				{
+					$step_data['challenges_checklist_marks'][ $point_id ] = null !== trbs_rewards()->get_checklist_mark( [
+							'badge' => $badge_id,
+							'step'  => $step_id,
+							'point' => $point_id,
+							'user'  => $user_id,
+						] );
+				}
+			}
+
+			// clear
+			unset( $step_id );
 		}
 
 		// buffer start

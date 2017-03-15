@@ -362,62 +362,20 @@ class Rewards extends Component
 	}
 
 	/**
-	 * @param $args
+	 * Update given checklist point mark
+	 *
+	 * @param array $mark_args
 	 *
 	 * @return WP_Error|boolean
 	 */
-	public function update_checklist_mark( $args )
+	public function update_checklist_mark( $mark_args )
 	{
 		global $wpdb;
 
-		// query badge info
-		$badge = $this->get_badge( $args['badge'] );
-		if ( is_wp_error( $badge ) )
-		{
-			// badge error!
-			return $badge;
-		}
+		// get checklist point last mark
+		$mark_id = $this->get_checklist_mark( $mark_args );
 
-		// Grab our Badge's required steps
-		$badge_steps = $this->get_badge_steps( $badge, true );
-		if ( 0 === count( $badge_steps ) )
-		{
-			// badge doesn't have any steps!
-			return new WP_Error( 'trbs_badge_has_no_steps', __( 'Badge has not steps!', TRBS_DOMAIN ) );
-		}
-
-		// get the target step
-		$target_step = null;
-		foreach ( $badge_steps as $badge_step )
-		{
-			if ( $badge_step->ID === $args['step'] )
-			{
-				$target_step = $badge_step;
-				break;
-			}
-		}
-
-		if ( null === $target_step )
-		{
-			// step not found!
-			return new WP_Error( 'trbs_step_not_found', __( 'Badge step not found!', TRBS_DOMAIN ) );
-		}
-
-		if (
-			!isset( $target_step->step_data ) ||
-			!isset( $target_step->step_data['challenges_checklist'] ) ||
-			!isset( $target_step->step_data['challenges_checklist'][ $args['point'] ] )
-		)
-		{
-			// checklist point not found!
-			return new WP_Error( 'trbs_checklist_point_not_found', __( 'Checklist point not foudn!', TRBS_DOMAIN ) );
-		}
-
-		// last mark for that point
-		$mark_sql = "SELECT mark_id FROM $wpdb->checklist_marks WHERE user_id = %d AND point_id = %d AND step_id = %d AND badge_id = %d ORDER BY mark_datetime DESC LIMIT 1";
-		$mark_id  = $wpdb->get_var( $wpdb->prepare( $mark_sql, $args['user'], $args['point'], $args['step'], $args['badge'] ) );
-
-		if ( null === $mark_id && $args['checked'] )
+		if ( null === $mark_id && $mark_args['checked'] )
 		{
 			/**
 			 * Filter new checklist mark fields' data
@@ -426,11 +384,11 @@ class Rewards extends Component
 			 *
 			 * @return array
 			 */
-			$mark_fields = apply_filters( 'trbs_new_mark_fields', [
-				'user_id'       => $args['user'],
-				'point_id'      => $args['point'],
-				'step_id'       => $args['step'],
-				'badge_id'      => $args['badge'],
+			$mark_fields = apply_filters( 'trbs_checklist_mark_fields', [
+				'user_id'       => $mark_args['user'],
+				'point_id'      => $mark_args['point'],
+				'step_id'       => $mark_args['step'],
+				'badge_id'      => $mark_args['badge'],
 				'mark_datetime' => current_time( 'mysql' ),
 			] );
 
@@ -452,7 +410,7 @@ class Rewards extends Component
 			do_action( 'trbs_checklist_mark_added', $mark_id, $mark_fields );
 		}
 
-		if ( null !== $mark_id && false === $args['checked'] )
+		if ( null !== $mark_id && false === $mark_args['checked'] )
 		{
 			// remove/delete mark
 			$delete_mark = $wpdb->delete( $wpdb->checklist_marks, [ 'mark_id' => $mark_id ], [ '%d' ] );
@@ -471,6 +429,75 @@ class Rewards extends Component
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get checklist point last mark
+	 *
+	 * @param array $mark_args
+	 *
+	 * @return null|string|WP_Error
+	 */
+	public function get_checklist_mark( $mark_args )
+	{
+		global $wpdb;
+
+		// query badge info
+		$badge = $this->get_badge( $mark_args['badge'] );
+		if ( is_wp_error( $badge ) )
+		{
+			// badge error!
+			return $badge;
+		}
+
+		// Grab our Badge's required steps
+		$badge_steps = $this->get_badge_steps( $badge, true );
+		if ( 0 === count( $badge_steps ) )
+		{
+			// badge doesn't have any steps!
+			return new WP_Error( 'trbs_badge_has_no_steps', __( 'Badge has not steps!', TRBS_DOMAIN ) );
+		}
+
+		// get the target step
+		$target_step = null;
+		foreach ( $badge_steps as $badge_step )
+		{
+			if ( $badge_step->ID === $mark_args['step'] )
+			{
+				$target_step = $badge_step;
+				break;
+			}
+		}
+
+		if ( null === $target_step )
+		{
+			// step not found!
+			return new WP_Error( 'trbs_step_not_found', __( 'Badge step not found!', TRBS_DOMAIN ) );
+		}
+
+		if (
+			!isset( $target_step->step_data ) ||
+			!isset( $target_step->step_data['challenges_checklist'] ) ||
+			!isset( $target_step->step_data['challenges_checklist'][ $mark_args['point'] ] )
+		)
+		{
+			// checklist point not found!
+			return new WP_Error( 'trbs_checklist_point_not_found', __( 'Checklist point not foudn!', TRBS_DOMAIN ) );
+		}
+
+		// last mark for that point
+		$mark_sql = "SELECT mark_id FROM $wpdb->checklist_marks WHERE user_id = %d AND point_id = %d AND step_id = %d AND badge_id = %d ORDER BY mark_datetime DESC LIMIT 1";
+		$mark_id  = $wpdb->get_var( $wpdb->prepare( $mark_sql, $mark_args['user'], $mark_args['point'], $mark_args['step'], $mark_args['badge'] ) );
+
+		/**
+		 * Filter queried checklist point mark
+		 *
+		 * @param null|string $mark_id
+		 * @param array       $mark_args
+		 *
+		 * @return null|string
+		 */
+		return apply_filters( 'trbs_checklist_point_last_mark', $mark_id, $mark_args );
 	}
 
 	/**
