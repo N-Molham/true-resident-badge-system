@@ -119,6 +119,10 @@ li.trbs-checklist-item input:checked + span::before {
 	color: #16B80A;
 }
 
+li.trbs-checklist-item input + span span.trbs-text {
+
+}
+
 li.trbs-checklist-item input:checked + span span.trbs-text {
 	text-decoration: line-through;
 }

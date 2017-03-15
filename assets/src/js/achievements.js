@@ -34,8 +34,18 @@
 			} );
 
 			// challenges checklist item checked/unchecked
-			$badge_challenges.on( 'change', '.trbs-checklist-item input[type=checkbox]', function ( e ) {
+			$badge_challenges.on( 'change tr-change', '.trbs-checklist-item input[type=checkbox]', function ( e ) {
 				var $this = $( e.currentTarget );
+
+				// user needs to login first
+				if ( false === is_user_logged_in() ) {
+					$( '#secondary-nav-menu' ).find( '.overlay-login' ).trigger( 'tr-click' );
+
+					// toggle back
+					$this.prop( 'checked', !$this.prop( 'checked' ) );
+
+					return true;
+				}
 
 				$.post( listifySettings.ajaxurl, $.extend( {}, $( this ).data(), {
 					point  : e.currentTarget.value,
@@ -44,13 +54,14 @@
 					action : 'challenges_checklist_update'
 				} ), function ( response ) {
 					if ( false === response.success ) {
+						// toggle back
 						$this.prop( 'checked', !$this.prop( 'checked' ) );
 					}
 				}, 'json' );
 			} );
 
 			// badges click
-			$container.on( 'click', '.badgeos-achievements-challenges-item', function ( e ) {
+			$container.on( 'click tr-click', '.badgeos-achievements-challenges-item', function ( e ) {
 				var $badge     = $( e.currentTarget ),
 				    steps_data = $badge.data( 'steps-data' ),
 				    badge_id   = $badge.data( 'id' );
@@ -86,12 +97,6 @@
 
 				if ( challenges.length < 1 ) {
 					// no challenges found!
-					return true;
-				}
-
-				// user needs to login first
-				if ( false === is_user_logged_in() ) {
-					$( '#secondary-nav-menu' ).find( '.overlay-login' ).trigger( 'tr-click' );
 					return true;
 				}
 
@@ -147,6 +152,15 @@
 					trbs_listing_id: listing_id
 				}
 			} );
+
+			$( doc ).ajaxSuccess( function ( e, response, options ) {
+				if ( 'get-achievements' === get_query_arg( 'action', options.url ) && 'badges' === get_query_arg( 'type', options.url ) ) {
+					// trigger first badge click
+					setTimeout( function () {
+						$container.find( '.badgeos-achievements-challenges-item:first' ).trigger( 'tr-click' );
+					}, 100 );
+				}
+			} );
 		})();
 
 		/**
@@ -156,6 +170,25 @@
 		 */
 		function is_user_logged_in() {
 			return Boolean( listify_child_overlays && 'is_user_logged_in' in listify_child_overlays ? listify_child_overlays.is_user_logged_in : trbs_badges.is_logged_in );
+		}
+
+		/**
+		 * Get Query string in url
+		 *
+		 * @param {String} name
+		 * @param {String} url
+		 * @return {String}
+		 */
+		function get_query_arg( name, url ) {
+			if ( !url ) {
+				url = window.location.href;
+			}
+			name        = name.replace( /[\[\]]/g, "\\$&" );
+			var regex   = new RegExp( "[?&]" + name + "(=([^&#]*)|&|#|$)" ),
+			    results = regex.exec( url );
+			if ( !results ) return null;
+			if ( !results[ 2 ] ) return '';
+			return decodeURIComponent( results[ 2 ].replace( /\+/g, " " ) );
 		}
 	} );
 })( window, jQuery, document );
