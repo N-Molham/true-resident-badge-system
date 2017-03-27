@@ -12,7 +12,7 @@ class Listing_Tag_Check_In_Trigger implements Trigger_Interface
 	 *
 	 * @var array
 	 */
-	var $meta_keys = [
+	public $meta_keys = [
 		'taxonomy' => '_trbs_taxonomy',
 		'term'     => '_trbs_term',
 	];
@@ -22,7 +22,7 @@ class Listing_Tag_Check_In_Trigger implements Trigger_Interface
 	 *
 	 * @var array
 	 */
-	var $field_names = [
+	public $field_names = [
 		'taxonomy' => 'check_in_listing_taxonomy',
 		'term'     => 'check_in_listing_term',
 	];
@@ -32,7 +32,7 @@ class Listing_Tag_Check_In_Trigger implements Trigger_Interface
 	 *
 	 * @var array
 	 */
-	var $exclude_taxonomy = [
+	public $exclude_taxonomy = [
 		'job_listing_region',
 		'job_listing_category',
 	];
@@ -93,7 +93,7 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 
 	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
 	{
-		if ( 'step' != get_post_type( $achievement_id ) )
+		if ( 'step' !== get_post_type( $achievement_id ) )
 		{
 			// If we're not dealing with a step, bail here
 			return $return;
@@ -101,7 +101,7 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $achievement_id );
-		if ( !isset( $requirements[ $this->field_names['term'] ] ) || !isset( $requirements[ $this->field_names['taxonomy'] ] ) )
+		if ( !isset( $requirements[ $this->field_names['term'] ], $requirements[ $this->field_names['taxonomy'] ] ) )
 		{
 			// skip un-related type
 			return $return;
@@ -209,7 +209,7 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 	{
 		// vars
 		$step_requirements = badgeos_get_step_requirements( $step_id );
-		if ( !isset( $step_requirements[ $this->field_names['term'] ] ) || !isset( $step_requirements[ $this->field_names['taxonomy'] ] ) )
+		if ( !isset( $step_requirements[ $this->field_names['term'] ], $step_requirements[ $this->field_names['taxonomy'] ] ) )
 		{
 			// un-filled data
 			return 0;

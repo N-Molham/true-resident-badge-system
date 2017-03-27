@@ -12,21 +12,21 @@ class Listing_Category_Check_In_Trigger implements Trigger_Interface
 	 *
 	 * @var string
 	 */
-	var $meta_key = '_trbs_category';
+	public $meta_key = '_trbs_category';
 
 	/**
 	 * Target category taxonomy
 	 *
 	 * @var string
 	 */
-	var $category_taxonomy = 'job_listing_category';
+	public $category_taxonomy = 'job_listing_category';
 
 	/**
 	 * UI field name
 	 *
 	 * @var string
 	 */
-	var $category_field_name = 'check_in_listing_category';
+	public $category_field_name = 'check_in_listing_category';
 
 	public function label()
 	{
@@ -91,7 +91,7 @@ class Listing_Category_Check_In_Trigger implements Trigger_Interface
 
 	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
 	{
-		if ( 'step' != get_post_type( $achievement_id ) )
+		if ( 'step' !== get_post_type( $achievement_id ) )
 		{
 			// If we're not dealing with a step, bail here
 			return $return;

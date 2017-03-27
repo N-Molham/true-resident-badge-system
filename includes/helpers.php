@@ -274,13 +274,13 @@ final class Helpers
 	 * URL Redirect
 	 *
 	 * @param string $target
-	 * @param number $status
+	 * @param int    $status
 	 *
 	 * @return void
 	 */
 	public static function redirect( $target = '', $status = 302 )
 	{
-		if ( '' == $target && isset( $_REQUEST['_wp_http_referer'] ) )
+		if ( '' === $target && isset( $_REQUEST['_wp_http_referer'] ) )
 		{
 			$target = esc_url( $_REQUEST['_wp_http_referer'] );
 		}

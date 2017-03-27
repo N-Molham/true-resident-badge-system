@@ -14,7 +14,7 @@ class Frontend extends Component
 	 *
 	 * @var array
 	 */
-	var $popover_args;
+	public $popover_args;
 
 	/**
 	 * Constructor
@@ -184,7 +184,7 @@ class Frontend extends Component
 		$credly_ID = '';
 
 		// If the achievement is earned and givable, override our credly classes
-		if ( 'user-has-earned' == $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) )
+		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) )
 		{
 			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
 			$credly_ID   = 'data-credlyid="' . $badge_id . '"';

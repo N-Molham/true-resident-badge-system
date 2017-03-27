@@ -12,21 +12,21 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 	 *
 	 * @var string
 	 */
-	var $meta_key = '_trbs_listing_id';
+	public $meta_key = '_trbs_listing_id';
 
 	/**
 	 * Target listing post type
 	 *
 	 * @var string
 	 */
-	var $listing_post_type = 'job_listing';
+	public $listing_post_type = 'job_listing';
 
 	/**
 	 * Target listing ID field name
 	 *
 	 * @var string
 	 */
-	var $listing_id_field_name = 'check_in_listing_id';
+	public $listing_id_field_name = 'check_in_listing_id';
 
 	public function label()
 	{
@@ -73,7 +73,7 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 		global $wpdb;
 
 		// If we're not dealing with a step, bail here
-		if ( 'step' != get_post_type( $achievement_id ) )
+		if ( 'step' !== get_post_type( $achievement_id ) )
 		{
 			return $return;
 		}

@@ -55,42 +55,42 @@ class Plugin extends Singular
 	 *
 	 * @var string
 	 */
-	var $version = '1.4.0';
+	public $version = '1.4.0';
 
 	/**
 	 * Backend
 	 *
 	 * @var Backend
 	 */
-	var $backend;
+	public $backend;
 
 	/**
 	 * Backend
 	 *
 	 * @var Frontend
 	 */
-	var $frontend;
+	public $frontend;
 
 	/**
 	 * Bookmarks
 	 *
 	 * @var Bookmarks
 	 */
-	var $bookmarks;
+	public $bookmarks;
 
 	/**
 	 * Backend
 	 *
 	 * @var Ajax_Handler
 	 */
-	var $ajax;
+	public $ajax;
 
 	/**
 	 * BadgeOS rewards
 	 *
 	 * @var Rewards
 	 */
-	var $rewards;
+	public $rewards;
 
 	/**
 	 * List of dependency plugin(s)
@@ -132,7 +132,7 @@ class Plugin extends Singular
 			],
 		];
 
-		foreach ( $this->dependency_plugins as $plugin_name => &$plugin_info )
+		foreach ( $this->dependency_plugins as $plugin_name => $plugin_info )
 		{
 			// check if plugin is active or not
 			$plugin_info['inactive'] = Helpers::is_plugin_inactive( $plugin_name );
@@ -238,9 +238,6 @@ class Plugin extends Singular
 			// file not found!
 			wp_die( sprintf( __( 'Template <code>%s</code> File not found, calculated path: <code>%s</code>', TRBS_DOMAIN ), $__view_name, $__template_path ) );
 		}
-
-		// clear vars
-		unset( $view_name );
 
 		if ( !empty( $args ) )
 		{

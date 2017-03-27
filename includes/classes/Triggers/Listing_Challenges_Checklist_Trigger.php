@@ -14,35 +14,35 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 	 *
 	 * @var string
 	 */
-	var $meta_key = '_trbs_listing_id';
+	public $meta_key = '_trbs_listing_id';
 
 	/**
 	 * Step meta key for challenges checklist
 	 *
 	 * @var string
 	 */
-	var $checklist_meta_key = '_trbs_checklist';
+	public $checklist_meta_key = '_trbs_checklist';
 
 	/**
 	 * Target listing post type
 	 *
 	 * @var string
 	 */
-	var $listing_post_type = 'job_listing';
+	public $listing_post_type = 'job_listing';
 
 	/**
 	 * Target listing ID field name
 	 *
 	 * @var string
 	 */
-	var $listing_id_field_name = 'challenges_checklist_listing_id';
+	public $listing_id_field_name = 'challenges_checklist_listing_id';
 
 	/**
 	 * Challenges checklist field name
 	 *
 	 * @var string
 	 */
-	var $checklist_field_name = 'challenges_checklist';
+	public $checklist_field_name = 'challenges_checklist';
 
 	/**
 	 * Listing_Challenges_Checklist_Trigger constructor.

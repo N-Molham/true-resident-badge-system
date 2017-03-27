@@ -178,7 +178,7 @@ class Rewards extends Component
 		] );
 
 		// walk through all badges
-		for ( $i = 0, $badges_size = sizeof( $registered_badges ); $i < $badges_size; $i++ )
+		for ( $i = 0, $badges_size = count( $registered_badges ); $i < $badges_size; $i++ )
 		{
 			// badge required steps
 			$badge_id    = $registered_badges[ $i ];
@@ -202,7 +202,7 @@ class Rewards extends Component
 			}
 		}
 
-		if ( sizeof( $badges_found ) > 0 )
+		if ( count( $badges_found ) > 0 )
 		{
 			// cache it for a day
 			set_transient( $cache_id, $badges_found, 12 * HOUR_IN_SECONDS );
@@ -232,7 +232,7 @@ class Rewards extends Component
 			 *
 			 * @return array
 			 */
-			$triggers_classes = apply_filters( 'trbs_rewards_activity_triggers', [
+			$triggers_classes = (array) apply_filters( 'trbs_rewards_activity_triggers', [
 				'True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger',
 				'True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger',
 				'True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger',
