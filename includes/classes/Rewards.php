@@ -223,7 +223,7 @@ class Rewards extends Component
 	 */
 	public function get_triggers()
 	{
-		if ( null == $this->triggers_list )
+		if ( null === $this->triggers_list )
 		{
 			/**
 			 * Filters the list of triggers' classes in the add-on
@@ -359,6 +359,78 @@ class Rewards extends Component
 
 		// step type object
 		return $triggers[ $step_type ];
+	}
+
+	/**
+	 * Query checklist marks
+	 *
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function get_checklist_marks( $args )
+	{
+		global $wpdb;
+
+		// default args
+		$args = wp_parse_args( $args, [
+			'user_id'  => 0,
+			'step_id'  => 0,
+			'badge_id' => 0,
+			'before'   => '',
+			'after'    => '',
+		] );
+
+		// base sql
+		$sql_stmt = "SELECT * FROM {$wpdb->checklist_marks} WHERE 1 = 1";
+		$sql_vars = [];
+
+		foreach ( $args as $arg_name => $arg_value )
+		{
+			switch ( $arg_name )
+			{
+				// count for specific IDs
+				case 'user_id':
+				case 'step_id':
+				case 'badge_id':
+					$sql_stmt   .= " AND {$arg_name} = %d";
+					$sql_vars[] = $arg_value;
+					break;
+			}
+		}
+
+		/**
+		 * Filter checklist marks query SQL statement
+		 *
+		 * @param string $sql_stmt
+		 * @param array  $args
+		 *
+		 * @return string
+		 */
+		$sql_stmt = apply_filters( 'trbs_checklist_marks_query_sql', $sql_stmt, $args );
+
+		/**
+		 * Filter checklist marks query SQL variables
+		 *
+		 * @param string $sql_vars
+		 * @param array  $args
+		 *
+		 * @return array
+		 */
+		$sql_vars = apply_filters( 'trbs_checklist_marks_query_vars', $sql_vars, $args );
+
+		// execute query
+		$results = $wpdb->get_results( $wpdb->prepare( $sql_stmt, $sql_vars ) );
+
+		/**
+		 * Filter checklist marks query results
+		 *
+		 * @param array $results
+		 * @param array $args
+		 *
+		 * @return array
+		 */
+		return apply_filters( 'trbs_checklist_marks_query_results', $results, $args );
 	}
 
 	/**

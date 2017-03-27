@@ -111,7 +111,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 	public function trigger_action()
 	{
-		return 'true_resident_listing_challenge_checked';
+		return 'trbs_checklist_mark_added';
 	}
 
 	public function activity_trigger()
@@ -121,12 +121,68 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 	public function activity_hook()
 	{
+		// vars
+		$mark_id      = func_get_arg( 0 );
+		$mark_fields  = func_get_arg( 1 );
+		$blog_id      = get_current_blog_id();
+		$user         = get_user_by( 'id', absint( $mark_fields['user_id'] ) );
+		$this_trigger = $this->activity_trigger();
 
+		// update count
+		$trigger_count = badgeos_update_user_trigger_count( $user->ID, $this_trigger, $blog_id );
+
+		// Mark the count in the log entry
+		badgeos_post_log_entry( $mark_id, $user->ID, $this_trigger, sprintf( __( '%1$s triggered %2$s (%3$dx)', TRBS_DOMAIN ), $user->display_name, $this_trigger, $trigger_count ) );
+
+		// user reward if match
+		badgeos_maybe_award_achievement_to_user( $mark_fields['step_id'], $user->ID, $this_trigger, $blog_id, $mark_fields );
 	}
 
 	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
 	{
-		return $return;
+		// If we're not dealing with a step, bail here
+		if ( 'step' !== get_post_type( $achievement_id ) )
+		{
+			return $return;
+		}
+
+		// get step requirements
+		$requirements = badgeos_get_step_requirements( $achievement_id );
+		if ( !isset( $requirements[ $this->listing_id_field_name ] ) || !isset( $requirements[ $this->checklist_field_name ] ) )
+		{
+			// skip un-related type
+			return $return;
+		}
+
+		/*dd( badgeos_get_user_achievements( [
+			'user_id' => $user_id,
+			'site_id' => $site_id,
+		] ) );*/
+
+		// get user current checklist marks
+		$current_marks = trbs_rewards()->get_checklist_marks( $args );
+		$marks_count   = count( $current_marks );
+
+		if ( 0 === $marks_count )
+		{
+			// no marks found!
+			return false;
+		}
+
+		// fetch only marked points
+		$current_marks = array_unique( array_map( function ( $mark )
+		{
+			return absint( $mark->point_id );
+		}, $current_marks ) );
+
+		// checklist points IDs/indexes
+		$checklist_points = array_keys( $requirements[ $this->checklist_field_name ] );
+
+		// intersection points
+		$common_points = array_intersect( $checklist_points, $current_marks );
+
+		// all checklist points marked or not!
+		return count( $checklist_points ) === count( $common_points );
 	}
 
 	public function get_data( $step_id, $trigger_type = '' )
