@@ -25,7 +25,8 @@
 			// compile checklist template
 			var render_checklist  = doT.template( $( '#trbs-checklist-template' ).html() ),
 			    $badge_challenges = $( '#trbs-badges-challenges' ),
-			    challenges        = [];
+			    challenges        = [],
+			    requests_count    = 0;
 
 			// when ajax login is successful
 			$body.on( 'tr-login-register-ajax-success', function () {
@@ -35,7 +36,8 @@
 
 			// challenges checklist item checked/unchecked
 			$badge_challenges.on( 'change tr-change', '.trbs-checklist-item input[type=checkbox]', function ( e ) {
-				var $this = $( e.currentTarget );
+				var $this      = $( e.currentTarget ),
+				    point_data = $this.data();
 
 				// user needs to login first
 				if ( false === is_user_logged_in() ) {
@@ -47,17 +49,46 @@
 					return true;
 				}
 
-				$.post( listifySettings.ajaxurl, $.extend( {}, $( this ).data(), {
+				// new request
+				requests_count++;
+
+				$.post( listifySettings.ajaxurl, $.extend( {}, point_data, {
 					point  : e.currentTarget.value,
 					checked: e.currentTarget.checked,
 					nonce  : trbs_badges.checklist_nonce,
 					action : 'challenges_checklist_update'
-				} ), function ( response ) {
-					if ( false === response.success ) {
-						// toggle back
-						$this.prop( 'checked', !$this.prop( 'checked' ) );
+				} ), (function ( $input, badge_id ) {
+					return function ( response ) {
+						if ( false === response.success ) {
+							// toggle back
+							$input.prop( 'checked', !$input.prop( 'checked' ) );
+						} else {
+							// validate earning only if it's the last ajax request
+							if ( requests_count > 1 ) {
+								return;
+							}
+
+							// query all checklist inputs
+							var $checklist_points = $input.closest( '.trbs-checklist' ).find( '.trbs-checklist-item input[type=checkbox]' ),
+							    // filter only checked ones
+							    $checked_points   = $checklist_points.filter( ':checked' );
+
+							// not all points are checked
+							if ( $checklist_points.length !== $checked_points.length ) {
+								return;
+							}
+
+							// toggle earn status
+							$( '#badgeos-achievements-list-item-' + badge_id ).removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned' );
+						}
+					};
+				})( $this, point_data.badge ), 'json' ).always( function () {
+					// request done
+					requests_count--;
+					if ( requests_count < 0 ) {
+						requests_count = 0;
 					}
-				}, 'json' );
+				} );
 			} );
 
 			// badges click

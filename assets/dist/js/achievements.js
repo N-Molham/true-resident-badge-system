@@ -19,19 +19,32 @@ var g=b(c.body),h="",i=c.body.className,j=i.indexOf("single-job_listing")>-1&&i.
 // badges with challenges checklist
 !function(){if(!1!==j){
 // compile checklist template
-var c=doT.template(b("#trbs-checklist-template").html()),e=b("#trbs-badges-challenges"),i=[];
+var c=doT.template(b("#trbs-checklist-template").html()),e=b("#trbs-badges-challenges"),i=[],k=0;
 // when ajax login is successful
 g.on("tr-login-register-ajax-success",function(){
 // force reload the page
 a.location.reload(!0)}),
 // challenges checklist item checked/unchecked
-e.on("change tr-change",".trbs-checklist-item input[type=checkbox]",function(a){var c=b(a.currentTarget);
+e.on("change tr-change",".trbs-checklist-item input[type=checkbox]",function(a){var c=b(a.currentTarget),e=c.data();
 // user needs to login first
 // user needs to login first
 // toggle back
-return!1===d()?(b("#secondary-nav-menu").find(".overlay-login").trigger("tr-click"),c.prop("checked",!c.prop("checked")),!0):void b.post(listifySettings.ajaxurl,b.extend({},b(this).data(),{point:a.currentTarget.value,checked:a.currentTarget.checked,nonce:trbs_badges.checklist_nonce,action:"challenges_checklist_update"}),function(a){!1===a.success&&
+// new request
+return!1===d()?(b("#secondary-nav-menu").find(".overlay-login").trigger("tr-click"),c.prop("checked",!c.prop("checked")),!0):(k++,void b.post(listifySettings.ajaxurl,b.extend({},e,{point:a.currentTarget.value,checked:a.currentTarget.checked,nonce:trbs_badges.checklist_nonce,action:"challenges_checklist_update"}),function(a,c){return function(d){if(!1===d.success)
 // toggle back
-c.prop("checked",!c.prop("checked"))},"json")}),
+a.prop("checked",!a.prop("checked"));else{
+// validate earning only if it's the last ajax request
+if(k>1)return;
+// query all checklist inputs
+var e=a.closest(".trbs-checklist").find(".trbs-checklist-item input[type=checkbox]"),
+// filter only checked ones
+f=e.filter(":checked");
+// not all points are checked
+if(e.length!==f.length)return;
+// toggle earn status
+b("#badgeos-achievements-list-item-"+c).removeClass("user-has-not-earned").addClass("user-has-earned")}}}(c,e.badge),"json").always(function(){
+// request done
+k--,k<0&&(k=0)}))}),
 // badges click
 f.on("click tr-click",".badgeos-achievements-challenges-item",function(a){var d=b(a.currentTarget),f=d.data("steps-data"),g=d.data("id");
 // reset
