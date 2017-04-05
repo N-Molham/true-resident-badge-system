@@ -1,6 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
 use ReflectionClass;
+use stdClass;
 use True_Resident\Badge_System\Triggers\Trigger_Interface;
 use WP_Error;
 use WP_Post;
@@ -558,8 +559,23 @@ class Rewards extends Component
 		}
 
 		// last mark for that point
-		$mark_sql = "SELECT mark_id FROM $wpdb->checklist_marks WHERE user_id = %d AND point_id = %d AND step_id = %d AND badge_id = %d ORDER BY mark_datetime DESC LIMIT 1";
-		$mark_id  = $wpdb->get_var( $wpdb->prepare( $mark_sql, $mark_args['user'], $mark_args['point'], $mark_args['step'], $mark_args['badge'] ) );
+		$mark_sql  = "SELECT mark_id FROM $wpdb->checklist_marks WHERE user_id = %d AND point_id = %d AND step_id = %d AND badge_id = %d";
+		$mark_vars = [ $mark_args['user'], $mark_args['point'], $mark_args['step'], $mark_args['badge'] ];
+
+		// last time user earned that step
+		$last_earning = $this->get_last_badge_earning( $mark_args['step'], $mark_args['user'] );
+		if ( false !== $last_earning && isset( $last_earning->date_earned ) )
+		{
+			// get mark after the last earning datetime
+			$mark_sql .= " AND mark_datetime > %s";
+			$mark_vars[] = date( 'Y-m-d H:i:s', $last_earning->date_earned );
+		}
+
+		// order by datetime descending
+		$mark_sql .= " ORDER BY mark_datetime DESC LIMIT 1";
+		
+		// execute SQL
+		$mark_id = $wpdb->get_var( $wpdb->prepare( $mark_sql, $mark_vars ) );
 
 		/**
 		 * Filter queried checklist point mark
@@ -570,6 +586,44 @@ class Rewards extends Component
 		 * @return null|string
 		 */
 		return apply_filters( 'trbs_checklist_point_last_mark', $mark_id, $mark_args );
+	}
+
+	/**
+	 * Get last time the given user earned given achievement
+	 *
+	 * @param int $achievement_id
+	 * @param int $user_id
+	 *
+	 * @return stdClass|bool
+	 */
+	public function get_last_badge_earning( $achievement_id, $user_id = 0 )
+	{
+		$earnings = badgeos_get_user_achievements( [
+			'user_id'        => $user_id,
+			'achievement_id' => $achievement_id,
+		] );
+
+		if ( !isset( $earnings[0] ) )
+		{
+			// user earned nothing like that yet
+			return false;
+		}
+
+		$earnings_count = count( $earnings );
+		if ( 1 === $earnings_count )
+		{
+			// just one time earning
+			return $earnings[0];
+		}
+
+		// sort object by earn date descending
+		usort( $earnings, function ( $a, $b )
+		{
+			return $a->date_earned < $b->date_earned ? 1 : -1;
+		} );
+
+		// get the latest one
+		return array_shift( $earnings );
 	}
 
 	/**

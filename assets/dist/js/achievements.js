@@ -42,7 +42,9 @@ f=e.filter(":checked");
 // not all points are checked
 if(e.length!==f.length)return;
 // toggle earn status
-b("#badgeos-achievements-list-item-"+c).removeClass("user-has-not-earned").addClass("user-has-earned")}}}(c,e.badge),"json").always(function(){
+b("#badgeos-achievements-list-item-"+c).removeClass("user-has-not-earned").addClass("user-has-earned"),
+// reset checked points
+e.prop("checked",!1)}}}(c,e.badge),"json").always(function(){
 // request done
 k--,k<0&&(k=0)}))}),
 // badges click

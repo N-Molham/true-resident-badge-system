@@ -80,6 +80,9 @@
 
 							// toggle earn status
 							$( '#badgeos-achievements-list-item-' + badge_id ).removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned' );
+
+							// reset checked points
+							$checklist_points.prop( 'checked', false );
 						}
 					};
 				})( $this, point_data.badge ), 'json' ).always( function () {
