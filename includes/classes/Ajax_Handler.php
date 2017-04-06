@@ -62,7 +62,8 @@ class Ajax_Handler extends Component
 			$this->error( $update_point_mark->get_error_message() );
 		}
 
-		$this->success( true );
+		// respond with updated completion percentage
+		$this->success( trbs_rewards()->get_step_completed_percentage( $mark_args['step'], $mark_args['user'] ) );
 	}
 
 	/**

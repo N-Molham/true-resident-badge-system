@@ -198,9 +198,9 @@ class Frontend extends Component
 		for ( $i = 0; $i < $steps_count; $i++ )
 		{
 			// vars
-			$step_id        = $steps[ $i ]->ID;
-			$step_type      = trbs_rewards()->get_step_type( $step_id );
-			$step_completed = count( badgeos_get_user_achievements( [
+			$step_id         = $steps[ $i ]->ID;
+			$step_type       = trbs_rewards()->get_step_type( $step_id );
+			$step_completed  = count( badgeos_get_user_achievements( [
 					'user_id'        => $user_id,
 					'achievement_id' => $step_id,
 					'since'          => absint( badgeos_achievement_last_user_activity( $badge_id, $user_id ) ),
@@ -272,7 +272,7 @@ class Frontend extends Component
 		$popover_content .= '<h2 class="badgeos-item-title">' . get_the_title( $badge ) . '</h2>';
 
 		// Achievement Short Description
-		$excerpt = '' === $badge->post_excerpt || empty( $badge->post_excerpt ) ? $badge->post_content : $badge->post_excerpt;
+		$excerpt         = '' === $badge->post_excerpt || empty( $badge->post_excerpt ) ? $badge->post_content : $badge->post_excerpt;
 		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
 		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
 		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span>';
@@ -281,7 +281,8 @@ class Frontend extends Component
 		// Each Achievement
 		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $badge_id, '" data-id="', $badge_id, '" ',
 		'data-content="', esc_attr( $popover_content ), '" ', Helpers::parse_attributes( $this->popover_args ),
-		'class="', implode( ' ', $css_classes ), '"', $credly_ID, ' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '">';
+		'class="', implode( ' ', $css_classes ), '"', $credly_ID,
+		' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '" data-completed="', $earned_percentage, '">';
 		// Achievement Image
 		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $badge ), '</span></a><!-- .badgeos-achievements-list-item -->';
 

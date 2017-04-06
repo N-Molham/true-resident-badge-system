@@ -63,6 +63,11 @@
 							// toggle back
 							$input.prop( 'checked', !$input.prop( 'checked' ) );
 						} else {
+							// linked badge
+							var $badge = $( '#badgeos-achievements-list-item-' + badge_id )
+							// update with the new complete percentage
+							.attr( 'data-completed', response.data );
+
 							// validate earning only if it's the last ajax request
 							if ( requests_count > 1 ) {
 								return;
@@ -79,7 +84,7 @@
 							}
 
 							// toggle earn status
-							$( '#badgeos-achievements-list-item-' + badge_id ).removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned' );
+							$badge.removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned' );
 
 							// reset checked points
 							$checklist_points.prop( 'checked', false );
@@ -157,7 +162,22 @@
 		// badges popover init
 		(function () {
 			$( '.badgeos-achievements-list-item' ).livequery( function ( index, element ) {
-				$( element ).webuiPopover();
+				$( element ).webuiPopover( {
+					onShow: function ( $popover ) {
+						// related badge
+						var $badge    = $( '#badgeos-achievements-container' ).find( '.badgeos-achievements-list-item[data-target="' + $popover.attr( 'id' ) + '"]' ),
+						    completed = Math.abs( $badge.attr( 'data-completed' ) );
+
+						// 100% max
+						completed = completed > 100 ? 100 : completed;
+
+						// bar width
+						$popover.find( '.badgeos-percentage-bar' ).css( 'width', completed + '%' );
+
+						// bar text
+						$popover.find( '.badgeos-percentage-number' ).html( completed + '&percnt;' );
+					}
+				} );
 			} );
 		})();
 

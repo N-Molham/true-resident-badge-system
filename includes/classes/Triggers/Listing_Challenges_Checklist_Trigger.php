@@ -163,7 +163,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 		// get user current checklist marks
 		$current_marks = trbs_rewards()->get_checklist_marks( $args );
-		$marks_count = count( $current_marks );
+		$marks_count   = count( $current_marks );
 
 		if ( 0 === $marks_count )
 		{
@@ -261,7 +261,45 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 	public function get_step_percentage( $step_id, $user_id )
 	{
-		return 0;
+		// get step requirements
+		$requirements = badgeos_get_step_requirements( $step_id );
+		if ( !isset( $requirements[ $this->listing_id_field_name ] ) || !isset( $requirements[ $this->checklist_field_name ] ) )
+		{
+			// skip un-related type
+			return 0;
+		}
+
+		$marks_args   = [ 'user_id' => $user_id, 'step_id' => $step_id ];
+		$last_earning = trbs_rewards()->get_last_badge_earning( $step_id, $user_id );
+		if ( false !== $last_earning )
+		{
+			// get marks after the last time earnings
+			$marks_args['after'] = date( 'Y-m-d H:i:s', $last_earning->date_earned );
+		}
+
+		// get user current checklist marks
+		$current_marks = trbs_rewards()->get_checklist_marks( $marks_args );
+		$marks_count   = count( $current_marks );
+
+		if ( 0 === $marks_count )
+		{
+			// no marks found!
+			return 0;
+		}
+
+		// fetch only marked points
+		$current_marks = array_unique( array_map( function ( $mark )
+		{
+			return absint( $mark->point_id );
+		}, $current_marks ) );
+
+		// checklist points IDs/indexes
+		$checklist_points = array_keys( $requirements[ $this->checklist_field_name ] );
+
+		// intersection points
+		$common_points = array_intersect( $checklist_points, $current_marks );
+
+		return round( ( count( $common_points ) / count( $checklist_points ) ) * 100 );
 	}
 
 	public function related_to_listing( $listing_id, $step_id )

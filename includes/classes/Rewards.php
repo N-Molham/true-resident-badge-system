@@ -394,8 +394,11 @@ class Rewards extends Component
 				case 'user_id':
 				case 'step_id':
 				case 'badge_id':
-					$sql_stmt   .= " AND {$arg_name} = %d";
-					$sql_vars[] = $arg_value;
+					if ( 0 !== $arg_value )
+					{
+						$sql_stmt   .= " AND {$arg_name} = %d";
+						$sql_vars[] = $arg_value;
+					}
 					break;
 
 				case 'before':

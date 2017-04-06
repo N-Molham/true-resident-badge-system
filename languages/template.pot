@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-06 04:17:05+00:00\n"
+"POT-Creation-Date: 2017-04-06 05:19:59+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "Missing or Invalid input!"
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:78
+#: includes/classes/Ajax_Handler.php:79
 msgid "Invalid access."
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:85
+#: includes/classes/Ajax_Handler.php:86
 msgid "Invalid taxonomy."
 msgstr ""
 
@@ -49,31 +49,31 @@ msgstr ""
 msgid "Incomplete Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:489
+#: includes/classes/Rewards.php:492
 msgid "Error adding checklist mark!"
 msgstr ""
 
-#: includes/classes/Rewards.php:510
+#: includes/classes/Rewards.php:513
 msgid "Error removing checklist mark!"
 msgstr ""
 
-#: includes/classes/Rewards.php:548
+#: includes/classes/Rewards.php:551
 msgid "Badge has not steps!"
 msgstr ""
 
-#: includes/classes/Rewards.php:565
+#: includes/classes/Rewards.php:568
 msgid "Badge step not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:575
+#: includes/classes/Rewards.php:578
 msgid "Checklist point not foudn!"
 msgstr ""
 
-#: includes/classes/Rewards.php:715
+#: includes/classes/Rewards.php:718
 msgid "Badge not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:721
+#: includes/classes/Rewards.php:724
 msgid "Invalid badge!"
 msgstr ""
 

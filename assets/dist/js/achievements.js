@@ -33,18 +33,20 @@ e.on("change tr-change",".trbs-checklist-item input[type=checkbox]",function(a){
 return!1===d()?(b("#secondary-nav-menu").find(".overlay-login").trigger("tr-click"),c.prop("checked",!c.prop("checked")),!0):(k++,void b.post(listifySettings.ajaxurl,b.extend({},e,{point:a.currentTarget.value,checked:a.currentTarget.checked,nonce:trbs_badges.checklist_nonce,action:"challenges_checklist_update"}),function(a,c){return function(d){if(!1===d.success)
 // toggle back
 a.prop("checked",!a.prop("checked"));else{
+// linked badge
+var e=b("#badgeos-achievements-list-item-"+c).attr("data-completed",d.data);
 // validate earning only if it's the last ajax request
 if(k>1)return;
 // query all checklist inputs
-var e=a.closest(".trbs-checklist").find(".trbs-checklist-item input[type=checkbox]"),
+var f=a.closest(".trbs-checklist").find(".trbs-checklist-item input[type=checkbox]"),
 // filter only checked ones
-f=e.filter(":checked");
+g=f.filter(":checked");
 // not all points are checked
-if(e.length!==f.length)return;
+if(f.length!==g.length)return;
 // toggle earn status
-b("#badgeos-achievements-list-item-"+c).removeClass("user-has-not-earned").addClass("user-has-earned"),
+e.removeClass("user-has-not-earned").addClass("user-has-earned"),
 // reset checked points
-e.prop("checked",!1)}}}(c,e.badge),"json").always(function(){
+f.prop("checked",!1)}}}(c,e.badge),"json").always(function(){
 // request done
 k--,k<0&&(k=0)}))}),
 // badges click
@@ -60,7 +62,15 @@ return i.length<1||void e.html(i.join(""))})}}(),
 // badges filter
 function(){var a=b("#achievements_list_filter");if(a.length)for(option_value in trbs_badges.filter_labels)trbs_badges.filter_labels.hasOwnProperty(option_value)&&a.find('option[value="'+option_value+'"]').text(trbs_badges.filter_labels[option_value])}(),
 // badges popover init
-function(){b(".badgeos-achievements-list-item").livequery(function(a,c){b(c).webuiPopover()})}(),
+function(){b(".badgeos-achievements-list-item").livequery(function(a,c){b(c).webuiPopover({onShow:function(a){
+// related badge
+var c=b("#badgeos-achievements-container").find('.badgeos-achievements-list-item[data-target="'+a.attr("id")+'"]'),d=Math.abs(c.attr("data-completed"));
+// 100% max
+d=d>100?100:d,
+// bar width
+a.find(".badgeos-percentage-bar").css("width",d+"%"),
+// bar text
+a.find(".badgeos-percentage-number").html(d+"&percnt;")}})})}(),
 // badges for current open listing
 function(){if(!1!==j){var a=i.match(/postid-\d+/i);null!==a&&(
 // loaded listing ID in the current page
