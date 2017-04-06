@@ -397,6 +397,22 @@ class Rewards extends Component
 					$sql_stmt   .= " AND {$arg_name} = %d";
 					$sql_vars[] = $arg_value;
 					break;
+
+				case 'before':
+					if ( '' !== $arg_value || !empty( $arg_value ) )
+					{
+						$sql_stmt   .= " AND mark_datetime < %s";
+						$sql_vars[] = $arg_value;
+					}
+					break;
+
+				case 'after':
+					if ( '' !== $arg_value || !empty( $arg_value ) )
+					{
+						$sql_stmt   .= " AND mark_datetime > %s";
+						$sql_vars[] = $arg_value;
+					}
+					break;
 			}
 		}
 
@@ -422,6 +438,7 @@ class Rewards extends Component
 
 		// execute query
 		$results = $wpdb->get_results( $wpdb->prepare( $sql_stmt, $sql_vars ) );
+		// dd( $wpdb->last_query );
 
 		/**
 		 * Filter checklist marks query results
@@ -462,7 +479,7 @@ class Rewards extends Component
 				'point_id'      => $mark_args['point'],
 				'step_id'       => $mark_args['step'],
 				'badge_id'      => $mark_args['badge'],
-				'mark_datetime' => current_time( 'mysql' ),
+				'mark_datetime' => current_time( 'mysql', true ),
 			] );
 
 			// add/insert check
@@ -567,13 +584,13 @@ class Rewards extends Component
 		if ( false !== $last_earning && isset( $last_earning->date_earned ) )
 		{
 			// get mark after the last earning datetime
-			$mark_sql .= " AND mark_datetime > %s";
+			$mark_sql    .= " AND mark_datetime > %s";
 			$mark_vars[] = date( 'Y-m-d H:i:s', $last_earning->date_earned );
 		}
 
 		// order by datetime descending
 		$mark_sql .= " ORDER BY mark_datetime DESC LIMIT 1";
-		
+
 		// execute SQL
 		$mark_id = $wpdb->get_var( $wpdb->prepare( $mark_sql, $mark_vars ) );
 

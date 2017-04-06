@@ -154,14 +154,16 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 			return $return;
 		}
 
-		/*dd( badgeos_get_user_achievements( [
-			'user_id' => $user_id,
-			'site_id' => $site_id,
-		] ) );*/
+		$last_earning = trbs_rewards()->get_last_badge_earning( $achievement_id, $user_id );
+		if ( false !== $last_earning )
+		{
+			// get marks after the last time earnings
+			$args['after'] = date( 'Y-m-d H:i:s', $last_earning->date_earned );
+		}
 
 		// get user current checklist marks
 		$current_marks = trbs_rewards()->get_checklist_marks( $args );
-		$marks_count   = count( $current_marks );
+		$marks_count = count( $current_marks );
 
 		if ( 0 === $marks_count )
 		{
