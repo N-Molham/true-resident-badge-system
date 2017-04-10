@@ -38,6 +38,17 @@
 	margin-bottom: 10px;
 }
 
+.badgeos-item-description .badgeos-earning {
+	display: block;
+	padding-top: 10px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.badgeos-item-description .badgeos-earning-count {
+	color: #2ebdd2;
+}
+
 .badgeos-achievements-list-item .badgeos-item-image {
 	width: auto;
 	padding: 0;

@@ -611,14 +611,14 @@ class Rewards extends Component
 	/**
 	 * Get last time the given user earned given achievement
 	 *
-	 * @param int $achievement_id
-	 * @param int $user_id
+	 * @param int|array $achievement_id
+	 * @param int       $user_id
 	 *
 	 * @return stdClass|bool
 	 */
 	public function get_last_badge_earning( $achievement_id, $user_id = 0 )
 	{
-		$earnings = badgeos_get_user_achievements( [
+		$earnings = is_array( $achievement_id ) ? $achievement_id : badgeos_get_user_achievements( [
 			'user_id'        => $user_id,
 			'achievement_id' => $achievement_id,
 		] );

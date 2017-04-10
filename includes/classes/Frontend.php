@@ -168,12 +168,16 @@ class Frontend extends Component
 		$has_challenges = false;
 		$steps_data     = [];
 
+
 		// check if user has earned this Achievement, and add an 'earned' class
-		$is_earned     = count( badgeos_get_user_achievements( [
-				'user_id'        => $user_id,
-				'achievement_id' => $badge_id,
-			] ) ) > 0;
-		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
+		$badge_earnings = badgeos_get_user_achievements( [
+			'user_id'        => $user_id,
+			'achievement_id' => $badge_id,
+		] );
+		$earnings_count = count( $badge_earnings );
+		$last_earning   = trbs_rewards()->get_last_badge_earning( $badge_earnings );
+		$is_earned      = false !== $last_earning;
+		$earned_status  = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
 
 		$css_classes = [
 			'badgeos-achievements-list-item',
@@ -275,8 +279,19 @@ class Frontend extends Component
 		$excerpt         = '' === $badge->post_excerpt || empty( $badge->post_excerpt ) ? $badge->post_content : $badge->post_excerpt;
 		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
 		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
-		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span>';
-		$popover_content .= '</span></div><!-- .badgeos-item-description --></div><!-- .badgeos-item-description -->';
+		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span></span>';
+
+		if ( $is_earned && isset( $last_earning->date_earned ) )
+		{
+			// earn date
+			$popover_content .= '<span class="badgeos-earning">';
+			$popover_content .= $has_challenges ? sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> times<br/>', TRBS_DOMAIN ), $earnings_count ) : '';
+			$popover_content .= $has_challenges ? __( 'Last earned on', TRBS_DOMAIN ) : __( 'Earned on', TRBS_DOMAIN );
+			$popover_content .= ' <span class="badgeos-earning-date">' . date( 'M j, Y', $last_earning->date_earned ) . '</span>';
+			$popover_content .= '</span>';
+		}
+
+		$popover_content .= '</div><!-- .badgeos-item-excerpt --></div><!-- .badgeos-item-description -->';
 
 		// Each Achievement
 		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $badge_id, '" data-id="', $badge_id, '" ',
