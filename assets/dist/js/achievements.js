@@ -34,7 +34,7 @@ return!1===d()?(b("#secondary-nav-menu").find(".overlay-login").trigger("tr-clic
 // toggle back
 a.prop("checked",!a.prop("checked"));else{
 // linked badge
-var e=b("#badgeos-achievements-list-item-"+c).attr("data-completed",d.data);
+var e=b("#badgeos-achievements-list-item-"+c).attr("data-completed",d.data.percentage).attr("data-last-earning",JSON.stringify(d.data.last_earning));
 // validate earning only if it's the last ajax request
 if(k>1)return;
 // query all checklist inputs
@@ -64,13 +64,19 @@ function(){var a=b("#achievements_list_filter");if(a.length)for(option_value in 
 // badges popover init
 function(){b(".badgeos-achievements-list-item").livequery(function(a,c){b(c).webuiPopover({onShow:function(a){
 // related badge
-var c=b("#badgeos-achievements-container").find('.badgeos-achievements-list-item[data-target="'+a.attr("id")+'"]'),d=Math.abs(c.attr("data-completed"));
+var c=b("#badgeos-achievements-container").find('.badgeos-achievements-list-item[data-target="'+a.attr("id")+'"]'),d=Math.abs(c.attr("data-completed")),e=a.find(".badgeos-earning");if(
 // 100% max
 d=d>100?100:d,
 // bar width
 a.find(".badgeos-percentage-bar").css("width",d+"%"),
 // bar text
-a.find(".badgeos-percentage-number").html(d+"&percnt;")}})})}(),
+a.find(".badgeos-percentage-number").html(d+"&percnt;"),e.length){
+// update last earning
+var f=JSON.parse(c.attr("data-last-earning"));
+// earning count
+e.find(".badgeos-earning-count").text(f.earn_count),
+// earning date
+e.find(".badgeos-earning-date").text(f.date_earned_formatted)}}})})}(),
 // badges for current open listing
 function(){if(!1!==j){var a=i.match(/postid-\d+/i);null!==a&&(
 // loaded listing ID in the current page

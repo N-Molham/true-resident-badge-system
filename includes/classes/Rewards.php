@@ -618,7 +618,7 @@ class Rewards extends Component
 	 */
 	public function get_last_badge_earning( $achievement_id, $user_id = 0 )
 	{
-		$earnings = is_array( $achievement_id ) ? $achievement_id : badgeos_get_user_achievements( [
+		$earnings = badgeos_get_user_achievements( [
 			'user_id'        => $user_id,
 			'achievement_id' => $achievement_id,
 		] );
@@ -643,7 +643,15 @@ class Rewards extends Component
 		} );
 
 		// get the latest one
-		return array_shift( $earnings );
+		$last_earning = array_shift( $earnings );
+
+		// format earn date
+		$last_earning->date_earned_formatted = date( 'M j, Y', $last_earning->date_earned );
+
+		// append earnings count
+		$last_earning->earn_count = $earnings_count;
+
+		return $last_earning;
 	}
 
 	/**

@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-10 06:21:44+00:00\n"
+"POT-Creation-Date: 2017-04-10 06:51:43+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,15 +25,15 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/classes/Ajax_Handler.php:52
+#: includes/classes/Ajax_Handler.php:57
 msgid "Missing or Invalid input!"
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:79
+#: includes/classes/Ajax_Handler.php:87
 msgid "Invalid access."
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:86
+#: includes/classes/Ajax_Handler.php:94
 msgid "Invalid taxonomy."
 msgstr ""
 
@@ -49,15 +49,15 @@ msgstr ""
 msgid "Incomplete Badges"
 msgstr ""
 
-#: includes/classes/Frontend.php:288
+#: includes/classes/Frontend.php:287
 msgid "Earned <span class=\"badgeos-earning-count\">%d</span> times<br/>"
 msgstr ""
 
-#: includes/classes/Frontend.php:289
+#: includes/classes/Frontend.php:290
 msgid "Last earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:289
+#: includes/classes/Frontend.php:290
 msgid "Earned on"
 msgstr ""
 
@@ -81,11 +81,11 @@ msgstr ""
 msgid "Checklist point not foudn!"
 msgstr ""
 
-#: includes/classes/Rewards.php:718
+#: includes/classes/Rewards.php:726
 msgid "Badge not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:724
+#: includes/classes/Rewards.php:732
 msgid "Invalid badge!"
 msgstr ""
 

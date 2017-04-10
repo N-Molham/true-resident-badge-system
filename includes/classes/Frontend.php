@@ -170,14 +170,9 @@ class Frontend extends Component
 
 
 		// check if user has earned this Achievement, and add an 'earned' class
-		$badge_earnings = badgeos_get_user_achievements( [
-			'user_id'        => $user_id,
-			'achievement_id' => $badge_id,
-		] );
-		$earnings_count = count( $badge_earnings );
-		$last_earning   = trbs_rewards()->get_last_badge_earning( $badge_earnings );
-		$is_earned      = false !== $last_earning;
-		$earned_status  = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
+		$last_earning  = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
+		$is_earned     = false !== $last_earning;
+		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
 
 		$css_classes = [
 			'badgeos-achievements-list-item',
@@ -285,9 +280,15 @@ class Frontend extends Component
 		{
 			// earn date
 			$popover_content .= '<span class="badgeos-earning">';
-			$popover_content .= $has_challenges ? sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> times<br/>', TRBS_DOMAIN ), $earnings_count ) : '';
+
+			if ( $has_challenges && isset( $last_earning->earn_count ) )
+			{
+				// earn count
+				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> times<br/>', TRBS_DOMAIN ), $last_earning->earn_count );
+			}
+
 			$popover_content .= $has_challenges ? __( 'Last earned on', TRBS_DOMAIN ) : __( 'Earned on', TRBS_DOMAIN );
-			$popover_content .= ' <span class="badgeos-earning-date">' . date( 'M j, Y', $last_earning->date_earned ) . '</span>';
+			$popover_content .= ' <span class="badgeos-earning-date">' . $last_earning->date_earned_formatted . '</span>';
 			$popover_content .= '</span>';
 		}
 
@@ -297,7 +298,7 @@ class Frontend extends Component
 		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $badge_id, '" data-id="', $badge_id, '" ',
 		'data-content="', esc_attr( $popover_content ), '" ', Helpers::parse_attributes( $this->popover_args ),
 		'class="', implode( ' ', $css_classes ), '"', $credly_ID,
-		' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '" data-completed="', $earned_percentage, '">';
+		' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '" data-completed="', $earned_percentage, '" data-last-earning="', esc_attr( json_encode( $last_earning ) ), '">';
 		// Achievement Image
 		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $badge ), '</span></a><!-- .badgeos-achievements-list-item -->';
 

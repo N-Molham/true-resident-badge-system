@@ -66,7 +66,9 @@
 							// linked badge
 							var $badge = $( '#badgeos-achievements-list-item-' + badge_id )
 							// update with the new complete percentage
-							.attr( 'data-completed', response.data );
+							.attr( 'data-completed', response.data.percentage )
+							// update with the earning data
+							.attr( 'data-last-earning', JSON.stringify( response.data.last_earning ) );
 
 							// validate earning only if it's the last ajax request
 							if ( requests_count > 1 ) {
@@ -166,7 +168,8 @@
 					onShow: function ( $popover ) {
 						// related badge
 						var $badge    = $( '#badgeos-achievements-container' ).find( '.badgeos-achievements-list-item[data-target="' + $popover.attr( 'id' ) + '"]' ),
-						    completed = Math.abs( $badge.attr( 'data-completed' ) );
+						    completed = Math.abs( $badge.attr( 'data-completed' ) ),
+						    $earning  = $popover.find( '.badgeos-earning' );
 
 						// 100% max
 						completed = completed > 100 ? 100 : completed;
@@ -176,6 +179,17 @@
 
 						// bar text
 						$popover.find( '.badgeos-percentage-number' ).html( completed + '&percnt;' );
+
+						if ( $earning.length ) {
+							// update last earning
+							var last_earning = JSON.parse( $badge.attr( 'data-last-earning' ) );
+
+							// earning count
+							$earning.find( '.badgeos-earning-count' ).text( last_earning.earn_count );
+
+							// earning date
+							$earning.find( '.badgeos-earning-date' ).text( last_earning.date_earned_formatted );
+						}
 					}
 				} );
 			} );

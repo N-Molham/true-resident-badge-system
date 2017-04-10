@@ -27,6 +27,11 @@ class Ajax_Handler extends Component
 		}
 	}
 
+	/**
+	 * Check/Un-check checklist point
+	 *
+	 * @return void
+	 */
 	public function challenges_checklist_update()
 	{
 		// security check
@@ -63,7 +68,10 @@ class Ajax_Handler extends Component
 		}
 
 		// respond with updated completion percentage
-		$this->success( trbs_rewards()->get_step_completed_percentage( $mark_args['step'], $mark_args['user'] ) );
+		$this->success( [
+			'percentage'   => trbs_rewards()->get_step_completed_percentage( $mark_args['step'], $mark_args['user'] ),
+			'last_earning' => trbs_rewards()->get_last_badge_earning( $mark_args['badge'], $mark_args['user'] ),
+		] );
 	}
 
 	/**
