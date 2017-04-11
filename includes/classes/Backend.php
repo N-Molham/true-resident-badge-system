@@ -58,6 +58,7 @@ class Backend extends Component
 			&$this,
 			'append_hide_from_listing_page_field',
 		], 10, 3 );
+		add_filter( 'badgeos_achievement_data_meta_box_fields', [ &$this, 'append_badge_type_field' ], 15, 3 );
 
 		// WP post data save action
 		add_action( 'save_post_badges', [ &$this, 'store_hidden_badges_as_option' ], 100 );
@@ -176,6 +177,38 @@ class Backend extends Component
 			'desc' => ' ' . __( 'Yes, will hide this achievement from loading in the POI singular page.', TRBS_DOMAIN ),
 			'id'   => $prefix . 'hide_from_listing',
 			'type' => 'checkbox',
+		];
+
+		return $fields;
+	}
+
+	/**
+	 * Append field for badge type
+	 *
+	 * @param array  $fields
+	 * @param string $prefix
+	 * @param array  $achievement_types
+	 *
+	 * @return array
+	 */
+	public function append_badge_type_field( $fields, $prefix, $achievement_types )
+	{
+		if ( !in_array( 'badges', $achievement_types ) )
+		{
+			// skip if badge not in the achievements list
+			return $fields;
+		}
+
+		// store the prefix for later
+		$this->badge_field_prefix = $prefix;
+
+		// add the new field
+		$fields[] = [
+			'name'    => __( 'Badge Type', TRBS_DOMAIN ),
+			'desc'    => '',
+			'id'      => $prefix . 'badge_type',
+			'type'    => 'select',
+			'options' => trbs_rewards()->get_badge_types(),
 		];
 
 		return $fields;

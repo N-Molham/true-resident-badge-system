@@ -734,4 +734,18 @@ class Rewards extends Component
 
 		return $badge;
 	}
+
+	/**
+	 * Get registered badge types
+	 *
+	 * @return array
+	 */
+	public function get_badge_types()
+	{
+		return apply_filters( 'trbs_badge_types', [
+			[ 'name' => __( 'Explorer', TRBS_DOMAIN ), 'value' => 'explorer' ],
+			[ 'name' => __( 'Challenge', TRBS_DOMAIN ), 'value' => 'challenge' ],
+			[ 'name' => __( 'Milestone', TRBS_DOMAIN ), 'value' => 'milestone' ],
+		] );
+	}
 }

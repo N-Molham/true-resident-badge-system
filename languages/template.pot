@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-10 06:51:43+00:00\n"
+"POT-Creation-Date: 2017-04-11 03:37:58+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -37,12 +37,16 @@ msgstr ""
 msgid "Invalid taxonomy."
 msgstr ""
 
-#: includes/classes/Backend.php:175
+#: includes/classes/Backend.php:176
 msgid "Hide Achievement From POI Page"
 msgstr ""
 
-#: includes/classes/Backend.php:176
+#: includes/classes/Backend.php:177
 msgid "Yes, will hide this achievement from loading in the POI singular page."
+msgstr ""
+
+#: includes/classes/Backend.php:207
+msgid "Badge Type"
 msgstr ""
 
 #: includes/classes/Frontend.php:147
@@ -87,6 +91,18 @@ msgstr ""
 
 #: includes/classes/Rewards.php:732
 msgid "Invalid badge!"
+msgstr ""
+
+#: includes/classes/Rewards.php:746
+msgid "Explorer"
+msgstr ""
+
+#: includes/classes/Rewards.php:747
+msgid "Challenge"
+msgstr ""
+
+#: includes/classes/Rewards.php:748
+msgid "Milestone"
 msgstr ""
 
 #: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:33
