@@ -148,16 +148,48 @@
 
 		// badges filter
 		(function () {
-			var $badges_filter = $( '#achievements_list_filter' );
-			if ( $badges_filter.length ) {
-				for ( option_value in trbs_badges.filter_labels ) {
-					if ( !trbs_badges.filter_labels.hasOwnProperty( option_value ) ) {
-						// skip non-properties index
-						continue;
-					}
+			var $container = $( '#badgeos-achievements-filter' );
+			if ( $container.length ) {
+				// new type filter starting tag
+				var new_filters = [ '<ul class="badgeos-badge-types-filter">' ],
+				    filter      = {};
 
-					$badges_filter.find( 'option[value="' + option_value + '"]' ).text( trbs_badges.filter_labels[ option_value ] );
+				for ( var i = 0, len = trbs_badges.badge_filters.length; i < len; i++ ) {
+					filter = trbs_badges.badge_filters[ i ];
+
+					new_filters.push( '<li' + ( 0 === i ? ' class="current"' : '' ) + '><a href="#' + filter.value + '">' + filter.filter_name + '</a></li>' );
 				}
+
+				// filters list closing tag
+				new_filters.push( '</ul>' );
+
+				// hidden input
+				new_filters.push( '<input type="hidden" name="achievements_list_filter" id="achievements_list_filter" value="all" />' );
+
+				// replace current badge filter with the new one
+				$container.html( new_filters.join( '' ) );
+
+				var $filter_input = $( '#achievements_list_filter' );
+
+				// badge type filter click
+				$container.on( 'click', '.badgeos-badge-types-filter a', function ( e ) {
+					e.preventDefault();
+
+					// clicked link
+					var $this    = $( e.currentTarget ),
+					    $this_el = $this.closest( 'li' );
+
+					if ( false === $this_el.hasClass( 'current' ) ) {
+						// set selected badge type value
+						$filter_input.val( $this.attr( 'href' ).replace( '#', '' ) )
+						// trigger ajax update
+						.trigger( 'change' );
+
+						// set current badge type CSS class
+						$container.find( 'li.current' ).removeClass( 'current' );
+						$this_el.addClass( 'current' );
+					}
+				} );
 			}
 		})();
 

@@ -80,7 +80,40 @@ class Frontend extends Component
 			return;
 		}
 
+		// disable pagination
 		$query->set( 'nopaging', true );
+
+		// looking for specific type of badges 
+		$selected_type = isset( $_REQUEST['filter'] ) ? sanitize_key( $_REQUEST['filter'] ) : null;
+		if ( null !== $selected_type && !empty( $selected_type ) )
+		{
+			// look for the selected type info
+			$selected_type = array_filter( trbs_rewards()->get_badge_types(), function ( $badge_type ) use ( $selected_type )
+			{
+				return $badge_type['value'] === $selected_type;
+			} );
+
+			if ( count( $selected_type ) > 0 )
+			{
+				$selected_type = array_shift( $selected_type );
+
+				// if found then filter badge based on it
+				$meta_query = $query->get( 'meta_query' );
+				if ( '' === $meta_query || !is_array( $meta_query ) )
+				{
+					// initialize array
+					$meta_query = [];
+				}
+
+				// update meta query
+				$meta_query[] = [
+					'key'     => '_badgeos_badge_type',
+					'value'   => $selected_type['value'],
+					'compare' => '=',
+				];
+				$query->set( 'meta_query', $meta_query );
+			}
+		}
 
 		// check for related badges for a specific listing
 		$listing_id = isset( $_REQUEST['trbs_listing_id'] ) ? absint( $_REQUEST['trbs_listing_id'] ) : null;
@@ -100,7 +133,7 @@ class Frontend extends Component
 			$listing_badges = array_values( array_diff( $listing_badges, $hidden_badges ) );
 		}
 
-		// TEMP: load only these two badges
+		// load only these two badges
 		$query->set( 'post__in', $listing_badges );
 	}
 
@@ -143,9 +176,11 @@ class Frontend extends Component
 		], $assets_version, false );
 
 		wp_localize_script( 'trbs-achievements', 'trbs_badges', [
-			'filter_labels'   => [
-				'not-completed' => __( 'Incomplete Badges', TRBS_DOMAIN ),
-			],
+			'badge_filters'   => array_merge( [
+				[ 'filter_name' => __( 'All Badges', TRBS_DOMAIN ), 'value' => 'all' ],
+				[ 'filter_name' => __( 'Completed', TRBS_DOMAIN ), 'value' => 'completed' ],
+				[ 'filter_name' => __( 'Uncompleted', TRBS_DOMAIN ), 'value' => 'not-completed' ],
+			], trbs_rewards()->get_badge_types() ),
 			'is_mobile'       => wp_is_mobile(),
 			'is_logged_in'    => is_user_logged_in(),
 			'checklist_nonce' => wp_create_nonce( 'trbs_challenges_checklist_change' ),

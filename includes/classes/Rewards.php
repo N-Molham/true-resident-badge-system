@@ -743,9 +743,21 @@ class Rewards extends Component
 	public function get_badge_types()
 	{
 		return apply_filters( 'trbs_badge_types', [
-			[ 'name' => __( 'Explorer', TRBS_DOMAIN ), 'value' => 'explorer' ],
-			[ 'name' => __( 'Challenge', TRBS_DOMAIN ), 'value' => 'challenge' ],
-			[ 'name' => __( 'Milestone', TRBS_DOMAIN ), 'value' => 'milestone' ],
+			[
+				'name'        => __( 'Explorer', TRBS_DOMAIN ),
+				'value'       => 'explorer',
+				'filter_name' => __( 'Explorer Badges', TRBS_DOMAIN ),
+			],
+			[
+				'name'        => __( 'Challenge', TRBS_DOMAIN ),
+				'value'       => 'challenge',
+				'filter_name' => __( 'Challenge Badges', TRBS_DOMAIN ),
+			],
+			[
+				'name'        => __( 'Milestone', TRBS_DOMAIN ),
+				'value'       => 'milestone',
+				'filter_name' => __( 'Milestone Badges', TRBS_DOMAIN ),
+			],
 		] );
 	}
 }

@@ -60,7 +60,21 @@ i.push(c(k))}
 // output checklist(s)
 return i.length<1||void e.html(i.join(""))})}}(),
 // badges filter
-function(){var a=b("#achievements_list_filter");if(a.length)for(option_value in trbs_badges.filter_labels)trbs_badges.filter_labels.hasOwnProperty(option_value)&&a.find('option[value="'+option_value+'"]').text(trbs_badges.filter_labels[option_value])}(),
+function(){var a=b("#badgeos-achievements-filter");if(a.length){for(var c=['<ul class="badgeos-badge-types-filter">'],d={},e=0,f=trbs_badges.badge_filters.length;e<f;e++)d=trbs_badges.badge_filters[e],c.push("<li"+(0===e?' class="current"':"")+'><a href="#'+d.value+'">'+d.filter_name+"</a></li>");
+// filters list closing tag
+c.push("</ul>"),
+// hidden input
+c.push('<input type="hidden" name="achievements_list_filter" id="achievements_list_filter" value="all" />'),
+// replace current badge filter with the new one
+a.html(c.join(""));var g=b("#achievements_list_filter");
+// badge type filter click
+a.on("click",".badgeos-badge-types-filter a",function(c){c.preventDefault();
+// clicked link
+var d=b(c.currentTarget),e=d.closest("li");!1===e.hasClass("current")&&(
+// set selected badge type value
+g.val(d.attr("href").replace("#","")).trigger("change"),
+// set current badge type CSS class
+a.find("li.current").removeClass("current"),e.addClass("current"))})}}(),
 // badges popover init
 function(){b(".badgeos-achievements-list-item").livequery(function(a,c){b(c).webuiPopover({onShow:function(a){
 // related badge

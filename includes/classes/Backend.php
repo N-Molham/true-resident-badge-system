@@ -208,7 +208,12 @@ class Backend extends Component
 			'desc'    => '',
 			'id'      => $prefix . 'badge_type',
 			'type'    => 'select',
-			'options' => trbs_rewards()->get_badge_types(),
+			'options' => array_merge( [
+				[
+					'name'  => __( 'None', TRBS_DOMAIN ),
+					'value' => 'none',
+				],
+			], trbs_rewards()->get_badge_types() ),
 		];
 
 		return $fields;
