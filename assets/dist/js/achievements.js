@@ -44,7 +44,9 @@ g=f.filter(":checked");
 // not all points are checked
 if(f.length!==g.length)return;
 // toggle earn status
-e.removeClass("user-has-not-earned").addClass("user-has-earned"),
+e.removeClass("user-has-not-earned").addClass("user-has-earned badgeos-glow"),setTimeout(function(a){return function(){
+// remove the glow
+a.removeClass("badgeos-glow")}}(e),2e3),
 // reset checked points
 f.prop("checked",!1)}}}(c,e.badge),"json").always(function(){
 // request done

@@ -153,7 +153,7 @@ ul.badgeos-badge-types-filter {
 	list-style: none;
 	margin: 0;
 	padding: 0;
-	
+
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -179,4 +179,41 @@ ul.badgeos-badge-types-filter li.current {
 ul.badgeos-badge-types-filter li:hover a,
 ul.badgeos-badge-types-filter li.current a {
 	color: #828585;
+}
+
+.badgeos-achievements-list-item {
+	position: relative;
+}
+
+.badgeos-achievements-list-item::before {
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	bottom: 0;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	border-radius: 50%;
+	background: #f5e425;
+	background: -moz-radial-gradient(center, ellipse cover, rgba(245, 228, 37, 1) 55%, rgba(255, 255, 255, 0) 70%);
+	background: -webkit-radial-gradient(center, ellipse cover, rgba(245, 228, 37, 1) 55%, rgba(255, 255, 255, 0) 70%);
+	background: radial-gradient(ellipse at center, rgba(245, 228, 37, 1) 55%, rgba(255, 255, 255, 0) 70%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5e425', endColorstr='#00ffffff', GradientType=1);
+	opacity: 0;
+	-webkit-transition: opacity 1s;
+	-moz-transition: opacity 1s;
+	-ms-transition: opacity 1s;
+	-o-transition: opacity 1s;
+	transition: opacity 1s;
+}
+
+.badgeos-achievements-list-item span.badgeos-item-image {
+	position: relative;
+	z-index: 100;
+}
+
+.badgeos-achievements-list-item.badgeos-glow::before {
+	opacity: 1;
 }

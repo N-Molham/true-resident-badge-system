@@ -86,7 +86,14 @@
 							}
 
 							// toggle earn status
-							$badge.removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned' );
+							$badge.removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned badgeos-glow' );
+
+							setTimeout( (function ( $badge_link ) {
+								return function () {
+									// remove the glow
+									$badge_link.removeClass( 'badgeos-glow' );
+								};
+							})( $badge ), 2000 );
 
 							// reset checked points
 							$checklist_points.prop( 'checked', false );
