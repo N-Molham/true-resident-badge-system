@@ -181,6 +181,24 @@ ul.badgeos-badge-types-filter li.current a {
 	color: #828585;
 }
 
+@media (max-width: 767px) {
+	ul.badgeos-badge-types-filter {
+		display: block;
+		overflow-x: auto;
+		overflow-y: hidden;
+		white-space: nowrap;
+	}
+
+	ul.badgeos-badge-types-filter > li {
+		display: inline-block;
+		margin-right: 1.2em;
+	}
+
+	ul.badgeos-badge-types-filter > li:last-child {
+		margin-right: auto;
+	}
+}
+
 .badgeos-achievements-list-item {
 	position: relative;
 }
