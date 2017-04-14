@@ -200,9 +200,9 @@ class Frontend extends Component
 		// vars
 		$user_id        = get_current_user_id();
 		$badge          = get_post( $badge_id );
+		$multi_earnings = -1 === (int) $badge->_badgeos_maximum_earnings;
 		$has_challenges = false;
 		$steps_data     = [];
-
 
 		// check if user has earned this Achievement, and add an 'earned' class
 		$last_earning  = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
@@ -316,13 +316,13 @@ class Frontend extends Component
 			// earn date
 			$popover_content .= '<span class="badgeos-earning">';
 
-			if ( $has_challenges && isset( $last_earning->earn_count ) )
+			if ( $multi_earnings && isset( $last_earning->earn_count ) )
 			{
 				// earn count
 				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> times<br/>', TRBS_DOMAIN ), $last_earning->earn_count );
 			}
 
-			$popover_content .= $has_challenges ? __( 'Last earned on', TRBS_DOMAIN ) : __( 'Earned on', TRBS_DOMAIN );
+			$popover_content .= $multi_earnings ? __( 'Last earned on', TRBS_DOMAIN ) : __( 'Earned on', TRBS_DOMAIN );
 			$popover_content .= ' <span class="badgeos-earning-date">' . $last_earning->date_earned_formatted . '</span>';
 			$popover_content .= '</span>';
 		}

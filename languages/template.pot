@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-12 05:08:14+00:00\n"
+"POT-Creation-Date: 2017-04-14 03:59:53+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -97,35 +97,35 @@ msgstr ""
 msgid "Checklist point not foudn!"
 msgstr ""
 
-#: includes/classes/Rewards.php:726
+#: includes/classes/Rewards.php:730
 msgid "Badge not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:732
+#: includes/classes/Rewards.php:736
 msgid "Invalid badge!"
 msgstr ""
 
-#: includes/classes/Rewards.php:747
+#: includes/classes/Rewards.php:751
 msgid "Explorer"
 msgstr ""
 
-#: includes/classes/Rewards.php:749
+#: includes/classes/Rewards.php:753
 msgid "Explorer Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:752
+#: includes/classes/Rewards.php:756
 msgid "Challenge"
 msgstr ""
 
-#: includes/classes/Rewards.php:754
+#: includes/classes/Rewards.php:758
 msgid "Challenge Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:757
+#: includes/classes/Rewards.php:761
 msgid "Milestone"
 msgstr ""
 
-#: includes/classes/Rewards.php:759
+#: includes/classes/Rewards.php:763
 msgid "Milestone Badges"
 msgstr ""
 
