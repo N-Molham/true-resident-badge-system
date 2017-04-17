@@ -181,24 +181,6 @@ ul.badgeos-badge-types-filter li.current a {
 	color: #828585;
 }
 
-@media (max-width: 767px) {
-	ul.badgeos-badge-types-filter {
-		display: block;
-		overflow-x: auto;
-		overflow-y: hidden;
-		white-space: nowrap;
-	}
-
-	ul.badgeos-badge-types-filter > li {
-		display: inline-block;
-		margin-right: 1.2em;
-	}
-
-	ul.badgeos-badge-types-filter > li:last-child {
-		margin-right: auto;
-	}
-}
-
 .badgeos-achievements-list-item {
 	position: relative;
 }
@@ -234,4 +216,33 @@ ul.badgeos-badge-types-filter li.current a {
 
 .badgeos-achievements-list-item.badgeos-glow::before {
 	opacity: 1;
+}
+
+.trbs-checklist-container .trbs-suggestion-button {
+	display: block;
+	width: 40%;
+	padding: 1em;
+	margin: 0.8em auto 0 auto;
+}
+
+@media (max-width: 767px) {
+	ul.badgeos-badge-types-filter {
+		display: block;
+		overflow-x: auto;
+		overflow-y: hidden;
+		white-space: nowrap;
+	}
+
+	ul.badgeos-badge-types-filter > li {
+		display: inline-block;
+		margin-right: 1.2em;
+	}
+
+	ul.badgeos-badge-types-filter > li:last-child {
+		margin-right: auto;
+	}
+
+	.trbs-checklist-container .trbs-suggestion-button {
+		width: 90%;
+	}
 }

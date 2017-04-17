@@ -1,5 +1,6 @@
 <?php namespace True_Resident\Badge_System;
 
+use WP_Post;
 use WP_Query;
 
 /**
@@ -338,5 +339,35 @@ class Frontend extends Component
 		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $badge ), '</span></a><!-- .badgeos-achievements-list-item -->';
 
 		return ob_get_clean();
+	}
+
+	/**
+	 * Render challenges suggestions form
+	 *
+	 * @param WP_Post $listing
+	 * @param WP_Post $badge
+	 *
+	 * @return void
+	 */
+	public function render_activities_suggestion_form( $listing, $badge )
+	{
+		// title
+		echo '<h2 class="popup-title">', sprintf( __( 'Suggestions for "%s"', TRBS_DOMAIN ), $listing->post_title ), '</h2>';
+
+		$form = trbs_rewards()->get_suggestion_form();
+		if ( is_wp_error( $form ) )
+		{
+			// error loading form
+			echo $form->get_error_message();
+
+			return;
+		}
+
+		// set global ids
+		$_GET['trbs_listing_id'] = $listing->ID;
+		$_GET['trbs_badge_id']   = $badge->ID;
+
+		// render form's shortcode
+		echo do_shortcode( '[gravityform id="' . $form['id'] . '" title="true" description="false" ajax="true"]' );
 	}
 }

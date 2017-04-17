@@ -150,6 +150,16 @@
 
 				// output checklist(s)
 				$badge_challenges.html( challenges.join( '' ) );
+
+				// initialize popups
+				$badge_challenges.find( '.trbs-suggestion-button' ).magnificPopup( {
+					tClose         : listifySettings.l10n.magnific.tClose,
+					tLoading       : listifySettings.l10n.magnific.tLoading,
+					fixedContentPos: false,
+					fixedBgPos     : true,
+					overflowY      : 'scroll',
+					type           : 'ajax'
+				} );
 			} );
 		})();
 

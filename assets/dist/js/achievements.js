@@ -60,7 +60,8 @@ var k=b.extend({},f[j],{step_id:j,badge_id:g});"challenges_checklist_listing_id"
 // render badge's step checklist
 i.push(c(k))}
 // output checklist(s)
-return i.length<1||void e.html(i.join(""))})}}(),
+// initialize popups
+return i.length<1||(e.html(i.join("")),void e.find(".trbs-suggestion-button").magnificPopup({tClose:listifySettings.l10n.magnific.tClose,tLoading:listifySettings.l10n.magnific.tLoading,fixedContentPos:!1,fixedBgPos:!0,overflowY:"scroll",type:"ajax"}))})}}(),
 // badges filter
 function(){var a=b("#badgeos-achievements-filter");if(a.length){for(var c=['<ul class="badgeos-badge-types-filter">'],d={},e=0,f=trbs_badges.badge_filters.length;e<f;e++)d=trbs_badges.badge_filters[e],c.push("<li"+(0===e?' class="current"':"")+'><a href="#'+d.value+'">'+d.filter_name+"</a></li>");
 // filters list closing tag

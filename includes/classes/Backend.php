@@ -65,6 +65,111 @@ class Backend extends Component
 
 		// WP admin dashboard action
 		add_action( 'admin_action_trbs_run_command', [ &$this, 'manually_trigger_command' ] );
+
+		// Job Manager settings fields
+		add_filter( 'job_manager_settings', [ &$this, 'activities_suggestion_form_setting' ], 999 );
+
+		// GForms entries field value
+		add_action( 'gform_entries_column', [ &$this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
+		add_filter( 'gform_field_content', [ &$this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
+	}
+
+	/**
+	 * Add post edit link to listing & badge in form entry display
+	 *
+	 * @return string
+	 */
+	public function append_listing_badge_links_to_entry_value()
+	{
+		$args = func_get_args();
+
+		// if entry page
+		$field = $args[1];
+		if ( false === is_object( $field ) )
+		{
+			$is_entry_page = false;
+
+			// if entries list page
+			$field = \GFFormsModel::get_field( \GFAPI::get_form( $args[0] ), $args[1] );
+		}
+		else
+		{
+			$is_entry_page = true;
+		}
+
+		if ( 'hidden' !== $field->get_input_type() )
+		{
+			// not a hidden field
+			return $is_entry_page ? $args[0] : '';
+		}
+
+		if ( !in_array( $field->label, [ 'trbs_listing_id', 'trbs_badge_id' ] ) )
+		{
+			// unrelated fields
+			return $is_entry_page ? $args[0] : '';
+		}
+
+		// generate edit post link
+		ob_start();
+		edit_post_link( __( 'Edit', TRBS_DOMAIN ), '', '', absint( $args[2] ) );
+		$edit_link = '&nbsp;' . ob_get_clean();
+
+		if ( $is_entry_page )
+		{
+			preg_match_all( '/<td.+ class="entry-view-field-value(.+)?">(.+)<\/td>/', $args[0], $matches );
+
+			if ( isset( $matches[0], $matches[2] ) && !empty( $matches[0] ) && !empty( $matches[2] ) )
+			{
+				// modify value
+				return str_replace( $matches[2][0], $matches[2][0] . $edit_link, $args[0] );
+			}
+
+			return $args[0];
+		}
+
+		echo $edit_link;
+	}
+
+	/**
+	 * Append activities suggestion form dropdown setting
+	 *
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
+	public function activities_suggestion_form_setting( $settings )
+	{
+		if ( false === class_exists( 'RGFormsModel' ) )
+		{
+			// Gravity Form is not installed/active
+			return $settings;
+		}
+
+		// vars
+		$active_forms    = array_merge( [
+			[ 'title' => __( 'Please select a form', TRBS_DOMAIN ), 'id' => 0 ],
+		], \GFAPI::get_forms() );
+		$setting_options = [];
+
+		foreach ( $active_forms as $form )
+		{
+			// build options array
+			$setting_options[ $form['id'] ] = $form['title'];
+		}
+
+		// clear data
+		unset( $form, $active_forms );
+
+		$settings['job_listings'][1][] = [
+			'name'    => trbs_rewards()->get_suggestion_form_option_name(),
+			'std'     => null,
+			'label'   => __( 'Activities Suggestion Form', TRBS_DOMAIN ),
+			'desc'    => '',
+			'type'    => 'select',
+			'options' => $setting_options,
+		];
+
+		return $settings;
 	}
 
 	/**

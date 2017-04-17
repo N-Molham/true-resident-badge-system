@@ -2,10 +2,10 @@
 # This file is distributed under the GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: True Resident BadgeOS Customization 1.4.0\n"
+"Project-Id-Version: True Resident BadgeOS Customization 1.5.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-14 03:59:53+00:00\n"
+"POT-Creation-Date: 2017-04-17 08:15:22+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,108 +25,146 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/classes/Ajax_Handler.php:57
+#: includes/classes/Ajax_Handler.php:70
+msgid "Unknown listing!"
+msgstr ""
+
+#: includes/classes/Ajax_Handler.php:109
 msgid "Missing or Invalid input!"
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:87
+#: includes/classes/Ajax_Handler.php:139
 msgid "Invalid access."
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:94
+#: includes/classes/Ajax_Handler.php:146
 msgid "Invalid taxonomy."
 msgstr ""
 
-#: includes/classes/Backend.php:176
+#: includes/classes/Backend.php:114
+msgid "Edit"
+msgstr ""
+
+#: includes/classes/Backend.php:150
+msgid "Please select a form"
+msgstr ""
+
+#: includes/classes/Backend.php:166
+msgid "Activities Suggestion Form"
+msgstr ""
+
+#: includes/classes/Backend.php:281
 msgid "Hide Achievement From POI Page"
 msgstr ""
 
-#: includes/classes/Backend.php:177
+#: includes/classes/Backend.php:282
 msgid "Yes, will hide this achievement from loading in the POI singular page."
 msgstr ""
 
-#: includes/classes/Backend.php:207
+#: includes/classes/Backend.php:312
 msgid "Badge Type"
 msgstr ""
 
-#: includes/classes/Backend.php:213
+#: includes/classes/Backend.php:318
 msgid "None"
 msgstr ""
 
-#: includes/classes/Frontend.php:180
+#: includes/classes/Frontend.php:181
 msgid "All Badges"
 msgstr ""
 
-#: includes/classes/Frontend.php:181
+#: includes/classes/Frontend.php:182
 msgid "Completed"
 msgstr ""
 
-#: includes/classes/Frontend.php:182
+#: includes/classes/Frontend.php:183
 msgid "Uncompleted"
 msgstr ""
 
-#: includes/classes/Frontend.php:322
+#: includes/classes/Frontend.php:323
 msgid "Earned <span class=\"badgeos-earning-count\">%d</span> times<br/>"
 msgstr ""
 
-#: includes/classes/Frontend.php:325
+#: includes/classes/Frontend.php:326
 msgid "Last earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:325
+#: includes/classes/Frontend.php:326
 msgid "Earned on"
 msgstr ""
 
-#: includes/classes/Rewards.php:492
+#: includes/classes/Frontend.php:355
+msgid "Suggestions for \"%s\""
+msgstr ""
+
+#: includes/classes/Rewards.php:499
 msgid "Error adding checklist mark!"
 msgstr ""
 
-#: includes/classes/Rewards.php:513
+#: includes/classes/Rewards.php:520
 msgid "Error removing checklist mark!"
 msgstr ""
 
-#: includes/classes/Rewards.php:551
+#: includes/classes/Rewards.php:558
 msgid "Badge has not steps!"
 msgstr ""
 
-#: includes/classes/Rewards.php:568
+#: includes/classes/Rewards.php:575
 msgid "Badge step not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:578
+#: includes/classes/Rewards.php:585
 msgid "Checklist point not foudn!"
 msgstr ""
 
-#: includes/classes/Rewards.php:730
+#: includes/classes/Rewards.php:737
 msgid "Badge not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:736
+#: includes/classes/Rewards.php:743
 msgid "Invalid badge!"
 msgstr ""
 
-#: includes/classes/Rewards.php:751
+#: includes/classes/Rewards.php:758
 msgid "Explorer"
 msgstr ""
 
-#: includes/classes/Rewards.php:753
+#: includes/classes/Rewards.php:760
 msgid "Explorer Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:756
+#: includes/classes/Rewards.php:763
 msgid "Challenge"
 msgstr ""
 
-#: includes/classes/Rewards.php:758
+#: includes/classes/Rewards.php:765
 msgid "Challenge Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:761
+#: includes/classes/Rewards.php:768
 msgid "Milestone"
 msgstr ""
 
-#: includes/classes/Rewards.php:763
+#: includes/classes/Rewards.php:770
 msgid "Milestone Badges"
+msgstr ""
+
+#: includes/classes/Rewards.php:785
+msgid "Gravity Forms not installed or active!"
+msgstr ""
+
+#: includes/classes/Rewards.php:792
+msgid "Suggestion form not set!"
+msgstr ""
+
+#: includes/classes/Rewards.php:799
+msgid "Invalid suggestion form!"
+msgstr ""
+
+#: includes/classes/Rewards.php:825
+msgid ""
+"Missing required fields in the suggestion form! <code>listing_id</code> or "
+"<code>badge_id</code>"
 msgstr ""
 
 #: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:33
@@ -285,6 +323,10 @@ msgstr ""
 
 #: views/admin/badges/challenges_checklist.php:60
 msgid "Save Changes"
+msgstr ""
+
+#: views/frontend/badges/challenges.php:25
+msgid "Make a suggestion"
 msgstr ""
 
 #. Plugin Name of the plugin/theme

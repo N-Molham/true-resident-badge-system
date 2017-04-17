@@ -28,6 +28,13 @@ class Rewards extends Component
 	protected $session_key = 'trbs_force_reload';
 
 	/**
+	 * Activity suggestion form setting option name
+	 *
+	 * @var string
+	 */
+	protected $suggestion_form_option_name = 'trbs_suggestion_form';
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -763,5 +770,69 @@ class Rewards extends Component
 				'filter_name' => __( 'Milestone Badges', TRBS_DOMAIN ),
 			],
 		] );
+	}
+
+	/**
+	 * Get selected suggestion form information
+	 *
+	 * @return WP_Error|array
+	 */
+	public function get_suggestion_form()
+	{
+		if ( false === class_exists( 'GFAPI' ) )
+		{
+			// GForms is missing
+			return new WP_Error( 'trbs_gform_missing', __( 'Gravity Forms not installed or active!', TRBS_DOMAIN ) );
+		}
+
+		$form_id = absint( get_option( $this->get_suggestion_form_option_name(), 0 ) );
+		if ( 0 === $form_id )
+		{
+			// form not set/selected
+			return new WP_Error( 'trbs_suggestion_form_not_set', __( 'Suggestion form not set!', TRBS_DOMAIN ) );
+		}
+
+		$form = \GFAPI::get_form( $form_id );
+		if ( false === $form )
+		{
+			// invalid form
+			return new WP_Error( 'trbs_suggestion_form_invalid', __( 'Invalid suggestion form!', TRBS_DOMAIN ) );
+		}
+
+		// check for missing fields
+		$required_fields = array_filter( $form['fields'], function ( $field )
+		{
+			/* @var $field \GF_Field */
+			if ( 'hidden' !== $field->get_input_type() )
+			{
+				// not hidden field
+				return false;
+			}
+
+			if ( 'trbs_listing_id' === $field->label || 'trbs_badge_id' === $field->label )
+			{
+				// is the target one
+				return true;
+			}
+
+			// unrelated field
+			return false;
+		} );
+
+		if ( 2 !== count( $required_fields ) )
+		{
+			// missing required fields
+			return new WP_Error( 'trbs_suggestion_fields_missing', __( 'Missing required fields in the suggestion form! <code>listing_id</code> or <code>badge_id</code>', TRBS_DOMAIN ) );
+		}
+
+		return $form;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_suggestion_form_option_name()
+	{
+		return $this->suggestion_form_option_name;
 	}
 }

@@ -8,6 +8,13 @@
 class Ajax_Handler extends Component
 {
 	/**
+	 * List of public ajax requests that without login status
+	 *
+	 * @var array
+	 */
+	protected $public_requests;
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -16,6 +23,8 @@ class Ajax_Handler extends Component
 	{
 		parent::init();
 
+		$this->public_requests = [ 'activity_suggestion_form' ];
+
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 		{
 			$action = filter_var( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '', FILTER_SANITIZE_STRING );
@@ -23,8 +32,51 @@ class Ajax_Handler extends Component
 			{
 				// hook into action if it's method exists
 				add_action( 'wp_ajax_' . $action, [ &$this, $action ] );
+
+				if ( in_array( $action, $this->public_requests ) )
+				{
+					// hook into action if it's method exists
+					add_action( 'wp_ajax_nopriv_' . $action, [ &$this, $action ] );
+				}
 			}
 		}
+	}
+
+	/**
+	 * Load/Render activities suggestion form
+	 *
+	 * @return void
+	 */
+	public function activity_suggestion_form()
+	{
+		// vars
+		$listing_id = absint( filter_input( INPUT_GET, 'trbs_listing_id', FILTER_SANITIZE_NUMBER_INT ) );
+		$badge_id   = absint( filter_input( INPUT_GET, 'badge_id', FILTER_SANITIZE_NUMBER_INT ) );
+
+		// popup start
+		echo '<div class="popup">';
+
+		$badge = trbs_rewards()->get_badge( $badge_id );
+		if ( is_wp_error( $badge ) )
+		{
+			// invalid badge!
+			die( $badge->get_error_message() . '</div>' );
+		}
+
+		$listing = get_post( $listing_id );
+		if ( false === is_object( $listing ) || 'job_listing' !== $listing->post_type )
+		{
+			// invalid badge!
+			die( __( 'Unknown listing!', TRBS_DOMAIN ) . '</div>' );
+		}
+
+		// render
+		trbs_frontend()->render_activities_suggestion_form( $listing, $badge );
+
+		// popup end
+		echo '</div>';
+
+		die();
 	}
 
 	/**

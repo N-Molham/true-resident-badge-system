@@ -3,7 +3,7 @@
 /**
  * Plugin Name: True Resident BadgeOS Customization
  * Description: Customize badeOS plugin with website badge system functions
- * Version: 1.4.0
+ * Version: 1.5.0
  * Author: Nabeel Molham
  * Author URI: http://nabeel.molham.me/
  * Text Domain: true-resident-badge-system
@@ -55,7 +55,7 @@ class Plugin extends Singular
 	 *
 	 * @var string
 	 */
-	public $version = '1.4.0';
+	public $version = '1.5.0';
 
 	/**
 	 * Backend
