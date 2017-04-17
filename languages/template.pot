@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.5.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-17 08:15:22+00:00\n"
+"POT-Creation-Date: 2017-04-17 08:23:24+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -82,8 +82,14 @@ msgid "Uncompleted"
 msgstr ""
 
 #: includes/classes/Frontend.php:323
-msgid "Earned <span class=\"badgeos-earning-count\">%d</span> times<br/>"
+msgid "Earned <span class=\"badgeos-earning-count\">%d</span> %s<br/>"
 msgstr ""
+
+#: includes/classes/Frontend.php:323
+msgid "time"
+msgid_plural "times"
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/classes/Frontend.php:326
 msgid "Last earned on"

@@ -320,7 +320,7 @@ class Frontend extends Component
 			if ( $multi_earnings && isset( $last_earning->earn_count ) )
 			{
 				// earn count
-				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> times<br/>', TRBS_DOMAIN ), $last_earning->earn_count );
+				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> %s<br/>', TRBS_DOMAIN ), $last_earning->earn_count, _n( 'time', 'times', $last_earning->earn_count, TRBS_DOMAIN ) );
 			}
 
 			$popover_content .= $multi_earnings ? __( 'Last earned on', TRBS_DOMAIN ) : __( 'Earned on', TRBS_DOMAIN );
