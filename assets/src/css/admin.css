@@ -7,3 +7,11 @@
 .panel.panel-checklist {
 	margin-top: 20px;
 }
+
+.checklist-repeatable .list-item {
+	margin-bottom: 1em;
+}
+
+.checklist-repeatable .sort-handle {
+	cursor: row-resize;
+}

@@ -24,6 +24,13 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 	public $checklist_meta_key = '_trbs_checklist';
 
 	/**
+	 * Step meta key for challenges checklist order
+	 *
+	 * @var string
+	 */
+	public $checklist_order_meta_key = '_trbs_checklist_order';
+
+	/**
 	 * Target listing post type
 	 *
 	 * @var string
@@ -101,6 +108,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 		}
 
 		// save meta
+		update_post_meta( $step_id, $this->checklist_order_meta_key, array_keys( $checklist ) );
 		update_post_meta( $step_id, $this->checklist_meta_key, $checklist );
 	}
 
@@ -205,6 +213,7 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 			$this->listing_id_field_name => absint( get_post_meta( $step_id, $this->meta_key, true ) ),
 			$this->checklist_field_name  => array_filter( (array) get_post_meta( $step_id, $this->checklist_meta_key, true ) ),
 			'checklist_max_index'        => absint( get_post_meta( $step_id, '_trbs_checklist_max', true ) ),
+			'checklist_order'            => get_post_meta( $step_id, $this->checklist_order_meta_key, true ),
 		];
 	}
 

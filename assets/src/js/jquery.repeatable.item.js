@@ -3,7 +3,7 @@
  * Copyright 2014 Nabeel Molham (http://nabeel.molham.me).
  * Licensed under MIT License (http://opensource.org/licenses/MIT)
  */
-(function ( win ) {
+(function ( win, undefined ) {
 	"use strict";
 
 	jQuery( function ( $ ) {
@@ -125,6 +125,7 @@
 					emptyListMessage    : '<li>No Items Found</li>',
 					defaultItem         : {},
 					values              : [],
+					valuesOrder         : [],
 					is_empty            : true
 				}, $list.data() );
 
@@ -177,9 +178,17 @@
 				// add values if any
 				if ( typeof $list.settings.values === 'object' ) {
 					// loop items for appending indexes
-					var data_indexes = [];
-					$.each( $list.settings.values, function ( item_index, item_data ) {
-						if ( typeof item_data.order_index !== 'undefined' ) {
+					var data_indexes     = [],
+					    has_custom_order = $.isArray( $list.settings.valuesOrder ) && $list.settings.valuesOrder.length;
+
+					$.each( has_custom_order ? $list.settings.valuesOrder : $list.settings.values, function ( item_index, item_data ) {
+						if ( has_custom_order && $list.settings.values !== undefined ) {
+							// load item based on the custom order
+							item_index = item_data;
+							item_data  = $list.settings.values[ item_index ];
+						}
+
+						if ( item_data.order_index !== undefined ) {
 							// use index from item data if exists
 							item_index = parseInt( item_data.order_index );
 						}
@@ -199,7 +208,7 @@
 				}
 
 				if ( $list.settings.is_empty && $list.settings.emptyListMessage.length ) {
-					if ( $list.settings.emptyListMessage == 'item' ) {
+					if ( $list.settings.emptyListMessage === 'item' ) {
 						// empty list label if is set
 						$list.add_new_btn.trigger( 'repeatable-add-click' );
 					} else {
@@ -213,7 +222,7 @@
 					e.preventDefault();
 
 					// confirm first
-					if ( $list.settings.confirmRemove == 'yes' ) {
+					if ( $list.settings.confirmRemove === 'yes' ) {
 						if ( !confirm( $list.settings.confirmRemoveMessage ) ) {
 							return false;
 						}

@@ -3,13 +3,13 @@
  * Copyright 2014 Nabeel Molham (http://nabeel.molham.me).
  * Licensed under MIT License (http://opensource.org/licenses/MIT)
  */
-!function(a){"use strict";jQuery(function(a){a.fn.repeatable_item=function(b){
+!function(a,b){"use strict";jQuery(function(a){a.fn.repeatable_item=function(c){
 // check if doT.js template engine is available
 if("object"!=typeof doT)throw"Repeatable Exception: doT.js Template engine not found, click here https://github.com/olado/doT";
 // default events handler
-b=a.extend({init:function(){},completed:function(){},new_item:function(){},removed:function(){}},b);
+c=a.extend({init:function(){},completed:function(){},new_item:function(){},removed:function(){}},c);
 // plugins methods
-var c={/**
+var d={/**
 				 * Clean final item layout from placeholders
 				 *
 				 * @param {string} layout
@@ -27,80 +27,82 @@ return b=b.replace(doT.templateSettings.evaluate,""),b=b.replace(doT.templateSet
 				 * @param {any} data
 				 * @return void
 				 */
-add_item:function(d,e,f){f=f||!1,
+add_item:function(b,e,f){f=f||!1,
 // check empty item
-d.settings.is_empty&&(d.settings.is_empty=!1,d.find(".repeatable-empty").remove());
+b.settings.is_empty&&(b.settings.is_empty=!1,b.find(".repeatable-empty").remove());
 // add new index
 var g;
 // check data
-switch(typeof f){case"boolean":g=d.item_template_dot(d.settings.defaultItem);break;case"object":
+switch(typeof f){case"boolean":g=b.item_template_dot(b.settings.defaultItem);break;case"object":
 // refill fields data template
-g=d.item_template_dot(f);break;default:
+g=b.item_template_dot(f);break;default:
 // fill in with value
-g=d.item_template.outerHTML().replace(new RegExp("{"+d.settings.valueKeyName+"}","g"),f)}
+g=b.item_template.outerHTML().replace(new RegExp("{"+b.settings.valueKeyName+"}","g"),f)}
 // add new index
-g=g.replace(new RegExp("{"+d.settings.indexKeyName+"}","g"),e),
+g=g.replace(new RegExp("{"+b.settings.indexKeyName+"}","g"),e),
 // clear placeholder left overs
-g=c.clean_template_holders(g);
+g=d.clean_template_holders(g);
 // replace HTML and append to list
-var h=a(g).appendTo(d);
+var h=a(g).appendTo(b);
 // index increment
-d.settings.startIndex=parseInt(e)+1,
+b.settings.startIndex=parseInt(e)+1,
 // trigger event: add new
-d.trigger("repeatable-new-item",[d,h,e,f]),b.new_item(d,h,e,f)}};
+b.trigger("repeatable-new-item",[b,h,e,f]),c.new_item(b,h,e,f)}};
 // chaining
 // element loop
-return this.each(function(d,e){var f=a(e);
+return this.each(function(e,f){var g=a(f);
 // trigger event: initialize
-f.trigger("repeatable-init"),b.init(f),
+g.trigger("repeatable-init"),c.init(g),
 // settings
-f.settings=a.extend({startIndex:0,templateSelector:"",indexKeyName:"index",valueKeyName:"value",addButtonLabel:"Add New",addButtonClass:"btn btn-primary",wrapperClass:"repeatable-wrapper",confirmRemoveMessage:"Are Your Sure ?",confirmRemove:"no",emptyListMessage:"<li>No Items Found</li>",defaultItem:{},values:[],is_empty:!0},f.data()),
+g.settings=a.extend({startIndex:0,templateSelector:"",indexKeyName:"index",valueKeyName:"value",addButtonLabel:"Add New",addButtonClass:"btn btn-primary",wrapperClass:"repeatable-wrapper",confirmRemoveMessage:"Are Your Sure ?",confirmRemove:"no",emptyListMessage:"<li>No Items Found</li>",defaultItem:{},values:[],valuesOrder:[],is_empty:!0},g.data()),
 // wrap list
-f.wrap('<div class="'+f.settings.wrapperClass+'" />');
+g.wrap('<div class="'+g.settings.wrapperClass+'" />');
 // index parsing
-var g=parseInt(f.settings.startIndex);
+var h=parseInt(g.settings.startIndex);
 // repeatable item template
-if(""==f.settings.templateSelector)
+if(""==g.settings.templateSelector)
 // use internal template
-f.item_template=f.find("> [data-template=yes]").removeAttr("data-template").remove();else
+g.item_template=g.find("> [data-template=yes]").removeAttr("data-template").remove();else
 // use external template from query selector
-try{f.item_template=a(a(f.settings.templateSelector).html())}catch(h){throw"Repeatable Exception: Invalid item template selector <"+f.settings.templateSelector+">"}if(1!==f.item_template.size())
+try{g.item_template=a(a(g.settings.templateSelector).html())}catch(i){throw"Repeatable Exception: Invalid item template selector <"+g.settings.templateSelector+">"}if(1!==g.item_template.size())
 // throw exception cause the template item not set
 throw"Repeatable Exception: Template item not found.";
 // add values if any
 if(
 // compiled template function
-f.item_template_dot=doT.template(f.item_template.outerHTML()),
+g.item_template_dot=doT.template(g.item_template.outerHTML()),
 // remove selector
-f.item_template.remove_selector=f.item_template.prop("tagName").toLowerCase(),f.item_template.is("[class]")&&(
+g.item_template.remove_selector=g.item_template.prop("tagName").toLowerCase(),g.item_template.is("[class]")&&(
 // specified more by class
-f.item_template.remove_selector+='[class*="'+f.item_template.prop("className")+'"]'),
+g.item_template.remove_selector+='[class*="'+g.item_template.prop("className")+'"]'),
 // create add button and wrap if in p tag
-f.add_new_btn=a('<p class="add-wrapper"><a href="#" class="'+f.settings.addButtonClass+'">'+f.settings.addButtonLabel+"</a></p>").insertAfter(f).on("click repeatable-add-click","a",function(a){a.preventDefault(),
+g.add_new_btn=a('<p class="add-wrapper"><a href="#" class="'+g.settings.addButtonClass+'">'+g.settings.addButtonLabel+"</a></p>").insertAfter(g).on("click repeatable-add-click","a",function(a){a.preventDefault(),
 // add new item
-c.add_item(f,f.settings.startIndex)}),"object"==typeof f.settings.values){
+d.add_item(g,g.settings.startIndex)}),"object"==typeof g.settings.values){
 // loop items for appending indexes
-var i=[];if(a.each(f.settings.values,function(a,b){"undefined"!=typeof b.order_index&&(
+var j=[],k=a.isArray(g.settings.valuesOrder)&&g.settings.valuesOrder.length;if(a.each(k?g.settings.valuesOrder:g.settings.values,function(a,c){k&&g.settings.values!==b&&(
+// load item based on the custom order
+a=c,c=g.settings.values[a]),c.order_index!==b&&(
 // use index from item data if exists
-a=parseInt(b.order_index)),i.push(a),
+a=parseInt(c.order_index)),j.push(a),
 // add new item
-c.add_item(f,a,b),f.settings.is_empty=!1}),i.length){
+d.add_item(g,a,c),g.settings.is_empty=!1}),j.length){
 // calculate next index
-var j=Math.max.apply(Math,i);f.settings.startIndex=(j>g?j:g)+1}}f.settings.is_empty&&f.settings.emptyListMessage.length&&("item"==f.settings.emptyListMessage?
+var l=Math.max.apply(Math,j);g.settings.startIndex=(l>h?l:h)+1}}g.settings.is_empty&&g.settings.emptyListMessage.length&&("item"===g.settings.emptyListMessage?
 // empty list label if is set
-f.add_new_btn.trigger("repeatable-add-click"):
+g.add_new_btn.trigger("repeatable-add-click"):
 // empty list label if is set
-f.append(a(f.settings.emptyListMessage).addClass("repeatable-empty"))),
+g.append(a(g.settings.emptyListMessage).addClass("repeatable-empty"))),
 // remove button
-f.on("click","[data-remove=yes]",function(c){
+g.on("click","[data-remove=yes]",function(b){
 // confirm first
-if(c.preventDefault(),"yes"==f.settings.confirmRemove&&!confirm(f.settings.confirmRemoveMessage))return!1;
+if(b.preventDefault(),"yes"===g.settings.confirmRemove&&!confirm(g.settings.confirmRemoveMessage))return!1;
 // query the item to remove > remove it
-var d=a(c.currentTarget).closest(f.item_template.remove_selector).remove();
+var d=a(b.currentTarget).closest(g.item_template.remove_selector).remove();
 // trigger event: item removed
-f.trigger("repeatable-removed",[f,d]),b.removed(f,d)}),
+g.trigger("repeatable-removed",[g,d]),c.removed(g,d)}),
 // trigger event: initializing completed
-f.trigger("repeatable-completed",[f]),b.completed(f)}),this},a.fn.outerHTML||(/**
+g.trigger("repeatable-completed",[g]),c.completed(g)}),this},a.fn.outerHTML||(/**
 			 * Get element whole HTML layout
 			 *
 			 * @returns {*|jQuery}

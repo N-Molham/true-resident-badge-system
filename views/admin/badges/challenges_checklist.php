@@ -22,8 +22,10 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 	<!-- Bootstrap core CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
 	<!-- Admin CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css" crossorigin="anonymous">
 	<link rel="stylesheet" href="<?php printf( $enqueue_path, 'css/admin.css' ); ?>" crossorigin="anonymous">
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->    <!--[if lt IE 9]>
@@ -43,15 +45,19 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 				    data-confirm-remove="yes" data-add-button-label="<?php esc_attr_e( 'Add New', TRBS_DOMAIN ); ?>"
 				    data-confirm-remove-message="<?php esc_attr_e( 'Are you sure?', TRBS_DOMAIN ); ?>"
 				    data-start-index="<?php echo esc_attr( $step_data['checklist_max_index'] ); ?>"
-				    data-values="<?php echo esc_attr( json_encode( $step_data['challenges_checklist'] ) ); ?>">
+				    data-values="<?php echo esc_attr( json_encode( $step_data['challenges_checklist'] ) ); ?>"
+				    data-values-order="<?php echo esc_attr( json_encode( $step_data['checklist_order'] ) ); ?>">
 					<li data-template="yes" class="list-item">
 						<div class="row">
-							<p class="col-md-10 col-sm-9">
-								<input type="text" name="checklist_points[{index}]" placeholder="<?php esc_attr_e( 'Challenge Label', TRBS_DOMAIN ); ?>" class="form-control" value="{value}" />
-							</p>
-							<p class="col-md-2 col-sm-3">
+							<div class="col-md-10 col-sm-8">
+								<div class="input-group">
+									<div class="input-group-addon sort-handle"><i class="icon-sort icon-large"></i></div>
+									<input type="text" name="checklist_points[{index}]" placeholder="<?php esc_attr_e( 'Challenge Label', TRBS_DOMAIN ); ?>" class="form-control" value="{value}" />
+								</div>
+							</div>
+							<div class="col-md-2 col-sm-3">
 								<a href="#" class="btn btn-default btn-danger btn-block" data-remove="yes"><?php esc_attr_e( 'Remove', TRBS_DOMAIN ); ?></a>
-							</p>
+							</div>
 						</div>
 					</li>
 				</ul>
@@ -71,7 +77,7 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<?php wp_scripts()->print_scripts( 'jquery' ); ?>
+<?php wp_scripts()->print_scripts( 'jquery-ui-sortable' ); ?>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
         integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="<?php printf( $enqueue_path, 'js/doT.js' ); ?>"></script>

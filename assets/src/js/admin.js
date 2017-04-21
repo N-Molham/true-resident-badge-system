@@ -14,7 +14,11 @@
 			}
 
 			// repeatable init
-			$checklist_form.find( '.checklist-repeatable' ).repeatable_item();
+			$checklist_form.find( '.checklist-repeatable' ).on( 'repeatable-completed', function ( e, $list ) {
+				$list.sortable( {
+					handle: '.sort-handle'
+				} );
+			} ).repeatable_item();
 		})();
 
 		// badge steps

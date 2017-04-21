@@ -5,7 +5,7 @@
 // POI badge checklist
 !function(){var a=b("#checklist-form");
 // repeatable init
-return 0!==a.length&&void a.find(".checklist-repeatable").repeatable_item()}(),
+return 0!==a.length&&void a.find(".checklist-repeatable").on("repeatable-completed",function(a,b){b.sortable({handle:".sort-handle"})}).repeatable_item()}(),
 // badge steps
 function(){
 // vars

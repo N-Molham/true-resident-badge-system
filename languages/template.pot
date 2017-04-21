@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.5.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-21 05:53:45+00:00\n"
+"POT-Creation-Date: 2017-04-21 06:47:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -178,7 +178,7 @@ msgid "True Resident Listing Category Check-in"
 msgstr ""
 
 #: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:62
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:135
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:143
 #: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:69
 #: includes/classes/Triggers/Listings_Reviews_Trigger.php:69
 #: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:60
@@ -190,16 +190,16 @@ msgstr ""
 msgid "Any Category"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:109
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:117
 msgid "True Resident Listing Challenges Checklist"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:238
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:247
 #: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:149
 msgid "Listing ID"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:258
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:267
 msgid "Manage Checklist"
 msgstr ""
 
@@ -307,27 +307,27 @@ msgstr ""
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:39
+#: views/admin/badges/challenges_checklist.php:41
 msgid "Challenges Checklist"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:43
+#: views/admin/badges/challenges_checklist.php:45
 msgid "Add New"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:44
+#: views/admin/badges/challenges_checklist.php:46
 msgid "Are you sure?"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:50
+#: views/admin/badges/challenges_checklist.php:55
 msgid "Challenge Label"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:53
+#: views/admin/badges/challenges_checklist.php:59
 msgid "Remove"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:60
+#: views/admin/badges/challenges_checklist.php:66
 msgid "Save Changes"
 msgstr ""
 
