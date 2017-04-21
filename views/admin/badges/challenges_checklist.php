@@ -49,7 +49,7 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 				    data-values-order="<?php echo esc_attr( json_encode( $step_data['checklist_order'] ) ); ?>">
 					<li data-template="yes" class="list-item">
 						<div class="row">
-							<div class="col-md-10 col-sm-8">
+							<div class="col-md-10 col-sm-9">
 								<div class="input-group">
 									<div class="input-group-addon sort-handle"><i class="icon-sort icon-large"></i></div>
 									<input type="text" name="checklist_points[{index}]" placeholder="<?php esc_attr_e( 'Challenge Label', TRBS_DOMAIN ); ?>" class="form-control" value="{value}" />
