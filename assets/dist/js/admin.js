@@ -15,16 +15,17 @@ a.on("keydown","input.true-resident-autocomplete",function(a){var c=b(a.currentT
 // search bar autocomplete
 return!!c.hasClass("ui-autocomplete-input")||void c.autocomplete({minLength:2,focus:function(a){
 // prevent default behaviour
-a.preventDefault()},source:function(a,c){
+a.preventDefault()},source:function(a){return function(c,d){
 // vars
-var d=a.term.trim(),e=""===d||d.length<1;if(g&&
+var e=c.term.trim(),h=""===e||e.length<1;if(g&&
 // stop the last request
-g.abort(),!e)
+g.abort(),!h){if(e in f)
 // load from cache
+return void d(f[e]);a.addClass("ui-autocomplete-loading"),
 // AJAX request
-return d in f?void c(f[d]):void(g=b.post(trbs_triggers.urls.get_listings,{search_keywords:d,page:1,search_location:"",per_page:30,orderby:"featured",order:"DESC",form_data:"",trsc_autocomplete:!0,show_pagination:!1},function(a){if(a.success){var b=[];for(var e in a.data)b.push({label:a.data[e].text,value:a.data[e].id});
+g=b.post(trbs_triggers.urls.get_listings,{search_keywords:e,page:1,search_location:"",per_page:30,orderby:"featured",order:"DESC",form_data:"",trsc_autocomplete:!0,show_pagination:!1},function(a){if(a.success){var b=[];for(var c in a.data)b.push({label:a.data[c].text,value:a.data[c].id});
 // cache it for later
-f[d]=b,c(b)}}))}})}),
+f[e]=b,d(b)}}).always(function(){a.removeClass("ui-autocomplete-loading")})}}}(c)})}),
 // when the trigger type changes
 a.on("change trbs-change",c,function(a){var c=b(a.currentTarget);
 // look for the linked fields
