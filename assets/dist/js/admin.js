@@ -9,7 +9,22 @@ return 0!==a.length&&void a.find(".checklist-repeatable").repeatable_item()}(),
 // badge steps
 function(){
 // vars
-var a=b("#steps_list"),c=".select-trigger-type",d=".true-resident-step-condition",e=".true-resident-tax-type";
+var a=b("#steps_list"),c=".select-trigger-type",d=".true-resident-step-condition",e=".true-resident-tax-type",f={},g=null;
+// listing search
+a.on("keydown","input.true-resident-autocomplete",function(a){var c=b(a.currentTarget);
+// search bar autocomplete
+return!!c.hasClass("ui-autocomplete-input")||void c.autocomplete({minLength:2,focus:function(a){
+// prevent default behaviour
+a.preventDefault()},source:function(a,c){
+// vars
+var d=a.term.trim(),e=""===d||d.length<1;if(g&&
+// stop the last request
+g.abort(),!e)
+// load from cache
+// AJAX request
+return d in f?void c(f[d]):void(g=b.post(trbs_triggers.urls.get_listings,{search_keywords:d,page:1,search_location:"",per_page:30,orderby:"featured",order:"DESC",form_data:"",trsc_autocomplete:!0,show_pagination:!1},function(a){if(a.success){var b=[];for(var e in a.data)b.push({label:a.data[e].text,value:a.data[e].id});
+// cache it for later
+f[d]=b,c(b)}}))}})}),
 // when the trigger type changes
 a.on("change trbs-change",c,function(a){var c=b(a.currentTarget);
 // look for the linked fields

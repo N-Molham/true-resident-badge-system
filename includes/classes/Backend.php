@@ -353,13 +353,23 @@ class Backend extends Component
 	public function load_scripts()
 	{
 		// main admin script
-		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [ 'jquery' ], Helpers::assets_version(), true );
+		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [
+			'jquery',
+			'jquery-ui-autocomplete',
+		], Helpers::assets_version(), true );
 
 		// load checkbox
 		add_thickbox();
 
 		// main css
 		wp_enqueue_style( 'trbs-triggers', Helpers::enqueue_path() . 'css/admin.css', null, Helpers::assets_version() );
+
+		// localization
+		wp_localize_script( 'trbs-triggers', 'trbs_triggers', [
+			'urls' => [
+				'get_listings' => \WP_Job_Manager_Ajax::get_endpoint( 'get_listings' ),
+			],
+		] );
 	}
 
 	/**

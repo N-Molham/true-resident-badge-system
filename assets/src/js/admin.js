@@ -23,7 +23,77 @@
 			var $steps_list              = $( '#steps_list' ),
 			    step_triggers_selector   = '.select-trigger-type',
 			    step_conditions_selector = '.true-resident-step-condition',
-			    taxonomy_field_selector  = '.true-resident-tax-type';
+			    taxonomy_field_selector  = '.true-resident-tax-type',
+			    autocomplete_cache       = {},
+			    last_request             = null;
+
+			// listing search
+			$steps_list.on( 'keydown', 'input.true-resident-autocomplete', function ( e ) {
+				var $this = $( e.currentTarget );
+
+				if ( $this.hasClass( 'ui-autocomplete-input' ) ) {
+					// skip if autocomplete already initialized
+					return true;
+				}
+
+				// search bar autocomplete
+				$this.autocomplete( {
+					minLength: 2,
+					focus    : function ( e ) {
+						// prevent default behaviour
+						e.preventDefault();
+					},
+					source   : function ( ui_request, ui_response ) {
+						// vars
+						var search_term  = ui_request.term.trim(),
+						    empty_search = '' === search_term || search_term.length < 1;
+
+						if ( last_request ) {
+							// stop the last request
+							last_request.abort();
+						}
+
+						if ( empty_search ) {
+							// skip
+							return;
+						}
+
+						if ( search_term in autocomplete_cache ) {
+							// load from cache
+							ui_response( autocomplete_cache[ search_term ] );
+							return;
+						}
+
+						// AJAX request
+						last_request = $.post( trbs_triggers.urls.get_listings, {
+							search_keywords  : search_term,
+							page             : 1,
+							search_location  : '',
+							per_page         : 30,
+							orderby          : 'featured',
+							order            : 'DESC',
+							form_data        : '',
+							trsc_autocomplete: true,
+							show_pagination  : false
+						}, function ( search_response ) {
+							if ( search_response.success ) {
+								var render_data = [];
+
+								for ( var i in search_response.data ) {
+									render_data.push( {
+										label: search_response.data[ i ].text,
+										value: search_response.data[ i ].id
+									} )
+								}
+
+								// cache it for later
+								autocomplete_cache[ search_term ] = render_data;
+								ui_response( render_data );
+							}
+						} );
+					}
+				} );
+			} );
 
 			// when the trigger type changes
 			$steps_list.on( 'change trbs-change', step_triggers_selector, function ( e ) {
