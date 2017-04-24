@@ -12,7 +12,7 @@
 	<div id="trbs-checklist-{{=it.step_id}}" class="trbs-checklist-container">
 		<h2 class="widget-title">{{=it.title}}</h2>
 		<ul class="trbs-checklist" data-badge="{{=it.badge_id}}" data-step="{{=it.step_id}}">
-			{{ for ( var point_index in it.challenges_checklist ) { }}
+			{{ for ( var i = 0; i < it.checklist_order.length; i++ ) { var point_index = it.checklist_order[i]; }}
 			<li class="trbs-checklist-item">
 				<label>
 					<input type="checkbox" {{? it.challenges_checklist_marks[point_index] }} checked="checked" {{?}} value="{{=point_index}}" data-badge="{{=it.badge_id}}" data-step="{{=it.step_id}}" />

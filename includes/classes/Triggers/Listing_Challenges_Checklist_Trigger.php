@@ -270,6 +270,12 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface
 
 	public function get_step_percentage( $step_id, $user_id )
 	{
+		if ( empty( $step_id ) || empty( $user_id ) )
+		{
+			// skip of any of the data is empty
+			return 0;
+		}
+
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $step_id );
 		if ( !isset( $requirements[ $this->listing_id_field_name ] ) || !isset( $requirements[ $this->checklist_field_name ] ) )
