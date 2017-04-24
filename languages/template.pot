@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.5.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-24 06:20:50+00:00\n"
+"POT-Creation-Date: 2017-04-24 06:52:54+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -69,37 +69,37 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: includes/classes/Frontend.php:181
+#: includes/classes/Frontend.php:187
 msgid "All Badges"
 msgstr ""
 
-#: includes/classes/Frontend.php:182
+#: includes/classes/Frontend.php:188
 msgid "Completed"
 msgstr ""
 
-#: includes/classes/Frontend.php:183
+#: includes/classes/Frontend.php:189
 msgid "Uncompleted"
 msgstr ""
 
-#: includes/classes/Frontend.php:323
+#: includes/classes/Frontend.php:329
 msgid "Earned <span class=\"badgeos-earning-count\">%d</span> %s<br/>"
 msgstr ""
 
-#: includes/classes/Frontend.php:323
+#: includes/classes/Frontend.php:329
 msgid "time"
 msgid_plural "times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/classes/Frontend.php:326
+#: includes/classes/Frontend.php:332
 msgid "Last earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:326
+#: includes/classes/Frontend.php:332
 msgid "Earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:355
+#: includes/classes/Frontend.php:361
 msgid "Suggestions for \"%s\""
 msgstr ""
 

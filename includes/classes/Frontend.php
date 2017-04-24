@@ -134,6 +134,12 @@ class Frontend extends Component
 			$listing_badges = array_values( array_diff( $listing_badges, $hidden_badges ) );
 		}
 
+		if ( empty( $listing_badges ) )
+		{
+			// if all badges are hidden, then force stop loading any other badges
+			$listing_badges = [ 0 ];
+		}
+
 		// load only these two badges
 		$query->set( 'post__in', $listing_badges );
 	}
