@@ -188,6 +188,7 @@ class Frontend extends Component
 				[ 'filter_name' => __( 'Completed', TRBS_DOMAIN ), 'value' => 'completed' ],
 				[ 'filter_name' => __( 'Uncompleted', TRBS_DOMAIN ), 'value' => 'not-completed' ],
 			], trbs_rewards()->get_badge_types() ),
+			'empty_message'   => '<div class="badgeos-no-results"><p>There are no badges for this Place. <a href="' . home_url( '/contact/' ) . '" target="_blank">Why not recommend one</a>?</p></div><!-- .badgeos-no-results -->',
 			'is_mobile'       => wp_is_mobile(),
 			'is_logged_in'    => is_user_logged_in(),
 			'checklist_nonce' => wp_create_nonce( 'trbs_challenges_checklist_change' ),

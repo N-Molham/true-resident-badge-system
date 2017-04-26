@@ -97,6 +97,12 @@ e.find(".badgeos-earning-date").text(f.date_earned_formatted)}}})})}(),
 // badges for current open listing
 function(){if(!1!==j){var a=i.match(/postid-\d+/i);null!==a&&(
 // loaded listing ID in the current page
-h=parseInt(a[0].replace("postid-","")),isNaN(h)||(b.ajaxSetup({data:{trbs_listing_id:h}}),b(c).ajaxSuccess(function(a,b,c){"get-achievements"===e("action",c.url)&&"badges"===e("type",c.url)&&
+h=parseInt(a[0].replace("postid-","")),isNaN(h)||(b.ajaxSetup({data:{trbs_listing_id:h},dataFilter:function(a,c){if("json"!==c)
+// return data with no change
+return a;
+// parse raw data into json object
+var d=b.parseJSON(a);
+// no badges found, change empty badges message content
+return d.data&&d.data.badge_count<1&&(d.data.message=trbs_badges.empty_message),JSON.stringify(d)}}),b(c).ajaxSuccess(function(a,b,c,d){"get-achievements"===e("action",c.url)&&"badges"===e("type",c.url)&&setTimeout(function(){
 // trigger first badge click
-setTimeout(function(){f.find(".badgeos-achievements-challenges-item:first").trigger("tr-click")},100)})))}}()}})}(window,jQuery,document);
+f.find(".badgeos-achievements-challenges-item:first").trigger("tr-click")},100)})))}}()}})}(window,jQuery,document);

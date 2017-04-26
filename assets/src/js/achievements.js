@@ -265,15 +265,30 @@
 			}
 
 			$.ajaxSetup( {
-				data: {
+				data      : {
 					trbs_listing_id: listing_id
+				},
+				dataFilter: function ( data, type ) {
+					if ( 'json' !== type ) {
+						// return data with no change
+						return data;
+					}
+
+					// parse raw data into json object
+					var response = $.parseJSON( data );
+					if ( response.data && response.data.badge_count < 1 ) {
+						// no badges found, change empty badges message content
+						response.data.message = trbs_badges.empty_message;
+					}
+
+					return JSON.stringify( response );
 				}
 			} );
 
-			$( doc ).ajaxSuccess( function ( e, response, options ) {
+			$( doc ).ajaxSuccess( function ( e, xhr, options, response ) {
 				if ( 'get-achievements' === get_query_arg( 'action', options.url ) && 'badges' === get_query_arg( 'type', options.url ) ) {
-					// trigger first badge click
 					setTimeout( function () {
+						// trigger first badge click
 						$container.find( '.badgeos-achievements-challenges-item:first' ).trigger( 'tr-click' );
 					}, 100 );
 				}
