@@ -45,8 +45,10 @@ class Frontend extends Component {
 			$this->popover_args['data-width']     = '200';
 		}
 
-		// Badges list pre-query
-		add_action( 'pre_get_posts', [ &$this, 'badgeos_query_list_all' ] );
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			// Badges list pre-query
+			add_action( 'pre_get_posts', [ &$this, 'badgeos_query_list_all' ] );
+		}
 	}
 
 	/**
@@ -63,13 +65,7 @@ class Frontend extends Component {
 			$post_type = [ $post_type ];
 		}
 
-		if ( ! in_array( 'badges', $post_type, true ) || ! defined( 'DOING_AJAX' ) || false === DOING_AJAX ) {
-			// skip un-related query
-			return;
-		}
-
-		$per_page = $query->get( 'posts_per_page' );
-		if ( $per_page > 0 || $query->get( 'trbs_listing_query' ) ) {
+		if ( $query->get( 'posts_per_page' ) > 0 || $query->get( 'trbs_listing_query' ) || ! in_array( 'badges', $post_type, true ) ) {
 			// skip un-related query
 			return;
 		}
