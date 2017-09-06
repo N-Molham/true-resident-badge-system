@@ -108,23 +108,9 @@ class Bookmarks extends Component {
 
 				// clear cache
 				delete_transient( 'bookmark_count_' . $post_id );
-				delete_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id );
+				delete_transient( $this->get_cache_key( $user_id, $post_id ) );
 			}
 		}
-
-		// delete bookmark
-		/*if ( !empty( $_GET['remove_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'remove_bookmark' ) )
-		{
-			$post_id = absint( $_GET['remove_bookmark'] );
-
-			$wpdb->delete(
-				"{$wpdb->prefix}job_manager_bookmarks",
-				[ 'post_id' => $post_id, 'user_id' => get_current_user_id() ],
-				[ '%d', '%d' ]
-			);
-
-			delete_transient( 'bookmark_count_' . $post_id );
-		}*/
 	}
 
 	/**
@@ -141,7 +127,7 @@ class Bookmarks extends Component {
 			return $this->wp_job_manager_bookmarks->bookmark_count( $post_id );
 		}
 
-		$cached = get_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id );
+		$cached = get_transient( $this->get_cache_key( $user_id, $post_id ) );
 		if ( false !== $cached ) {
 			// return the cached value
 			return $cached;
@@ -157,7 +143,7 @@ class Bookmarks extends Component {
 		$bookmark_count = absint( $wpdb->get_var( $wpdb->prepare( $count_sql, $count_params ) ) );
 
 		// caching
-		set_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id, $bookmark_count, WEEK_IN_SECONDS );
+		set_transient( $this->get_cache_key( $user_id, $post_id ), $bookmark_count, WEEK_IN_SECONDS );
 
 		return $bookmark_count;
 	}
@@ -171,5 +157,15 @@ class Bookmarks extends Component {
 		global $wpdb;
 
 		return "{$wpdb->prefix}job_manager_bookmarks";
+	}
+
+	/**
+	 * @param int $user_id
+	 * @param int $post_id
+	 *
+	 * @return string
+	 */
+	public function get_cache_key( $user_id, $post_id ) {
+		return 'user_' . $user_id . '_bookmark_count_' . $post_id;
 	}
 }
