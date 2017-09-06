@@ -8,8 +8,7 @@ use WP_Query;
  *
  * @package True_Resident\Badge_System
  */
-class Frontend extends Component
-{
+class Frontend extends Component {
 	/**
 	 * Badges popover args
 	 *
@@ -22,8 +21,7 @@ class Frontend extends Component
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
 		// BadgeOS achievement render
@@ -40,8 +38,7 @@ class Frontend extends Component
 			'data-closeable' => 'true',
 		];
 
-		if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() )
-		{
+		if ( function_exists( 'wp_is_mobile' ) && wp_is_mobile() ) {
 			// mobile request or not
 			$this->popover_args['data-trigger']   = 'click';
 			$this->popover_args['data-placement'] = 'auto-top';
@@ -59,24 +56,20 @@ class Frontend extends Component
 	 *
 	 * @return void
 	 */
-	public function badgeos_query_list_all( $query )
-	{
+	public function badgeos_query_list_all( $query ) {
 		$post_type = $query->get( 'post_type' );
-		if ( is_string( $post_type ) )
-		{
+		if ( is_string( $post_type ) ) {
 			// wrap in array
 			$post_type = [ $post_type ];
 		}
 
-		if ( !in_array( 'badges', $post_type ) || !defined( 'DOING_AJAX' ) || !DOING_AJAX )
-		{
+		if ( ! in_array( 'badges', $post_type, true ) || ! defined( 'DOING_AJAX' ) || false === DOING_AJAX ) {
 			// skip un-related query
 			return;
 		}
 
 		$per_page = $query->get( 'posts_per_page' );
-		if ( $per_page > 0 || $query->get( 'trbs_listing_query' ) )
-		{
+		if ( $per_page > 0 || $query->get( 'trbs_listing_query' ) ) {
 			// skip un-related query
 			return;
 		}
@@ -86,22 +79,18 @@ class Frontend extends Component
 
 		// looking for specific type of badges 
 		$selected_type = isset( $_REQUEST['filter'] ) ? sanitize_key( $_REQUEST['filter'] ) : null;
-		if ( null !== $selected_type && !empty( $selected_type ) )
-		{
+		if ( null !== $selected_type && ! empty( $selected_type ) ) {
 			// look for the selected type info
-			$selected_type = array_filter( trbs_rewards()->get_badge_types(), function ( $badge_type ) use ( $selected_type )
-			{
+			$selected_type = array_filter( trbs_rewards()->get_badge_types(), function ( $badge_type ) use ( $selected_type ) {
 				return $badge_type['value'] === $selected_type;
 			} );
 
-			if ( count( $selected_type ) > 0 )
-			{
+			if ( count( $selected_type ) > 0 ) {
 				$selected_type = array_shift( $selected_type );
 
 				// if found then filter badge based on it
 				$meta_query = $query->get( 'meta_query' );
-				if ( '' === $meta_query || !is_array( $meta_query ) )
-				{
+				if ( '' === $meta_query || ! is_array( $meta_query ) ) {
 					// initialize array
 					$meta_query = [];
 				}
@@ -118,8 +107,7 @@ class Frontend extends Component
 
 		// check for related badges for a specific listing
 		$listing_id = isset( $_REQUEST['trbs_listing_id'] ) ? absint( $_REQUEST['trbs_listing_id'] ) : null;
-		if ( null === $listing_id || 0 === $listing_id )
-		{
+		if ( null === $listing_id || 0 === $listing_id ) {
 			// skip invalid passed listing ID
 			return;
 		}
@@ -128,14 +116,12 @@ class Frontend extends Component
 		$listing_badges = trbs_rewards()->get_listings_badges( $listing_id );
 		$hidden_badges  = trbs_backend()->get_hidden_badges();
 
-		if ( isset( $hidden_badges[0] ) )
-		{
+		if ( isset( $hidden_badges[0] ) ) {
 			// exclude from list hidden badges from loading in the listing singular page
 			$listing_badges = array_values( array_diff( $listing_badges, $hidden_badges ) );
 		}
 
-		if ( empty( $listing_badges ) )
-		{
+		if ( empty( $listing_badges ) ) {
 			// if all badges are hidden, then force stop loading any other badges
 			$listing_badges = [ 0 ];
 		}
@@ -149,10 +135,8 @@ class Frontend extends Component
 	 *
 	 * @return void
 	 */
-	public function badgeos_achievements_list_styling()
-	{
-		if ( !wp_script_is( 'badgeos-achievements', 'enqueued' ) )
-		{
+	public function badgeos_achievements_list_styling() {
+		if ( ! wp_script_is( 'badgeos-achievements', 'enqueued' ) ) {
 			// skip un-related content
 			return;
 		}
@@ -180,7 +164,7 @@ class Frontend extends Component
 			'trbs-webui-popover',
 			'trbs-livequery',
 			'trbs-dot-engine',
-		], $assets_version, false );
+		], $assets_version );
 
 		wp_localize_script( 'trbs-achievements', 'trbs_badges', [
 			'badge_filters'   => array_merge( [
@@ -203,12 +187,11 @@ class Frontend extends Component
 	 *
 	 * @return string
 	 */
-	public function badge_render_output( $output, $badge_id )
-	{
+	public function badge_render_output( $output, $badge_id ) {
 		// vars
 		$user_id        = get_current_user_id();
 		$badge          = get_post( $badge_id );
-		$multi_earnings = -1 === (int) $badge->_badgeos_maximum_earnings;
+		$multi_earnings = - 1 === (int) $badge->_badgeos_maximum_earnings;
 		$has_challenges = false;
 		$steps_data     = [];
 
@@ -226,8 +209,7 @@ class Frontend extends Component
 		$credly_ID = '';
 
 		// If the achievement is earned and givable, override our credly classes
-		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) )
-		{
+		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) ) {
 			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
 			$credly_ID   = 'data-credlyid="' . $badge_id . '"';
 		}
@@ -237,8 +219,7 @@ class Frontend extends Component
 		$steps_count     = count( $steps );
 		$steps_completed = 0;
 
-		for ( $i = 0; $i < $steps_count; $i++ )
-		{
+		for ( $i = 0; $i < $steps_count; $i ++ ) {
 			// vars
 			$step_id         = $steps[ $i ]->ID;
 			$step_type       = trbs_rewards()->get_step_type( $step_id );
@@ -249,8 +230,7 @@ class Frontend extends Component
 				] ) ) > 0;
 			$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
 
-			if ( false === $has_challenges )
-			{
+			if ( false === $has_challenges ) {
 				// check if badge has challenges checklist step or not
 				$has_challenges = trbs_rewards()->is_checklist_step( $step_id, $step_type );
 			}
@@ -272,15 +252,12 @@ class Frontend extends Component
 		$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
 		$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
 
-		if ( $has_challenges )
-		{
+		if ( $has_challenges ) {
 			// Challenges badge mark
 			$css_classes[] = 'badgeos-achievements-challenges-item';
 
-			foreach ( $steps_data as $step_id => &$step_data )
-			{
-				if ( !isset( $step_data['challenges_checklist'] ) )
-				{
+			foreach ( $steps_data as $step_id => &$step_data ) {
+				if ( ! isset( $step_data['challenges_checklist'] ) ) {
 					// skip
 					continue;
 				}
@@ -289,8 +266,7 @@ class Frontend extends Component
 
 				// get points' marks
 				$points_indexes = array_keys( $step_data['challenges_checklist'] );
-				foreach ( $points_indexes as $point_id )
-				{
+				foreach ( $points_indexes as $point_id ) {
 					$step_data['challenges_checklist_marks'][ $point_id ] = null !== trbs_rewards()->get_checklist_mark( [
 							'badge' => $badge_id,
 							'step'  => $step_id,
@@ -319,13 +295,11 @@ class Frontend extends Component
 		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
 		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span></span>';
 
-		if ( $is_earned && isset( $last_earning->date_earned ) )
-		{
+		if ( $is_earned && isset( $last_earning->date_earned ) ) {
 			// earn date
 			$popover_content .= '<span class="badgeos-earning">';
 
-			if ( $multi_earnings && isset( $last_earning->earn_count ) )
-			{
+			if ( $multi_earnings && isset( $last_earning->earn_count ) ) {
 				// earn count
 				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> %s<br/>', TRBS_DOMAIN ), $last_earning->earn_count, _n( 'time', 'times', $last_earning->earn_count, TRBS_DOMAIN ) );
 			}
@@ -356,14 +330,12 @@ class Frontend extends Component
 	 *
 	 * @return void
 	 */
-	public function render_activities_suggestion_form( $listing, $badge )
-	{
+	public function render_activities_suggestion_form( $listing, $badge ) {
 		// title
 		echo '<h2 class="popup-title">', sprintf( __( 'Suggestions for "%s"', TRBS_DOMAIN ), $listing->post_title ), '</h2>';
 
 		$form = trbs_rewards()->get_suggestion_form();
-		if ( is_wp_error( $form ) )
-		{
+		if ( is_wp_error( $form ) ) {
 			// error loading form
 			echo $form->get_error_message();
 

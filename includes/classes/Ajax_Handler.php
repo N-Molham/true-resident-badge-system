@@ -5,8 +5,7 @@
  *
  * @package True_Resident\Badge_System
  */
-class Ajax_Handler extends Component
-{
+class Ajax_Handler extends Component {
 	/**
 	 * List of public ajax requests that without login status
 	 *
@@ -19,22 +18,18 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
 		$this->public_requests = [ 'activity_suggestion_form' ];
 
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
-		{
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			$action = filter_var( isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '', FILTER_SANITIZE_STRING );
-			if ( method_exists( $this, $action ) )
-			{
+			if ( method_exists( $this, $action ) ) {
 				// hook into action if it's method exists
 				add_action( 'wp_ajax_' . $action, [ &$this, $action ] );
 
-				if ( in_array( $action, $this->public_requests ) )
-				{
+				if ( in_array( $action, $this->public_requests, true ) ) {
 					// hook into action if it's method exists
 					add_action( 'wp_ajax_nopriv_' . $action, [ &$this, $action ] );
 				}
@@ -47,8 +42,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function activity_suggestion_form()
-	{
+	public function activity_suggestion_form() {
 		// vars
 		$listing_id = absint( filter_input( INPUT_GET, 'trbs_listing_id', FILTER_SANITIZE_NUMBER_INT ) );
 		$badge_id   = absint( filter_input( INPUT_GET, 'badge_id', FILTER_SANITIZE_NUMBER_INT ) );
@@ -57,15 +51,13 @@ class Ajax_Handler extends Component
 		echo '<div class="popup">';
 
 		$badge = trbs_rewards()->get_badge( $badge_id );
-		if ( is_wp_error( $badge ) )
-		{
+		if ( is_wp_error( $badge ) ) {
 			// invalid badge!
 			die( $badge->get_error_message() . '</div>' );
 		}
 
 		$listing = get_post( $listing_id );
-		if ( false === is_object( $listing ) || 'job_listing' !== $listing->post_type )
-		{
+		if ( false === is_object( $listing ) || 'job_listing' !== $listing->post_type ) {
 			// invalid badge!
 			die( __( 'Unknown listing!', TRBS_DOMAIN ) . '</div>' );
 		}
@@ -84,8 +76,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function challenges_checklist_update()
-	{
+	public function challenges_checklist_update() {
 		// security check
 		check_admin_referer( 'trbs_challenges_checklist_change', 'nonce' );
 
@@ -94,8 +85,7 @@ class Ajax_Handler extends Component
 			'badge'   => FILTER_VALIDATE_INT,
 			'checked' => [
 				'filter'  => FILTER_CALLBACK,
-				'options' => function ( $value )
-				{
+				'options' => function ( $value ) {
 					return 'true' === sanitize_key( $value );
 				},
 			],
@@ -103,8 +93,7 @@ class Ajax_Handler extends Component
 			'step'    => FILTER_VALIDATE_INT,
 		] );
 
-		if ( false !== array_search( null, $mark_args, true ) )
-		{
+		if ( false !== array_search( null, $mark_args, true ) ) {
 			// missing data
 			$this->error( __( 'Missing or Invalid input!', TRBS_DOMAIN ) );
 		}
@@ -113,8 +102,7 @@ class Ajax_Handler extends Component
 
 		// update mark
 		$update_point_mark = trbs_rewards()->update_checklist_mark( $mark_args );
-		if ( is_wp_error( $update_point_mark ) )
-		{
+		if ( is_wp_error( $update_point_mark ) ) {
 			// error occurred
 			$this->error( $update_point_mark->get_error_message() );
 		}
@@ -131,17 +119,14 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function trbs_get_taxonomy_terms()
-	{
-		if ( !current_user_can( 'manage_options' ) )
-		{
+	public function trbs_get_taxonomy_terms() {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			// don't have access
 			$this->error( __( 'Invalid access.', TRBS_DOMAIN ) );
 		}
 
 		$taxonomy = sanitize_key( isset( $_REQUEST['taxonomy'] ) ? $_REQUEST['taxonomy'] : '' );
-		if ( '' === $taxonomy || empty( $taxonomy ) || false === get_taxonomy( $taxonomy ) )
-		{
+		if ( '' === $taxonomy || empty( $taxonomy ) || false === get_taxonomy( $taxonomy ) ) {
 			// unknown taxonomy
 			$this->error( __( 'Invalid taxonomy.', TRBS_DOMAIN ) );
 		}
@@ -163,8 +148,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function debug( $data )
-	{
+	public function debug( $data ) {
 		// return dump
 		$this->error( $data );
 	}
@@ -178,8 +162,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function dump( $args )
-	{
+	public function dump( $args ) {
 		// return dump
 		$this->error( print_r( func_num_args() === 1 ? $args : func_get_args(), true ) );
 	}
@@ -193,8 +176,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function error( $data )
-	{
+	public function error( $data ) {
 		wp_send_json_error( $data );
 	}
 
@@ -207,8 +189,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function success( $data )
-	{
+	public function success( $data ) {
 		wp_send_json_success( $data );
 	}
 
@@ -221,8 +202,7 @@ class Ajax_Handler extends Component
 	 *
 	 * @return void
 	 */
-	public function response( $response )
-	{
+	public function response( $response ) {
 		// send response
 		wp_send_json( $response );
 	}

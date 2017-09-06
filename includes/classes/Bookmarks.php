@@ -7,8 +7,7 @@ use WP_Job_Manager_Bookmarks;
  *
  * @package True_Resident\Badge_System
  */
-class Bookmarks extends Component
-{
+class Bookmarks extends Component {
 	/**
 	 * Original Job Manager Bookmarks addon component
 	 *
@@ -21,8 +20,7 @@ class Bookmarks extends Component
 	 *
 	 * @return WP_Job_Manager_Bookmarks
 	 */
-	public function get_wp_job_manager_bookmarks()
-	{
+	public function get_wp_job_manager_bookmarks() {
 		return $this->wp_job_manager_bookmarks;
 	}
 
@@ -31,8 +29,7 @@ class Bookmarks extends Component
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
 		// WP all plugin loaded action hook
@@ -44,11 +41,9 @@ class Bookmarks extends Component
 	 *
 	 * @return void
 	 */
-	public function replace_bookmark_handler()
-	{
+	public function replace_bookmark_handler() {
 		$this->wp_job_manager_bookmarks = isset( $GLOBALS['job_manager_bookmarks'] ) ? $GLOBALS['job_manager_bookmarks'] : null;
-		if ( null === $this->wp_job_manager_bookmarks )
-		{
+		if ( null === $this->wp_job_manager_bookmarks ) {
 			// skip, Job Manager bookmarks object not found
 			return;
 		}
@@ -63,12 +58,10 @@ class Bookmarks extends Component
 	 *
 	 * @return void
 	 */
-	public function bookmark_handler()
-	{
+	public function bookmark_handler() {
 		global $wpdb;
 
-		if ( !is_user_logged_in() )
-		{
+		if ( ! is_user_logged_in() ) {
 			// skip non-login users
 			return;
 		}
@@ -77,26 +70,21 @@ class Bookmarks extends Component
 		$user_id = get_current_user_id();
 
 		// insert/update bookmark
-		if ( !empty( $_POST['submit_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'update_bookmark' ) )
-		{
+		if ( ! empty( $_POST['submit_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'update_bookmark' ) ) {
 			// vars
 			$post_id         = absint( filter_input( INPUT_POST, 'bookmark_post_id', FILTER_SANITIZE_NUMBER_INT ) );
 			$note            = wp_kses_post( stripslashes( filter_input( INPUT_POST, 'bookmark_notes', FILTER_SANITIZE_STRING ) ) );
 			$update_bookmark = 'yes' === filter_input( INPUT_POST, 'bookmark_update', FILTER_SANITIZE_STRING );
 
-			if ( $post_id && in_array( get_post_type( $post_id ), [ 'job_listing', 'resume' ] ) )
-			{
-				if ( $this->wp_job_manager_bookmarks->is_bookmarked( $post_id ) && $update_bookmark )
-				{
+			if ( $post_id && in_array( get_post_type( $post_id ), [ 'job_listing', 'resume' ], true ) ) {
+				if ( $update_bookmark && $this->wp_job_manager_bookmarks->is_bookmarked( $post_id ) ) {
 					// update existing one
 					$wpdb->update( $this->table_name(),
 						[ 'bookmark_note' => $note ],
 						[ 'post_id' => $post_id, 'user_id' => $user_id ],
 						[ '%s' ], [ '%d', '%d' ]
 					);
-				}
-				else
-				{
+				} else {
 					$bookmark_data = [
 						'user_id'       => $user_id,
 						'post_id'       => $post_id,
@@ -147,17 +135,14 @@ class Bookmarks extends Component
 	 *
 	 * @return int
 	 */
-	public function get_listing_bookmarks_count( $post_id, $user_id = 0 )
-	{
-		if ( 0 === $user_id )
-		{
+	public function get_listing_bookmarks_count( $post_id, $user_id = 0 ) {
+		if ( 0 === $user_id ) {
 			// get count
 			return $this->wp_job_manager_bookmarks->bookmark_count( $post_id );
 		}
 
 		$cached = get_transient( 'user_' . $user_id . '_bookmark_count_' . $post_id );
-		if ( false !== $cached )
-		{
+		if ( false !== $cached ) {
 			// return the cached value
 			return $cached;
 		}
@@ -182,8 +167,7 @@ class Bookmarks extends Component
 	 *
 	 * @return string
 	 */
-	public function table_name()
-	{
+	public function table_name() {
 		global $wpdb;
 
 		return "{$wpdb->prefix}job_manager_bookmarks";

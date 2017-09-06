@@ -5,8 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-interface Trigger_Interface
-{
+interface Trigger_Interface {
 	/**
 	 * Trigger label
 	 *

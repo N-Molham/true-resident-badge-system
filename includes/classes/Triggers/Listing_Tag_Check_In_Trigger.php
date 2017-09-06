@@ -5,8 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class Listing_Tag_Check_In_Trigger implements Trigger_Interface
-{
+class Listing_Tag_Check_In_Trigger implements Trigger_Interface {
 	/**
 	 * Step meta keys
 	 *
@@ -37,23 +36,19 @@ class Listing_Tag_Check_In_Trigger implements Trigger_Interface
 		'job_listing_category',
 	];
 
-	public function label()
-	{
+	public function label() {
 		return __( 'True Resident Listing Tags Check-in', TRBS_DOMAIN );
 	}
 
-	public function trigger_action()
-	{
+	public function trigger_action() {
 		return 'true_resident_listing_new_check_in';
 	}
 
-	public function activity_trigger()
-	{
+	public function activity_trigger() {
 		return 'true_resident_listing_tag_check_in';
 	}
 
-	public function activity_hook()
-	{
+	public function activity_hook() {
 		global $wpdb;
 
 		// vars
@@ -73,44 +68,37 @@ class Listing_Tag_Check_In_Trigger implements Trigger_Interface
 FROM {$wpdb->postmeta} as tax_meta
 LEFT JOIN {$wpdb->postmeta} as term_meta ON term_meta.post_id = tax_meta.post_id AND term_meta.meta_key = %s
 WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxonomy'] ) );
-		foreach ( $achievements as $achievement )
-		{
+		foreach ( $achievements as $achievement ) {
 			// achievement scope
 			$post_terms = wp_get_post_terms( $post_id, $achievement->taxonomy, [ 'fields' => 'ids' ] );
-			if ( is_wp_error( $post_terms ) )
-			{
+			if ( is_wp_error( $post_terms ) ) {
 				// skip invalid link
 				continue;
 			}
 
-			if ( in_array( $achievement->term_id, $post_terms ) )
-			{
+			if ( in_array( $achievement->term_id, $post_terms ) ) {
 				// do it
 				badgeos_maybe_award_achievement_to_user( $achievement->id, $user->ID, $this_trigger, $blog_id );
 			}
 		}
 	}
 
-	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
-	{
-		if ( 'step' !== get_post_type( $achievement_id ) )
-		{
+	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args ) {
+		if ( 'step' !== get_post_type( $achievement_id ) ) {
 			// If we're not dealing with a step, bail here
 			return $return;
 		}
 
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $achievement_id );
-		if ( !isset( $requirements[ $this->field_names['term'] ], $requirements[ $this->field_names['taxonomy'] ] ) )
-		{
+		if ( ! isset( $requirements[ $this->field_names['term'] ], $requirements[ $this->field_names['taxonomy'] ] ) ) {
 			// skip un-related type
 			return $return;
 		}
 
 		// execute sql for the current count
 		$check_in_count = $this->get_check_ins_count( $user_id, $requirements[ $this->field_names['term'] ], $requirements[ $this->field_names['taxonomy'] ] );
-		if ( $check_in_count >= $requirements['count'] )
-		{
+		if ( $check_in_count >= $requirements['count'] ) {
 			// target reached
 			$return = true;
 		}
@@ -118,41 +106,33 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		return $return;
 	}
 
-	public function get_data( $step_id, $trigger_type = '' )
-	{
-		if ( '' === $trigger_type || empty( $trigger_type ) )
-		{
+	public function get_data( $step_id, $trigger_type = '' ) {
+		if ( '' === $trigger_type || empty( $trigger_type ) ) {
 			// if step trigger type not passed
 			$trigger_type = trbs_rewards()->get_step_type( $step_id );
 		}
 
-		if ( $this->activity_trigger() !== $trigger_type )
-		{
+		if ( $this->activity_trigger() !== $trigger_type ) {
 			// not the same trigger type
 			return [];
 		}
 
 		$data = [];
-		foreach ( $this->field_names as $field_key => $field_name )
-		{
+		foreach ( $this->field_names as $field_key => $field_name ) {
 			$data[ $field_name ] = get_post_meta( $step_id, $this->meta_keys[ $field_key ], true );
 		}
 
 		return $data;
 	}
 
-	public function save_data( $step_id, $step_data, $trigger_name = '' )
-	{
-		if ( $this->activity_trigger() !== $trigger_name || $trigger_name !== $step_data['trigger_type'] )
-		{
+	public function save_data( $step_id, $step_data, $trigger_name = '' ) {
+		if ( $trigger_name !== $step_data['trigger_type'] || $this->activity_trigger() !== $trigger_name ) {
 			// skip non-related triggers
 			return;
 		}
 
-		foreach ( $this->field_names as $field_key => $field_name )
-		{
-			if ( !isset( $step_data[ $field_name ] ) )
-			{
+		foreach ( $this->field_names as $field_key => $field_name ) {
+			if ( ! isset( $step_data[ $field_name ] ) ) {
 				// field value wasn't set
 				continue;
 			}
@@ -162,8 +142,7 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		}
 	}
 
-	public function user_interface( $step_id, $badge_id )
-	{
+	public function user_interface( $step_id, $badge_id ) {
 		// vars
 		$taxonomies        = $this->get_taxonomies();
 		$step_data         = $this->get_data( $step_id, $this->activity_trigger() );
@@ -172,8 +151,7 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		// taxonomies start
 		echo '<select name="', $this->field_names['taxonomy'], '" class="true-resident-step-condition true-resident-tax-type" data-toggle="', $this->activity_trigger(), '">';
 		echo '<option value="">', __( '-- Tag Type --', TRBS_DOMAIN ), '</option>';
-		foreach ( $taxonomies as $taxonomy_name => $taxonomy_label )
-		{
+		foreach ( $taxonomies as $taxonomy_name => $taxonomy_label ) {
 			echo '<option value="', $taxonomy_name, '"', selected( $selected_taxonomy, $taxonomy_name, false ), '>', $taxonomy_label, '</option>';
 		}
 		// taxonomies end
@@ -186,38 +164,31 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		echo '</select>';
 	}
 
-	public function get_taxonomies()
-	{
+	public function get_taxonomies() {
 		$taxonomies = get_object_taxonomies( 'job_listing', 'object' );
-		foreach ( $this->exclude_taxonomy as $exclude_tax )
-		{
-			if ( isset( $taxonomies[ $exclude_tax ] ) )
-			{
+		foreach ( $this->exclude_taxonomy as $exclude_tax ) {
+			if ( isset( $taxonomies[ $exclude_tax ] ) ) {
 				// remove excluded taxonomy
 				unset( $taxonomies[ $exclude_tax ] );
 			}
 		}
 
-		return array_map( function ( $tax_obj )
-		{
+		return array_map( function ( $tax_obj ) {
 			// get taxonomy name
 			return get_taxonomy_labels( $tax_obj )->name;
 		}, $taxonomies );
 	}
 
-	public function get_step_percentage( $step_id, $user_id )
-	{
+	public function get_step_percentage( $step_id, $user_id ) {
 		// vars
 		$step_requirements = badgeos_get_step_requirements( $step_id );
-		if ( !isset( $step_requirements[ $this->field_names['term'] ], $step_requirements[ $this->field_names['taxonomy'] ] ) )
-		{
+		if ( ! isset( $step_requirements[ $this->field_names['term'] ], $step_requirements[ $this->field_names['taxonomy'] ] ) ) {
 			// un-filled data
 			return 0;
 		}
 
 		$check_ins_count = $this->get_check_ins_count( $user_id, $step_requirements[ $this->field_names['term'] ], $step_requirements[ $this->field_names['taxonomy'] ] );
-		if ( 0 === $check_ins_count )
-		{
+		if ( 0 === $check_ins_count ) {
 			// non-done yet
 			return 0;
 		}
@@ -234,8 +205,7 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 	 *
 	 * @return int
 	 */
-	public function get_check_ins_count( $user_id, $term_id, $taxonomy )
-	{
+	public function get_check_ins_count( $user_id, $term_id, $taxonomy ) {
 		global $wpdb;
 
 		// vars
@@ -253,12 +223,11 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		return absint( $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$table_name} WHERE user_id = %d AND post_id IN ({$term_posts})", [ $user_id ] ) ) );
 	}
 
-	public function related_to_listing( $listing_id, $step_id )
-	{
+	public function related_to_listing( $listing_id, $step_id ) {
 		// get step requirements
 		$requirements  = badgeos_get_step_requirements( $step_id );
 		$listing_terms = wp_get_post_terms( $listing_id, $requirements[ $this->field_names['taxonomy'] ], [ 'fields' => 'ids' ] );
 
-		return is_array( $listing_terms ) && in_array( $requirements[ $this->field_names['term'] ], $listing_terms );
+		return is_array( $listing_terms ) && in_array( $requirements[ $this->field_names['term'] ], $listing_terms, true );
 	}
 }

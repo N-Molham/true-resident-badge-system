@@ -5,8 +5,7 @@
  *
  * @package True_Resident\Badge_System
  */
-class Backend extends Component
-{
+class Backend extends Component {
 	/**
 	 * BadgeOS meta box field name prefix
 	 *
@@ -33,8 +32,7 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		parent::init();
 
 		// vars
@@ -79,32 +77,26 @@ class Backend extends Component
 	 *
 	 * @return string
 	 */
-	public function append_listing_badge_links_to_entry_value()
-	{
+	public function append_listing_badge_links_to_entry_value() {
 		$args = func_get_args();
 
 		// if entry page
 		$field = $args[1];
-		if ( false === is_object( $field ) )
-		{
+		if ( false === is_object( $field ) ) {
 			$is_entry_page = false;
 
 			// if entries list page
 			$field = \GFFormsModel::get_field( \GFAPI::get_form( $args[0] ), $args[1] );
-		}
-		else
-		{
+		} else {
 			$is_entry_page = true;
 		}
 
-		if ( 'hidden' !== $field->get_input_type() )
-		{
+		if ( 'hidden' !== $field->get_input_type() ) {
 			// not a hidden field
 			return $is_entry_page ? $args[0] : '';
 		}
 
-		if ( !in_array( $field->label, [ 'trbs_listing_id', 'trbs_badge_id' ] ) )
-		{
+		if ( ! in_array( $field->label, [ 'trbs_listing_id', 'trbs_badge_id' ], true ) ) {
 			// unrelated fields
 			return $is_entry_page ? $args[0] : '';
 		}
@@ -114,12 +106,10 @@ class Backend extends Component
 		edit_post_link( __( 'Edit', TRBS_DOMAIN ), '', '', absint( $args[2] ) );
 		$edit_link = '&nbsp;' . ob_get_clean();
 
-		if ( $is_entry_page )
-		{
+		if ( $is_entry_page ) {
 			preg_match_all( '/<td.+ class="entry-view-field-value(.+)?">(.+)<\/td>/', $args[0], $matches );
 
-			if ( isset( $matches[0], $matches[2] ) && !empty( $matches[0] ) && !empty( $matches[2] ) )
-			{
+			if ( ! empty( $matches[0] ) && ! empty( $matches[2] ) ) {
 				// modify value
 				return str_replace( $matches[2][0], $matches[2][0] . $edit_link, $args[0] );
 			}
@@ -137,10 +127,8 @@ class Backend extends Component
 	 *
 	 * @return array
 	 */
-	public function activities_suggestion_form_setting( $settings )
-	{
-		if ( false === class_exists( 'RGFormsModel' ) )
-		{
+	public function activities_suggestion_form_setting( $settings ) {
+		if ( false === class_exists( 'RGFormsModel' ) ) {
 			// Gravity Form is not installed/active
 			return $settings;
 		}
@@ -151,14 +139,13 @@ class Backend extends Component
 		], \GFAPI::get_forms() );
 		$setting_options = [];
 
-		foreach ( $active_forms as $form )
-		{
+		foreach ( $active_forms as $form ) {
 			// build options array
 			$setting_options[ $form['id'] ] = $form['title'];
 		}
 
 		// clear data
-		unset( $form, $active_forms );
+		unset( $active_forms );
 
 		$settings['job_listings'][1][] = [
 			'name'    => trbs_rewards()->get_suggestion_form_option_name(),
@@ -177,13 +164,11 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function manually_trigger_command()
-	{
+	public function manually_trigger_command() {
 		// target command
 		$cmd_name = sanitize_key( filter_input( INPUT_GET, 'command_name', FILTER_SANITIZE_STRING ) );
 
-		if ( method_exists( $this, $cmd_name ) )
-		{
+		if ( method_exists( $this, $cmd_name ) ) {
 			// run command if found
 			call_user_func( [ &$this, $cmd_name ] );
 		}
@@ -194,8 +179,7 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function update_db_tables()
-	{
+	public function update_db_tables() {
 		// load db API
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		global $wpdb;
@@ -226,8 +210,7 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function store_hidden_badges_as_option( $badge_id )
-	{
+	public function store_hidden_badges_as_option( $badge_id ) {
 		// hidden badges
 		$hidden_badges = $this->get_hidden_badges();
 
@@ -235,18 +218,13 @@ class Backend extends Component
 		$is_hidden     = 'on' === get_post_meta( $badge_id, $this->badge_field_prefix . 'hide_from_listing', true );
 		$in_list_index = array_search( $badge_id, $hidden_badges, true );
 
-		if ( $is_hidden )
-		{
-			if ( false === $in_list_index )
-			{
+		if ( $is_hidden ) {
+			if ( false === $in_list_index ) {
 				// add to list
 				$hidden_badges[] = $badge_id;
 			}
-		}
-		else
-		{
-			if ( false !== $in_list_index )
-			{
+		} else {
+			if ( false !== $in_list_index ) {
 				// remove from the list
 				unset( $hidden_badges[ $in_list_index ] );
 			}
@@ -265,10 +243,8 @@ class Backend extends Component
 	 *
 	 * @return array
 	 */
-	public function append_hide_from_listing_page_field( $fields, $prefix, $achievement_types )
-	{
-		if ( !in_array( 'badges', $achievement_types ) )
-		{
+	public function append_hide_from_listing_page_field( $fields, $prefix, $achievement_types ) {
+		if ( ! in_array( 'badges', $achievement_types, true ) ) {
 			// skip if badge not in the achievements list
 			return $fields;
 		}
@@ -296,10 +272,8 @@ class Backend extends Component
 	 *
 	 * @return array
 	 */
-	public function append_badge_type_field( $fields, $prefix, $achievement_types )
-	{
-		if ( !in_array( 'badges', $achievement_types ) )
-		{
+	public function append_badge_type_field( $fields, $prefix, $achievement_types ) {
+		if ( ! in_array( 'badges', $achievement_types, true ) ) {
 			// skip if badge not in the achievements list
 			return $fields;
 		}
@@ -333,13 +307,11 @@ class Backend extends Component
 	 *
 	 * @return string
 	 */
-	public function badgeos_save_step_triggers_options( $title, $step_id, $step_data )
-	{
+	public function badgeos_save_step_triggers_options( $title, $step_id, $step_data ) {
 		$triggers = trbs_rewards()->get_triggers();
-		foreach ( $triggers as $trigger_name => $trigger )
-		{
+		foreach ( $triggers as $trigger_name => $trigger ) {
 			// trigger additional UI
-			call_user_func( [ $trigger, 'save_data' ], $step_id, $step_data, $trigger_name );
+			$trigger->save_data( $step_id, $step_data, $trigger_name );
 		}
 
 		return $title;
@@ -350,8 +322,7 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function load_scripts()
-	{
+	public function load_scripts() {
 		// main admin script
 		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [
 			'jquery',
@@ -377,11 +348,9 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function badgeos_rewards_triggers_ui()
-	{
+	public function badgeos_rewards_triggers_ui() {
 		$triggers = trbs_rewards()->get_triggers();
-		foreach ( $triggers as $trigger_name => $trigger )
-		{
+		foreach ( $triggers as $trigger_name => $trigger ) {
 			// trigger additional UI
 			add_action( 'badgeos_steps_ui_html_after_trigger_type', [ $trigger, 'user_interface' ], 10, 2 );
 		}
@@ -392,8 +361,7 @@ class Backend extends Component
 	 *
 	 * @return array
 	 */
-	public function get_hidden_badges()
-	{
+	public function get_hidden_badges() {
 		return array_values( get_option( $this->hidden_badges_option, [] ) );
 	}
 
@@ -407,8 +375,7 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function add_notice_message( $body, $priority = 10, $is_error = false, $is_dismissible = false )
-	{
+	public function add_notice_message( $body, $priority = 10, $is_error = false, $is_dismissible = false ) {
 		$this->dashboard_messages[] = compact( 'body', 'priority', 'is_error', 'is_dismissible' );
 	}
 
@@ -417,16 +384,13 @@ class Backend extends Component
 	 *
 	 * @return void
 	 */
-	public function display_notice_messages()
-	{
+	public function display_notice_messages() {
 		// sort by higher priority
-		usort( $this->dashboard_messages, function ( $a, $b )
-		{
+		usort( $this->dashboard_messages, function ( $a, $b ) {
 			return $a['priority'] - $b['priority'];
 		} );
 
-		foreach ( $this->dashboard_messages as $message )
-		{
+		foreach ( $this->dashboard_messages as $message ) {
 			// message css classes
 			$css_classes   = [ 'notice' ];
 			$css_classes[] = $message['is_error'] ? 'error' : 'updated';

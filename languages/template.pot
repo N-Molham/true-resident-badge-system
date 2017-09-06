@@ -2,10 +2,10 @@
 # This file is distributed under the GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html.
 msgid ""
 msgstr ""
-"Project-Id-Version: True Resident BadgeOS Customization 1.5.0\n"
+"Project-Id-Version: True Resident BadgeOS Customization 1.5.3\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2017-04-26 03:56:54+00:00\n"
+"POT-Creation-Date: 2017-09-06 11:18:43+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -25,285 +25,285 @@ msgstr ""
 "X-Poedit-Bookmarks: \n"
 "X-Textdomain-Support: yes\n"
 
-#: includes/classes/Ajax_Handler.php:70
+#: includes/classes/Ajax_Handler.php:62
 msgid "Unknown listing!"
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:109
+#: includes/classes/Ajax_Handler.php:98
 msgid "Missing or Invalid input!"
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:139
+#: includes/classes/Ajax_Handler.php:125
 msgid "Invalid access."
 msgstr ""
 
-#: includes/classes/Ajax_Handler.php:146
+#: includes/classes/Ajax_Handler.php:131
 msgid "Invalid taxonomy."
 msgstr ""
 
-#: includes/classes/Backend.php:114
+#: includes/classes/Backend.php:106
 msgid "Edit"
 msgstr ""
 
-#: includes/classes/Backend.php:150
+#: includes/classes/Backend.php:138
 msgid "Please select a form"
 msgstr ""
 
-#: includes/classes/Backend.php:166
+#: includes/classes/Backend.php:153
 msgid "Activities Suggestion Form"
 msgstr ""
 
-#: includes/classes/Backend.php:281
+#: includes/classes/Backend.php:257
 msgid "Hide Achievement From POI Page"
 msgstr ""
 
-#: includes/classes/Backend.php:282
+#: includes/classes/Backend.php:258
 msgid "Yes, will hide this achievement from loading in the POI singular page."
 msgstr ""
 
-#: includes/classes/Backend.php:312
+#: includes/classes/Backend.php:286
 msgid "Badge Type"
 msgstr ""
 
-#: includes/classes/Backend.php:318
+#: includes/classes/Backend.php:292
 msgid "None"
 msgstr ""
 
-#: includes/classes/Frontend.php:187
+#: includes/classes/Frontend.php:171
 msgid "All Badges"
 msgstr ""
 
-#: includes/classes/Frontend.php:188
+#: includes/classes/Frontend.php:172
 msgid "Completed"
 msgstr ""
 
-#: includes/classes/Frontend.php:189
+#: includes/classes/Frontend.php:173
 msgid "Uncompleted"
 msgstr ""
 
-#: includes/classes/Frontend.php:330
+#: includes/classes/Frontend.php:304
 msgid "Earned <span class=\"badgeos-earning-count\">%d</span> %s<br/>"
 msgstr ""
 
-#: includes/classes/Frontend.php:330
+#: includes/classes/Frontend.php:304
 msgid "time"
 msgid_plural "times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/classes/Frontend.php:333
+#: includes/classes/Frontend.php:307
 msgid "Last earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:333
+#: includes/classes/Frontend.php:307
 msgid "Earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:362
+#: includes/classes/Frontend.php:335
 msgid "Suggestions for \"%s\""
 msgstr ""
 
-#: includes/classes/Rewards.php:499
+#: includes/classes/Rewards.php:455
 msgid "Error adding checklist mark!"
 msgstr ""
 
-#: includes/classes/Rewards.php:520
+#: includes/classes/Rewards.php:474
 msgid "Error removing checklist mark!"
 msgstr ""
 
-#: includes/classes/Rewards.php:558
+#: includes/classes/Rewards.php:509
 msgid "Badge has not steps!"
 msgstr ""
 
-#: includes/classes/Rewards.php:575
+#: includes/classes/Rewards.php:523
 msgid "Badge step not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:585
+#: includes/classes/Rewards.php:532
 msgid "Checklist point not foudn!"
 msgstr ""
 
-#: includes/classes/Rewards.php:737
+#: includes/classes/Rewards.php:672
 msgid "Badge not found!"
 msgstr ""
 
-#: includes/classes/Rewards.php:743
+#: includes/classes/Rewards.php:677
 msgid "Invalid badge!"
 msgstr ""
 
-#: includes/classes/Rewards.php:758
+#: includes/classes/Rewards.php:691
 msgid "Explorer"
 msgstr ""
 
-#: includes/classes/Rewards.php:760
+#: includes/classes/Rewards.php:693
 msgid "Explorer Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:763
+#: includes/classes/Rewards.php:696
 msgid "Challenge"
 msgstr ""
 
-#: includes/classes/Rewards.php:765
+#: includes/classes/Rewards.php:698
 msgid "Challenge Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:768
+#: includes/classes/Rewards.php:701
 msgid "Milestone"
 msgstr ""
 
-#: includes/classes/Rewards.php:770
+#: includes/classes/Rewards.php:703
 msgid "Milestone Badges"
 msgstr ""
 
-#: includes/classes/Rewards.php:785
+#: includes/classes/Rewards.php:716
 msgid "Gravity Forms not installed or active!"
 msgstr ""
 
-#: includes/classes/Rewards.php:792
+#: includes/classes/Rewards.php:722
 msgid "Suggestion form not set!"
 msgstr ""
 
-#: includes/classes/Rewards.php:799
+#: includes/classes/Rewards.php:728
 msgid "Invalid suggestion form!"
 msgstr ""
 
-#: includes/classes/Rewards.php:825
+#: includes/classes/Rewards.php:750
 msgid ""
 "Missing required fields in the suggestion form! <code>listing_id</code> or "
 "<code>badge_id</code>"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:33
+#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:31
 msgid "True Resident Listing Category Check-in"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:62
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:143
-#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:69
-#: includes/classes/Triggers/Listings_Reviews_Trigger.php:69
-#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:60
-#: includes/classes/Triggers/User_Register_Trigger.php:52
+#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:57
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:132
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:64
+#: includes/classes/Triggers/Listings_Reviews_Trigger.php:61
+#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:55
+#: includes/classes/Triggers/User_Register_Trigger.php:47
 msgid "%1$s triggered %2$s (%3$dx)"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:154
+#: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:133
 msgid "Any Category"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:117
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:109
 msgid "True Resident Listing Challenges Checklist"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:247
-#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:149
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:223
+#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:132
 msgid "Listing ID"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:267
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:243
 msgid "Manage Checklist"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:42
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:40
 msgid "True Resident Listing Tags Check-in"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:174
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:153
 msgid "-- Tag Type --"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:184
+#: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:162
 msgid "-- Select A Tag --"
 msgstr ""
 
-#: includes/classes/Triggers/Listings_Reviews_Trigger.php:19
+#: includes/classes/Triggers/Listings_Reviews_Trigger.php:17
 msgid "True Resident Review a Listing"
 msgstr ""
 
-#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:33
+#: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:31
 msgid "True Resident Specific Listing Check-in"
 msgstr ""
 
-#: includes/classes/Triggers/User_Register_Trigger.php:26
+#: includes/classes/Triggers/User_Register_Trigger.php:24
 msgid "True Resident User Register"
 msgstr ""
 
-#: includes/classes/Triggers/User_Register_Trigger.php:141
+#: includes/classes/Triggers/User_Register_Trigger.php:123
 msgid "Any"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:30
+#: includes/classes/Widgets/Listify_Listing_Badges.php:28
 msgid ""
 "Display the current opened listing's related badges which can be earned by "
 "unlocking that listing."
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:33
+#: includes/classes/Widgets/Listify_Listing_Badges.php:31
 msgid "True Resident Listings Badges"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:80
+#: includes/classes/Widgets/Listify_Listing_Badges.php:75
 msgid "Widget Title"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:85
+#: includes/classes/Widgets/Listify_Listing_Badges.php:80
 msgid "Order By"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:90
+#: includes/classes/Widgets/Listify_Listing_Badges.php:85
 msgid "Order"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:93
+#: includes/classes/Widgets/Listify_Listing_Badges.php:88
 msgid "Ascending"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:94
+#: includes/classes/Widgets/Listify_Listing_Badges.php:89
 msgid "Descending"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:98
+#: includes/classes/Widgets/Listify_Listing_Badges.php:93
 msgid "Limit"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:132
+#: includes/classes/Widgets/Listify_Listing_Badges.php:125
 msgid "Menu Order"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:133
+#: includes/classes/Widgets/Listify_Listing_Badges.php:126
 msgid "ID"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:134
+#: includes/classes/Widgets/Listify_Listing_Badges.php:127
 msgid "Title"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:135
+#: includes/classes/Widgets/Listify_Listing_Badges.php:128
 msgid "Published Date"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:136
+#: includes/classes/Widgets/Listify_Listing_Badges.php:129
 msgid "Last Modified Date"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:137
+#: includes/classes/Widgets/Listify_Listing_Badges.php:130
 msgid "Author"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:138
+#: includes/classes/Widgets/Listify_Listing_Badges.php:131
 msgid "Random"
 msgstr ""
 
-#: includes/classes/Widgets/Listify_Listing_Badges.php:150
+#: includes/classes/Widgets/Listify_Listing_Badges.php:142
 msgid "Listing Badges"
 msgstr ""
 
-#: true-resident-badge-system.php:209
+#: true-resident-badge-system.php:197
 msgid ""
 "<b>[True Resident BadgeOS Customization]</b> Missing dependency plugins: "
 "<b>%s</b>"
 msgstr ""
 
-#: true-resident-badge-system.php:239
+#: true-resident-badge-system.php:224
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
 msgstr ""
 

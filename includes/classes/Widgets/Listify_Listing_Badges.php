@@ -16,15 +16,13 @@ use WP_Widget;
  *
  * @package True_Resident\Badge_System\Widgets
  */
-class Listify_Listing_Badges extends WP_Widget
-{
+class Listify_Listing_Badges extends WP_Widget {
 	/**
 	 * Sets up the widgets name etc
 	 *
 	 * @return Listify_Listing_Badges
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 		$widget_ops = [
 			'classname'   => 'trbs_listing_rewards',
 			'description' => __( 'Display the current opened listing\'s related badges which can be earned by unlocking that listing.', TRBS_DOMAIN ),
@@ -41,15 +39,13 @@ class Listify_Listing_Badges extends WP_Widget
 	 *
 	 * @return void
 	 */
-	public function widget( $args, $instance )
-	{
+	public function widget( $args, $instance ) {
 		$instance = wp_parse_args( $instance, $this->default_options() );
 
 		// widget before layout
 		echo $args['before_widget'];
 
-		if ( '' !== $instance['title'] || !empty( $instance['title'] ) )
-		{
+		if ( '' !== $instance['title'] || ! empty( $instance['title'] ) ) {
 			// Only show the title if there actually is a title
 			echo $args['before_title'], esc_attr( $instance['title'] ), $args['after_title'];
 		}
@@ -73,8 +69,7 @@ class Listify_Listing_Badges extends WP_Widget
 	 *
 	 * @return void
 	 */
-	public function form( $instance )
-	{
+	public function form( $instance ) {
 		$instance = wp_parse_args( $instance, $this->default_options() );
 
 		echo '<p><label for="', esc_attr( $this->get_field_id( 'title' ) ), '">', __( 'Widget Title', TRBS_DOMAIN ), ',</label>',
@@ -109,12 +104,11 @@ class Listify_Listing_Badges extends WP_Widget
 	 *
 	 * @return array
 	 */
-	public function update( $new_instance, $old_instance )
-	{
+	public function update( $new_instance, $old_instance ) {
 		$order_bys = array_values( $this->get_order_by_options() );
 
 		$old_instance['title']    = sanitize_text_field( $new_instance['title'] );
-		$old_instance['order_by'] = in_array( $new_instance['order_by'], $order_bys ) ? $new_instance['order_by'] : array_shift( $order_bys );
+		$old_instance['order_by'] = in_array( $new_instance['order_by'], $order_bys, true ) ? $new_instance['order_by'] : array_shift( $order_bys );
 		$old_instance['order']    = 'ASC' === $new_instance['order'] || 'DESC' === $new_instance['order'] ? $new_instance['order'] : 'ASC';
 		$old_instance['limit']    = absint( $new_instance['limit'] );
 
@@ -126,8 +120,7 @@ class Listify_Listing_Badges extends WP_Widget
 	 *
 	 * @return array
 	 */
-	public function get_order_by_options()
-	{
+	public function get_order_by_options() {
 		return [
 			'menu_order' => __( 'Menu Order', TRBS_DOMAIN ),
 			'ID'         => __( 'ID', TRBS_DOMAIN ),
@@ -144,8 +137,7 @@ class Listify_Listing_Badges extends WP_Widget
 	 *
 	 * @return array
 	 */
-	public function default_options()
-	{
+	public function default_options() {
 		return [
 			'title'    => __( 'Listing Badges', TRBS_DOMAIN ),
 			'order_by' => 'menu_order',

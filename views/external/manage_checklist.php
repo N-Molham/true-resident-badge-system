@@ -14,8 +14,7 @@ session_start();
 // WordPress path
 $wp_path = isset( $_SESSION['trbs_wp_path'] ) ? $_SESSION['trbs_wp_path'] : null;
 
-if ( null === $wp_path )
-{
+if ( null === $wp_path ) {
 	die( 'Unknown Request!' );
 }
 
@@ -29,8 +28,7 @@ require rtrim( $wp_path, '/\\' ) . '/wp-load.php';
 $step_id  = absint( filter_input( INPUT_GET, 'step_id', FILTER_SANITIZE_NUMBER_INT ) );
 $badge_id = absint( filter_input( INPUT_GET, 'badge_id', FILTER_SANITIZE_NUMBER_INT ) );
 
-if ( !current_user_can( 'manage_options' ) || !wp_verify_nonce( filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING ), 'trbs_manage_challenges_checklist_' . $step_id ) )
-{
+if ( ! current_user_can( 'manage_options' ) || ! wp_verify_nonce( filter_input( INPUT_GET, 'nonce', FILTER_SANITIZE_STRING ), 'trbs_manage_challenges_checklist_' . $step_id ) ) {
 	// permission error
 	wp_die( 'Permission denied!' );
 }

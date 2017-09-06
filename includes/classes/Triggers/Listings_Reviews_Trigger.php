@@ -5,8 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class Listings_Reviews_Trigger implements Trigger_Interface
-{
+class Listings_Reviews_Trigger implements Trigger_Interface {
 	/**
 	 * Target listing post type
 	 *
@@ -14,13 +13,11 @@ class Listings_Reviews_Trigger implements Trigger_Interface
 	 */
 	public $listing_post_type = 'job_listing';
 
-	public function label()
-	{
+	public function label() {
 		return __( 'True Resident Review a Listing', TRBS_DOMAIN );
 	}
 
-	public function trigger_action()
-	{
+	public function trigger_action() {
 		// can happen on multiple actions
 		return [
 			'wp_insert_comment',
@@ -28,30 +25,25 @@ class Listings_Reviews_Trigger implements Trigger_Interface
 		];
 	}
 
-	public function activity_trigger()
-	{
+	public function activity_trigger() {
 		return 'true_resident_listing_review';
 	}
 
-	public function activity_hook()
-	{
+	public function activity_hook() {
 		global $wpdb;
 
 		$comment_data = func_get_arg( 1 );
-		if ( is_object( $comment_data ) )
-		{
+		if ( is_object( $comment_data ) ) {
 			// swap with assoc array
 			$comment_data = get_object_vars( $comment_data );
 		}
 
-		if ( 1 !== absint( $comment_data['comment_approved'] ) )
-		{
+		if ( 1 !== absint( $comment_data['comment_approved'] ) ) {
 			// skip un-approved reviews
 			return;
 		}
 
-		if ( $this->listing_post_type !== get_post_type( $comment_data['comment_post_ID'] ) )
-		{
+		if ( $this->listing_post_type !== get_post_type( $comment_data['comment_post_ID'] ) ) {
 			// skip un-related posts
 			return;
 		}
@@ -70,23 +62,19 @@ class Listings_Reviews_Trigger implements Trigger_Interface
 
 		// load achievements
 		$achievements_ids = $wpdb->get_col( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %s", '_badgeos_trigger_type', $this_trigger ) );
-		foreach ( $achievements_ids as $achievement_id )
-		{
+		foreach ( $achievements_ids as $achievement_id ) {
 			// user reward if match
 			badgeos_maybe_award_achievement_to_user( $achievement_id, $user->ID, $this_trigger, $blog_id );
 		}
 	}
 
-	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
-	{
-		if ( 'step' !== get_post_type( $achievement_id ) )
-		{
+	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args ) {
+		if ( 'step' !== get_post_type( $achievement_id ) ) {
 			// If we're not dealing with a step, bail here
 			return $return;
 		}
 
-		if ( $this->activity_trigger() !== $this_trigger )
-		{
+		if ( $this->activity_trigger() !== $this_trigger ) {
 			// skip un-related trigger
 			return $return;
 		}
@@ -101,8 +89,7 @@ class Listings_Reviews_Trigger implements Trigger_Interface
 			'status'    => 'approve',
 			'count'     => true,
 		] );
-		if ( $comments_count >= $requirements['count'] )
-		{
+		if ( $comments_count >= $requirements['count'] ) {
 			// target reached
 			$return = true;
 		}
@@ -110,24 +97,20 @@ class Listings_Reviews_Trigger implements Trigger_Interface
 		return $return;
 	}
 
-	public function get_data( $step_id, $trigger_type = '' )
-	{
+	public function get_data( $step_id, $trigger_type = '' ) {
 		// not needed
-		return [ ];
+		return [];
 	}
 
-	public function save_data( $step_id, $step_data, $trigger_name = '' )
-	{
+	public function save_data( $step_id, $step_data, $trigger_name = '' ) {
 		// not needed
 	}
 
-	public function user_interface( $step_id, $badge_id )
-	{
+	public function user_interface( $step_id, $badge_id ) {
 		// no additional information needed
 	}
 
-	public function get_step_percentage( $step_id, $user_id )
-	{
+	public function get_step_percentage( $step_id, $user_id ) {
 		// step requirements
 		$step_requirements = badgeos_get_step_requirements( $step_id );
 
@@ -141,8 +124,7 @@ class Listings_Reviews_Trigger implements Trigger_Interface
 		return $comments_count ? round( ( $comments_count / $step_requirements['count'] ) * 100 ) : 0;
 	}
 
-	public function related_to_listing( $listing_id, $step_id )
-	{
+	public function related_to_listing( $listing_id, $step_id ) {
 		return true;
 	}
 }

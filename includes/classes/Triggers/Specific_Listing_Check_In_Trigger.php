@@ -5,8 +5,7 @@
  *
  * @package True_Resident\Badge_System\Triggers
  */
-class Specific_Listing_Check_In_Trigger implements Trigger_Interface
-{
+class Specific_Listing_Check_In_Trigger implements Trigger_Interface {
 	/**
 	 * Step meta key for listing ID
 	 *
@@ -28,23 +27,19 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 	 */
 	public $listing_id_field_name = 'check_in_listing_id';
 
-	public function label()
-	{
+	public function label() {
 		return __( 'True Resident Specific Listing Check-in', TRBS_DOMAIN );
 	}
 
-	public function trigger_action()
-	{
+	public function trigger_action() {
 		return 'true_resident_listing_new_check_in';
 	}
 
-	public function activity_trigger()
-	{
+	public function activity_trigger() {
 		return 'true_resident_specific_listing_check_in';
 	}
 
-	public function activity_hook()
-	{
+	public function activity_hook() {
 		global $wpdb;
 
 		// vars
@@ -61,27 +56,23 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 
 		// load achievements
 		$achievements_ids = $wpdb->get_col( $wpdb->prepare( "SELECT post_id as id FROM $wpdb->postmeta WHERE meta_key = %s AND meta_value = %d", $this->meta_key, $post_id ) );
-		foreach ( $achievements_ids as $achievement_id )
-		{
+		foreach ( $achievements_ids as $achievement_id ) {
 			// user reward if match
 			badgeos_maybe_award_achievement_to_user( $achievement_id, $user->ID, $this_trigger, $blog_id );
 		}
 	}
 
-	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args )
-	{
+	public function user_deserves_achievement_hook( $return, $user_id, $achievement_id, $this_trigger, $site_id, $args ) {
 		global $wpdb;
 
 		// If we're not dealing with a step, bail here
-		if ( 'step' !== get_post_type( $achievement_id ) )
-		{
+		if ( 'step' !== get_post_type( $achievement_id ) ) {
 			return $return;
 		}
 
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $achievement_id );
-		if ( !isset( $requirements[ $this->listing_id_field_name ] ) )
-		{
+		if ( ! isset( $requirements[ $this->listing_id_field_name ] ) ) {
 			// skip un-related type
 			return $return;
 		}
@@ -93,8 +84,7 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 
 		// execute sql for the current count
 		$check_in_count = absint( $wpdb->get_var( $wpdb->prepare( $count_sql, $count_params ) ) );
-		if ( $check_in_count >= $requirements['count'] )
-		{
+		if ( $check_in_count >= $requirements['count'] ) {
 			// target reached
 			$return = true;
 		}
@@ -102,16 +92,13 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 		return $return;
 	}
 
-	public function get_data( $step_id, $trigger_type = '' )
-	{
-		if ( '' === $trigger_type || empty( $trigger_type ) )
-		{
+	public function get_data( $step_id, $trigger_type = '' ) {
+		if ( '' === $trigger_type || empty( $trigger_type ) ) {
 			// if step trigger type not passed
 			$trigger_type = trbs_rewards()->get_step_type( $step_id );
 		}
 
-		if ( $this->activity_trigger() !== $trigger_type )
-		{
+		if ( $this->activity_trigger() !== $trigger_type ) {
 			// not the same trigger type
 			return [];
 		}
@@ -121,10 +108,8 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 		];
 	}
 
-	public function save_data( $step_id, $step_data, $trigger_name = '' )
-	{
-		if ( $this->activity_trigger() !== $trigger_name || $trigger_name !== $step_data['trigger_type'] )
-		{
+	public function save_data( $step_id, $step_data, $trigger_name = '' ) {
+		if ( $trigger_name !== $step_data['trigger_type'] || $this->activity_trigger() !== $trigger_name ) {
 			// skip non-related triggers
 			return;
 		}
@@ -133,11 +118,9 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 		update_post_meta( $step_id, $this->meta_key, absint( $step_data[ $this->listing_id_field_name ] ) );
 	}
 
-	public function user_interface( $step_id, $badge_id )
-	{
+	public function user_interface( $step_id, $badge_id ) {
 		$listing_id = absint( get_post_meta( $step_id, $this->meta_key, true ) );
-		if ( 0 === $listing_id )
-		{
+		if ( 0 === $listing_id ) {
 			// no value was set
 			$listing_id = '';
 		}
@@ -153,15 +136,14 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface
 		);
 	}
 
-	public function get_step_percentage( $step_id, $user_id )
-	{
+	public function get_step_percentage( $step_id, $user_id ) {
 		return 0;
 	}
 
-	public function related_to_listing( $listing_id, $step_id )
-	{
+	public function related_to_listing( $listing_id, $step_id ) {
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $step_id );
+
 		return $listing_id === $requirements[ $this->listing_id_field_name ];
 	}
 }

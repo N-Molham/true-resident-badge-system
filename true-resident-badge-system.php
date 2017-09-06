@@ -3,7 +3,7 @@
 /**
  * Plugin Name: True Resident BadgeOS Customization
  * Description: Customize badeOS plugin with website badge system functions
- * Version: 1.5.0
+ * Version: 1.5.3
  * Author: Nabeel Molham
  * Author URI: http://nabeel.molham.me/
  * Text Domain: true-resident-badge-system
@@ -11,14 +11,12 @@
  * License: GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html
  */
 
-if ( !defined( 'WPINC' ) )
-{
+if ( ! defined( 'WPINC' ) ) {
 	// Exit if accessed directly
 	die();
 }
 
-if ( '' === session_id() )
-{
+if ( '' === session_id() ) {
 	// start session of not there
 	session_start();
 }
@@ -48,14 +46,13 @@ require_once TRBS_DIR . 'includes/functions.php';
  *
  * @package True_Resident\Badge_System
  */
-class Plugin extends Singular
-{
+class Plugin extends Singular {
 	/**
 	 * Plugin version
 	 *
 	 * @var string
 	 */
-	public $version = '1.5.0';
+	public $version = '1.5.3';
 
 	/**
 	 * Backend
@@ -104,8 +101,7 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	protected function init()
-	{
+	protected function init() {
 		// load language files
 		add_action( 'plugins_loaded', [ &$this, 'load_language' ] );
 
@@ -132,19 +128,16 @@ class Plugin extends Singular
 			],
 		];
 
-		foreach ( $this->dependency_plugins as $plugin_name => $plugin_info )
-		{
+		foreach ( $this->dependency_plugins as $plugin_name => $plugin_info ) {
 			// check if plugin is active or not
 			$plugin_info['inactive'] = Helpers::is_plugin_inactive( $plugin_name );
-			if ( $plugin_info['inactive'] )
-			{
+			if ( $plugin_info['inactive'] ) {
 				// the plugin is missing
 				$has_missing_plugins = true;
 			}
 		}
 
-		if ( $has_missing_plugins )
-		{
+		if ( $has_missing_plugins ) {
 			add_action( 'admin_notices', [ &$this, 'missing_dependency_plugin_notice' ] );
 
 			// skip as the dependencies aren't available
@@ -173,8 +166,7 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	public function plugin_activation_setups()
-	{
+	public function plugin_activation_setups() {
 		// Database tables
 		$this->backend->update_db_tables();
 	}
@@ -184,8 +176,7 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	public function register_widgets()
-	{
+	public function register_widgets() {
 		// listing's badges
 		register_widget( __NAMESPACE__ . '\Widgets\Listify_Listing_Badges' );
 	}
@@ -195,13 +186,10 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	public function missing_dependency_plugin_notice()
-	{
-		$missing_plugins = array_map( function ( $item )
-		{
+	public function missing_dependency_plugin_notice() {
+		$missing_plugins = array_map( function ( $item ) {
 			return sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $item['link'] ), $item['title'] );
-		}, array_filter( $this->dependency_plugins, function ( $item )
-		{
+		}, array_filter( $this->dependency_plugins, function ( $item ) {
 			return $item['inactive'];
 		} ) );
 
@@ -215,8 +203,7 @@ class Plugin extends Singular
 	 *
 	 * @return bool
 	 */
-	public function cache_disabled()
-	{
+	public function cache_disabled() {
 		return defined( 'TRBS_DISABLE_CACHE' ) && TRBS_DISABLE_CACHE;
 	}
 
@@ -228,19 +215,16 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	public function load_view( $view_name, $args = null )
-	{
+	public function load_view( $view_name, $args = null ) {
 		// build view file path
 		$__view_name     = $view_name;
 		$__template_path = TRBS_DIR . 'views/' . $__view_name . '.php';
-		if ( !file_exists( $__template_path ) )
-		{
+		if ( ! file_exists( $__template_path ) ) {
 			// file not found!
 			wp_die( sprintf( __( 'Template <code>%s</code> File not found, calculated path: <code>%s</code>', TRBS_DOMAIN ), $__view_name, $__template_path ) );
 		}
 
-		if ( !empty( $args ) )
-		{
+		if ( ! empty( $args ) ) {
 			// extract passed args into variables
 			extract( $args, EXTR_OVERWRITE );
 		}
@@ -277,8 +261,7 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	public function load_language()
-	{
+	public function load_language() {
 		load_plugin_textdomain( TRBS_DOMAIN, false, dirname( plugin_basename( TRBS_MAIN_FILE ) ) . '/languages' );
 	}
 
@@ -289,10 +272,8 @@ class Plugin extends Singular
 	 *
 	 * @return void
 	 */
-	public function autoloader( $class_name )
-	{
-		if ( strpos( $class_name, __NAMESPACE__ ) === false )
-		{
+	public function autoloader( $class_name ) {
+		if ( strpos( $class_name, __NAMESPACE__ ) === false ) {
 			// skip non related classes
 			return;
 		}
@@ -302,8 +283,7 @@ class Plugin extends Singular
 				'\\',
 			], [ '', DIRECTORY_SEPARATOR ], $class_name ) . '.php';
 
-		if ( file_exists( $class_path ) )
-		{
+		if ( file_exists( $class_path ) ) {
 			// load class file if found
 			require_once $class_path;
 		}
