@@ -93,7 +93,7 @@ class Ajax_Handler extends Component {
 			'step'    => FILTER_VALIDATE_INT,
 		] );
 
-		if ( false !== array_search( null, $mark_args, true ) ) {
+		if ( in_array( null, $mark_args, true ) ) {
 			// missing data
 			$this->error( __( 'Missing or Invalid input!', TRBS_DOMAIN ) );
 		}

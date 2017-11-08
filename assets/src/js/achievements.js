@@ -26,7 +26,8 @@
 			var render_checklist  = doT.template( $( '#trbs-checklist-template' ).html() ),
 			    $badge_challenges = $( '#trbs-badges-challenges' ),
 			    challenges        = [],
-			    requests_count    = 0;
+			    cache             = {},
+			    last_request      = null;
 
 			// when ajax login is successful
 			$body.on( 'tr-login-register-ajax-success', function () {
@@ -37,7 +38,8 @@
 			// challenges checklist item checked/unchecked
 			$badge_challenges.on( 'change tr-change', '.trbs-checklist-item input[type=checkbox]', function ( e ) {
 				var $this      = $( e.currentTarget ),
-				    point_data = $this.data();
+				    point_data = $this.data(),
+				    badge_id   = point_data.badge;
 
 				// user needs to login first
 				if ( false === is_user_logged_in() ) {
@@ -49,63 +51,59 @@
 					return true;
 				}
 
-				// new request
-				requests_count++;
+				if ( undefined === cache[ badge_id ] ) {
+					// cache needed data
+					cache[ badge_id ] = {
+						'$badge'           : $( '#badgeos-achievements-list-item-' + badge_id ),
+						'$checklist_points': $this.closest( '.trbs-checklist' ).find( '.trbs-checklist-item input[type=checkbox]' )
+					};
+				}
 
-				$.post( listifySettings.ajaxurl, $.extend( {}, point_data, {
+				// completion percentage check 
+				cache[ badge_id ].complete_percentage = Math.round( ( cache[ badge_id ].$checklist_points.filter( ':checked' ).length / cache[ badge_id ].$checklist_points.length ) * 100 );
+				cache[ badge_id ].$badge.attr( 'data-completed', cache[ badge_id ].complete_percentage );
+
+				if ( last_request ) {
+					last_request.abort();
+				}
+
+				last_request = $.post( listifySettings.ajaxurl, $.extend( {}, point_data, {
 					point  : e.currentTarget.value,
 					checked: e.currentTarget.checked,
 					nonce  : trbs_badges.checklist_nonce,
 					action : 'challenges_checklist_update'
-				} ), (function ( $input, badge_id ) {
+				} ), (function ( $input, badge_cache ) {
 					return function ( response ) {
 						if ( false === response.success ) {
 							// toggle back
 							$input.prop( 'checked', !$input.prop( 'checked' ) );
 						} else {
-							// linked badge
-							var $badge = $( '#badgeos-achievements-list-item-' + badge_id )
 							// update with the new complete percentage
+							badge_cache.$badge
 							.attr( 'data-completed', response.data.percentage )
 							// update with the earning data
 							.attr( 'data-last-earning', JSON.stringify( response.data.last_earning ) );
 
-							// validate earning only if it's the last ajax request
-							if ( requests_count > 1 ) {
-								return;
-							}
-
-							// query all checklist inputs
-							var $checklist_points = $input.closest( '.trbs-checklist' ).find( '.trbs-checklist-item input[type=checkbox]' ),
-							    // filter only checked ones
-							    $checked_points   = $checklist_points.filter( ':checked' );
-
 							// not all points are checked
-							if ( $checklist_points.length !== $checked_points.length ) {
+							if ( badge_cache.$checklist_points.length !== badge_cache.$checklist_points.filter( ':checked' ).length ) {
 								return;
 							}
 
 							// toggle earn status
-							$badge.removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned badgeos-glow' );
+							badge_cache.$badge.removeClass( 'user-has-not-earned' ).addClass( 'user-has-earned badgeos-glow' );
 
 							setTimeout( (function ( $badge_link ) {
 								return function () {
 									// remove the glow
 									$badge_link.removeClass( 'badgeos-glow' );
 								};
-							})( $badge ), 2000 );
+							})( badge_cache.$badge ), 2000 );
 
 							// reset checked points
-							$checklist_points.prop( 'checked', false );
+							badge_cache.$checklist_points.prop( 'checked', false );
 						}
 					};
-				})( $this, point_data.badge ), 'json' ).always( function () {
-					// request done
-					requests_count--;
-					if ( requests_count < 0 ) {
-						requests_count = 0;
-					}
-				} );
+				})( $this, cache[ badge_id ] ), 'json' );
 			} );
 
 			// badges click
