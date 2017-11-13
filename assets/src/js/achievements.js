@@ -27,7 +27,18 @@
 			    $badge_challenges = $( '#trbs-badges-challenges' ),
 			    challenges        = [],
 			    cache             = {},
-			    last_request      = null;
+			    last_request      = null,
+			    $suggestion_link  = $( trbs_badges.suggestion_form_link );
+
+			// add suggestion link
+			$suggestion_link.appendTo( $container.closest( '.trbs_listing_rewards' ).find( '> h2.widget-title' ) ).magnificPopup( {
+				tClose         : listifySettings.l10n.magnific.tClose,
+				tLoading       : listifySettings.l10n.magnific.tLoading,
+				fixedContentPos: false,
+				fixedBgPos     : true,
+				overflowY      : 'scroll',
+				type           : 'ajax'
+			} );
 
 			// when ajax login is successful
 			$body.on( 'tr-login-register-ajax-success', function () {
@@ -148,16 +159,6 @@
 
 				// output checklist(s)
 				$badge_challenges.html( challenges.join( '' ) );
-
-				// initialize popups
-				$badge_challenges.find( '.trbs-suggestion-button' ).magnificPopup( {
-					tClose         : listifySettings.l10n.magnific.tClose,
-					tLoading       : listifySettings.l10n.magnific.tLoading,
-					fixedContentPos: false,
-					fixedBgPos     : true,
-					overflowY      : 'scroll',
-					type           : 'ajax'
-				} );
 			} );
 		})();
 

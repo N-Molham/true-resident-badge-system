@@ -21,7 +21,5 @@
 			</li>
 			{{ } }}
 		</ul>
-
-		<a href="<?php echo admin_url( 'admin-ajax.php' ); ?>?action=activity_suggestion_form&badge_id={{=it.badge_id}}" class="button button-secondary trbs-suggestion-button"><?php _e( 'Make a suggestion', TRBS_DOMAIN ); ?></a>
 	</div>
 </script>

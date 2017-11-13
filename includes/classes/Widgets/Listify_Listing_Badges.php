@@ -28,7 +28,7 @@ class Listify_Listing_Badges extends WP_Widget {
 			'description' => __( 'Display the current opened listing\'s related badges which can be earned by unlocking that listing.', TRBS_DOMAIN ),
 		];
 
-		parent::__construct( 'my_widget', __( 'True Resident Listings Badges', TRBS_DOMAIN ), $widget_ops );
+		parent::__construct( 'trbs_listing_rewards', __( 'True Resident Listings Badges', TRBS_DOMAIN ), $widget_ops );
 	}
 
 	/**

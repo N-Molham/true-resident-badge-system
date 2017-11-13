@@ -163,15 +163,16 @@ class Frontend extends Component {
 		], $assets_version );
 
 		wp_localize_script( 'trbs-achievements', 'trbs_badges', [
-			'badge_filters'   => array_merge( [
+			'badge_filters'        => array_merge( [
 				[ 'filter_name' => __( 'All Badges', TRBS_DOMAIN ), 'value' => 'all' ],
 				[ 'filter_name' => __( 'Completed', TRBS_DOMAIN ), 'value' => 'completed' ],
 				[ 'filter_name' => __( 'Uncompleted', TRBS_DOMAIN ), 'value' => 'not-completed' ],
 			], trbs_rewards()->get_badge_types() ),
-			'empty_message'   => '<div class="badgeos-no-results"><p>There are no badges for this Place. <a href="' . home_url( '/contact/' ) . '" target="_blank">Why not recommend one</a>?</p></div><!-- .badgeos-no-results -->',
-			'is_mobile'       => wp_is_mobile(),
-			'is_logged_in'    => is_user_logged_in(),
-			'checklist_nonce' => wp_create_nonce( 'trbs_challenges_checklist_change' ),
+			'empty_message'        => '<div class="badgeos-no-results"><p>There are no badges for this Place. <a href="' . home_url( '/contact/' ) . '" target="_blank">Why not recommend one</a>?</p></div><!-- .badgeos-no-results -->',
+			'is_mobile'            => wp_is_mobile(),
+			'is_logged_in'         => is_user_logged_in(),
+			'checklist_nonce'      => wp_create_nonce( 'trbs_challenges_checklist_change' ),
+			'suggestion_form_link' => trbs_view( 'frontend/suggestion_form_link', null, true ),
 		] );
 	}
 
@@ -322,11 +323,10 @@ class Frontend extends Component {
 	 * Render challenges suggestions form
 	 *
 	 * @param WP_Post $listing
-	 * @param WP_Post $badge
 	 *
 	 * @return void
 	 */
-	public function render_activities_suggestion_form( $listing, $badge ) {
+	public function render_activities_suggestion_form( $listing ) {
 		// title
 		echo '<h2 class="popup-title">', sprintf( __( 'Suggestions for "%s"', TRBS_DOMAIN ), $listing->post_title ), '</h2>';
 

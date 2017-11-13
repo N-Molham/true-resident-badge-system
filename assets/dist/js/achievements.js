@@ -19,7 +19,9 @@ var h=b(c.body),i="",j=c.body.className,k=j.indexOf("single-job_listing")>-1&&j.
 // badges with challenges checklist
 !function(){if(!1!==k){
 // compile checklist template
-var c=doT.template(b("#trbs-checklist-template").html()),f=b("#trbs-badges-challenges"),j=[],l={},m=null;
+var c=doT.template(b("#trbs-checklist-template").html()),f=b("#trbs-badges-challenges"),j=[],l={},m=null,n=b(trbs_badges.suggestion_form_link);
+// add suggestion link
+n.appendTo(g.closest(".trbs_listing_rewards").find("> h2.widget-title")).magnificPopup({tClose:listifySettings.l10n.magnific.tClose,tLoading:listifySettings.l10n.magnific.tLoading,fixedContentPos:!1,fixedBgPos:!0,overflowY:"scroll",type:"ajax"}),
 // when ajax login is successful
 h.on("tr-login-register-ajax-success",function(){
 // force reload the page
@@ -53,8 +55,7 @@ var k=b.extend({},e[h],{step_id:h,badge_id:g});"challenges_checklist_listing_id"
 // render badge's step checklist
 j.push(c(k))}
 // output checklist(s)
-// initialize popups
-return j.length<1||(f.html(j.join("")),void f.find(".trbs-suggestion-button").magnificPopup({tClose:listifySettings.l10n.magnific.tClose,tLoading:listifySettings.l10n.magnific.tLoading,fixedContentPos:!1,fixedBgPos:!0,overflowY:"scroll",type:"ajax"}))})}}(),
+return j.length<1||void f.html(j.join(""))})}}(),
 // badges filter
 function(){var a=b("#badgeos-achievements-filter");if(a.length){for(var c=['<ul class="badgeos-badge-types-filter">'],d={},e=0,f=trbs_badges.badge_filters.length;e<f;e++)d=trbs_badges.badge_filters[e],c.push("<li"+(0===e?' class="current"':"")+'><a href="#'+d.value+'">'+d.filter_name+"</a></li>");
 // filters list closing tag

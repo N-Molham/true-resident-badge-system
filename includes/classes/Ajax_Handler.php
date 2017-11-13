@@ -50,12 +50,6 @@ class Ajax_Handler extends Component {
 		// popup start
 		echo '<div class="popup">';
 
-		$badge = trbs_rewards()->get_badge( $badge_id );
-		if ( is_wp_error( $badge ) ) {
-			// invalid badge!
-			die( $badge->get_error_message() . '</div>' );
-		}
-
 		$listing = get_post( $listing_id );
 		if ( false === is_object( $listing ) || 'job_listing' !== $listing->post_type ) {
 			// invalid badge!
@@ -63,7 +57,7 @@ class Ajax_Handler extends Component {
 		}
 
 		// render
-		trbs_frontend()->render_activities_suggestion_form( $listing, $badge );
+		trbs_frontend()->render_activities_suggestion_form( $listing );
 
 		// popup end
 		echo '</div>';
