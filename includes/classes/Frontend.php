@@ -168,7 +168,7 @@ class Frontend extends Component {
 				[ 'filter_name' => __( 'Completed', TRBS_DOMAIN ), 'value' => 'completed' ],
 				[ 'filter_name' => __( 'Uncompleted', TRBS_DOMAIN ), 'value' => 'not-completed' ],
 			], trbs_rewards()->get_badge_types() ),
-			'empty_message'        => '<div class="badgeos-no-results"><p>There are no badges for this Place. <a href="' . home_url( '/contact/' ) . '" target="_blank">Why not recommend one</a>?</p></div><!-- .badgeos-no-results -->',
+			'empty_message'        => '<div class="badgeos-no-results"><p>' . __( 'There are no badges for this place, but you can suggest one.', TRBS_DOMAIN ) . '</p></div><!-- .badgeos-no-results -->',
 			'is_mobile'            => wp_is_mobile(),
 			'is_logged_in'         => is_user_logged_in(),
 			'checklist_nonce'      => wp_create_nonce( 'trbs_challenges_checklist_change' ),
@@ -340,7 +340,13 @@ class Frontend extends Component {
 
 		// set global ids
 		$_GET['trbs_listing_id'] = $listing->ID;
-		$_GET['trbs_badge_id']   = $badge->ID;
+		
+		if ( ! is_user_logged_in() ) {
+			// user not logged in
+			echo '<p class="activity-suggestion-message">', sprintf( __( 'Please <a href="%s" class="bookmark-notice-button-login">log in</a> before submitting your suggestions', TRBS_DOMAIN ), esc_url( wp_login_url() ) ), '</p>';
+
+			return;
+		}
 
 		// render form's shortcode
 		echo do_shortcode( '[gravityform id="' . $form['id'] . '" title="true" description="false" ajax="true"]' );

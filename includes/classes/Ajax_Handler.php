@@ -45,7 +45,6 @@ class Ajax_Handler extends Component {
 	public function activity_suggestion_form() {
 		// vars
 		$listing_id = absint( filter_input( INPUT_GET, 'trbs_listing_id', FILTER_SANITIZE_NUMBER_INT ) );
-		$badge_id   = absint( filter_input( INPUT_GET, 'badge_id', FILTER_SANITIZE_NUMBER_INT ) );
 
 		// popup start
 		echo '<div class="popup">';
