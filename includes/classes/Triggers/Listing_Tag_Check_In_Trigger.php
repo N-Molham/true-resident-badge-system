@@ -228,6 +228,6 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 		$requirements  = badgeos_get_step_requirements( $step_id );
 		$listing_terms = wp_get_post_terms( $listing_id, $requirements[ $this->field_names['taxonomy'] ], [ 'fields' => 'ids' ] );
 
-		return is_array( $listing_terms ) && in_array( $requirements[ $this->field_names['term'] ], $listing_terms, true );
+		return is_array( $listing_terms ) && in_array( (int) $requirements[ $this->field_names['term'] ], $listing_terms, true );
 	}
 }

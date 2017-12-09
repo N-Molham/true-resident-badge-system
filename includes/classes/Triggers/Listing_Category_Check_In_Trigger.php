@@ -201,6 +201,6 @@ class Listing_Category_Check_In_Trigger implements Trigger_Interface {
 		// listing linked terms for comparison
 		$listing_terms = wp_get_post_terms( $listing_id, $this->category_taxonomy, [ 'fields' => 'ids' ] );
 
-		return is_array( $listing_terms ) && in_array( $requirements[ $this->category_field_name ], $listing_terms, true );
+		return is_array( $listing_terms ) && in_array( (int) $requirements[ $this->category_field_name ], $listing_terms, true );
 	}
 }

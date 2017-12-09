@@ -340,7 +340,7 @@ class Frontend extends Component {
 
 		// set global ids
 		$_GET['trbs_listing_id'] = $listing->ID;
-		
+
 		if ( ! is_user_logged_in() ) {
 			// user not logged in
 			echo '<p class="activity-suggestion-message">', sprintf( __( 'Please <a href="%s" class="bookmark-notice-button-login">log in</a> before submitting your suggestions', TRBS_DOMAIN ), esc_url( wp_login_url() ) ), '</p>';

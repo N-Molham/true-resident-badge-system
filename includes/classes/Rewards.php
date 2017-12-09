@@ -187,7 +187,7 @@ class Rewards extends Component {
 				if ( $trigger_obj->related_to_listing( $listing_id, $step->ID ) ) {
 					// one of the steps are related to the listing so the badge is related also :)
 					$badges_found[] = $badge_id;
-					continue;
+					break;
 				}
 			}
 		}

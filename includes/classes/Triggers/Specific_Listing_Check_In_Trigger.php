@@ -144,6 +144,6 @@ class Specific_Listing_Check_In_Trigger implements Trigger_Interface {
 		// get step requirements
 		$requirements = badgeos_get_step_requirements( $step_id );
 
-		return $listing_id === $requirements[ $this->listing_id_field_name ];
+		return $listing_id === (int) $requirements[ $this->listing_id_field_name ];
 	}
 }
