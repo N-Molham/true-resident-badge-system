@@ -8,21 +8,17 @@ use WP_Job_Manager_Bookmarks;
  * @package True_Resident\Badge_System
  */
 class Bookmarks extends Component {
+	/*
+	 * @var string
+	 */
+	protected $bookmark_mode;
+
 	/**
 	 * Original Job Manager Bookmarks addon component
 	 *
 	 * @var WP_Job_Manager_Bookmarks
 	 */
 	protected $wp_job_manager_bookmarks;
-
-	/**
-	 * Get WP Job Manager Bookmarks instance
-	 *
-	 * @return WP_Job_Manager_Bookmarks
-	 */
-	public function get_wp_job_manager_bookmarks() {
-		return $this->wp_job_manager_bookmarks;
-	}
 
 	/**
 	 * Constructor
@@ -149,6 +145,29 @@ class Bookmarks extends Component {
 	}
 
 	/**
+	 * @param int $post_id
+	 * @param int $user_id , if set will get the bookmarks only made by that user
+	 *
+	 * @return null|string
+	 */
+	public function get_listing_last_bookmark( $post_id, $user_id = 0 ) {
+		global $wpdb;
+
+		$table_name = $this->table_name();
+		$sql        = "SELECT date_created FROM {$table_name} WHERE post_id = %d";
+		$params     = [ $post_id ];
+
+		if ( $user_id ) {
+			$sql      .= " AND user_id = %d";
+			$params[] = $user_id;
+		}
+
+		$sql .= " ORDER BY date_created DESC LIMIT 1";
+
+		return $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
+	}
+
+	/**
 	 * Bookmarks DB table name
 	 *
 	 * @return string
@@ -167,5 +186,38 @@ class Bookmarks extends Component {
 	 */
 	public function get_cache_key( $user_id, $post_id ) {
 		return 'user_' . $user_id . '_bookmark_count_' . $post_id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_bookmark_mode() {
+
+		if ( null !== $this->bookmark_mode ) {
+			return $this->bookmark_mode;
+		}
+
+		$this->bookmark_mode = get_option( $this->bookmark_mode_option_name(), 'multiple' );
+		if ( ! is_string( $this->bookmark_mode ) || ! in_array( $this->bookmark_mode, [ 'multiple', 'single' ] ) ) {
+			$this->bookmark_mode = 'multiple';
+		}
+
+		return $this->bookmark_mode;
+	}
+
+	/**
+	 * Get WP Job Manager Bookmarks instance
+	 *
+	 * @return WP_Job_Manager_Bookmarks
+	 */
+	public function get_wp_job_manager_bookmarks() {
+		return $this->wp_job_manager_bookmarks;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function bookmark_mode_option_name() {
+		return 'bookmark_unlock_mode';
 	}
 }

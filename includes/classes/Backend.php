@@ -66,6 +66,7 @@ class Backend extends Component {
 
 		// Job Manager settings fields
 		add_filter( 'job_manager_settings', [ &$this, 'activities_suggestion_form_setting' ], 999 );
+		add_filter( 'job_manager_settings', [ &$this, 'bookmark_mode_toggle_switch' ], 1000 );
 
 		// GForms entries field value
 		add_action( 'gform_entries_column', [ &$this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
@@ -154,6 +155,27 @@ class Backend extends Component {
 			'desc'    => '',
 			'type'    => 'select',
 			'options' => $setting_options,
+		];
+
+		return $settings;
+	}
+
+	/**
+	 * @param array $settings
+	 *
+	 * @return array
+	 */
+	public function bookmark_mode_toggle_switch( $settings ) {
+
+		$settings['job_listings'][1][] = [
+			'name'    => trbs_bookmarks()->bookmark_mode_option_name(),
+			'std'     => 'multiple',
+			'label'   => __( 'Unlock Mode', TRBS_DOMAIN ),
+			'type'    => 'radio',
+			'options' => [
+				'multiple' => __( 'Multiple Unlocks', TRBS_DOMAIN ),
+				'single'   => __( 'Single Unlock', TRBS_DOMAIN ),
+			],
 		];
 
 		return $settings;

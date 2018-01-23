@@ -115,3 +115,20 @@ endif;
 function trbs_get_listing_bookmarks_count( $listing_id, $user_id = 0 ) {
 	return trbs_bookmarks()->get_listing_bookmarks_count( $listing_id, $user_id );
 }
+
+/**
+ * @param int $listing_id
+ * @param int $user_id , if set will get the bookmarks only made by that user
+ *
+ * @return null|string
+ */
+function trbs_get_listing_last_bookmark( $listing_id, $user_id = 0 ) {
+	return trbs_bookmarks()->get_listing_last_bookmark( $listing_id, $user_id );
+}
+
+/**
+ * @return string
+ */
+function trbs_bookmark_mode() {
+	return trbs_bookmarks()->get_bookmark_mode();
+}
