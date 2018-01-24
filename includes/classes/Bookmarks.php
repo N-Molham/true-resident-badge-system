@@ -57,56 +57,108 @@ class Bookmarks extends Component {
 	public function bookmark_handler() {
 		global $wpdb;
 
-		if ( ! is_user_logged_in() ) {
+		$user_id = get_current_user_id();
+		$post_id = absint( filter_input( INPUT_POST, 'bookmark_post_id', FILTER_SANITIZE_NUMBER_INT ) );
+
+		if ( empty( $user_id ) || empty( $_POST['submit_bookmark'] ) || 0 === $post_id ) {
 			// skip non-login users
 			return;
 		}
 
-		// vars
-		$user_id = get_current_user_id();
-
-		// insert/update bookmark
-		if ( ! empty( $_POST['submit_bookmark'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'update_bookmark' ) ) {
-			// vars
-			$post_id         = absint( filter_input( INPUT_POST, 'bookmark_post_id', FILTER_SANITIZE_NUMBER_INT ) );
-			$note            = wp_kses_post( stripslashes( filter_input( INPUT_POST, 'bookmark_notes', FILTER_SANITIZE_STRING ) ) );
-			$update_bookmark = 'yes' === filter_input( INPUT_POST, 'bookmark_update', FILTER_SANITIZE_STRING );
-
-			if ( $post_id && in_array( get_post_type( $post_id ), [ 'job_listing', 'resume' ], true ) ) {
-				if ( $update_bookmark && $this->wp_job_manager_bookmarks->is_bookmarked( $post_id ) ) {
-					// update existing one
-					$wpdb->update( $this->table_name(),
-						[ 'bookmark_note' => $note ],
-						[ 'post_id' => $post_id, 'user_id' => $user_id ],
-						[ '%s' ], [ '%d', '%d' ]
-					);
-				} else {
-					$bookmark_data = [
-						'user_id'       => $user_id,
-						'post_id'       => $post_id,
-						'bookmark_note' => $note,
-						'date_created'  => current_time( 'mysql' ),
-					];
-
-					// new bookmark
-					$wpdb->insert( $this->table_name(), $bookmark_data, [ '%d', '%d', '%s', '%s' ] );
-
-					/**
-					 * New listing check-in happened
-					 *
-					 * @param int    $user_id
-					 * @param int    $post_id
-					 * @param string $bookmark_note
-					 * @param string $date_created
-					 */
-					do_action_ref_array( 'true_resident_listing_new_check_in', $bookmark_data );
-				}
-
-				// clear cache
-				delete_transient( 'bookmark_count_' . $post_id );
-				delete_transient( $this->get_cache_key( $user_id, $post_id ) );
-			}
+		if ( false === wp_verify_nonce( $_REQUEST['_wpnonce'], 'update_bookmark_' . $post_id ) ) {
+			// invalid nonce
+			return;
 		}
+
+		if ( 'job_listing' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		$bookmark_note   = wp_kses_post( stripslashes( filter_input( INPUT_POST, 'bookmark_notes', FILTER_SANITIZE_STRING ) ) );
+		$update_bookmark = 'yes' === sanitize_key( filter_input( INPUT_POST, 'bookmark_update', FILTER_SANITIZE_STRING ) );
+		$is_bookmarked   = $this->wp_job_manager_bookmarks->is_bookmarked( $post_id );
+		$bookmark_mode   = $this->get_bookmark_mode();
+
+		if ( 'single' === $bookmark_mode ) {
+
+			if ( $is_bookmarked ) {
+
+				$this->delete_bookmark( $post_id, $user_id );
+
+			} else {
+
+				$this->add_bookmark( $post_id, $user_id, $bookmark_note );
+
+			}
+
+		} else {
+
+			if ( $update_bookmark && $is_bookmarked ) {
+
+				// update existing one
+				$wpdb->update( $this->table_name(),
+					[ 'bookmark_note' => $bookmark_note ],
+					[ 'post_id' => $post_id, 'user_id' => $user_id ],
+					[ '%s' ], [ '%d', '%d' ]
+				);
+
+			} else {
+
+				$this->add_bookmark( $post_id, $user_id, $bookmark_note );
+
+			}
+
+		}
+
+		// clear cache
+		delete_transient( 'bookmark_count_' . $post_id );
+		delete_transient( $this->get_cache_key( $user_id, $post_id ) );
+	}
+
+	/**
+	 * @param int $post_id
+	 * @param int $user_id
+	 *
+	 * @return void
+	 */
+	public function delete_bookmark( $post_id, $user_id ) {
+		global $wpdb;
+
+		$wpdb->delete( $this->table_name(), [
+			'user_id' => $user_id,
+			'post_id' => $post_id,
+		], [ '%d', '%d' ] );
+	}
+
+	/**
+	 * @param int    $post_id
+	 * @param int    $user_id
+	 * @param string $bookmark_note
+	 *
+	 * @return void
+	 */
+	public function add_bookmark( $post_id, $user_id, $bookmark_note = '' ) {
+		global $wpdb;
+
+		$bookmark_data = [
+			'user_id'       => $user_id,
+			'post_id'       => $post_id,
+			'bookmark_note' => $bookmark_note,
+			'date_created'  => current_time( 'mysql' ),
+		];
+
+		// new bookmark
+		$wpdb->insert( $this->table_name(), $bookmark_data, [ '%d', '%d', '%s', '%s' ] );
+
+		/**
+		 * New listing check-in happened
+		 *
+		 * @param int    $user_id
+		 * @param int    $post_id
+		 * @param string $bookmark_note
+		 * @param string $date_created
+		 */
+		do_action_ref_array( 'true_resident_listing_new_check_in', $bookmark_data );
 	}
 
 	/**
