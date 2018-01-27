@@ -67,7 +67,17 @@ class Bookmarks extends Component {
 
 		if ( false === wp_verify_nonce( $_REQUEST['_wpnonce'], 'update_bookmark_' . $post_id ) ) {
 			// invalid nonce
-			return;
+
+			if ( ! function_exists( 'um_user_last_login_timestamp' ) ) {
+				return;
+			}
+
+			// check if user just logged in (within 10 min)
+			$last_login_timestamp = (int) um_user_last_login_timestamp( $user_id );
+			if ( $last_login_timestamp && ( current_time( 'timestamp' ) - $last_login_timestamp ) > MINUTE_IN_SECONDS * 10 ) {
+				// user logged in long time ago, don't bypass
+				return;
+			}
 		}
 
 		if ( 'job_listing' !== get_post_type( $post_id ) ) {
