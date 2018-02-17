@@ -203,4 +203,23 @@ class Listing_Category_Check_In_Trigger implements Trigger_Interface {
 
 		return is_array( $listing_terms ) && in_array( (int) $requirements[ $this->category_field_name ], $listing_terms, true );
 	}
+
+	public function get_matching_listings( $step_id ) {
+
+		// get step requirements
+		$requirements = badgeos_get_step_requirements( $step_id );
+		if ( 0 === $requirements[ $this->category_field_name ] ) {
+			// will work on any listing despite the category
+			return true;
+		}
+
+		return get_posts( [
+			'post_type' => 'job_listing',
+			'nopaging'  => true,
+			'fields'    => 'ids',
+			'tax_query' => [
+				[ 'taxonomy' => $this->category_taxonomy, 'field' => 'term_id', 'terms' => $requirements[ $this->category_field_name ] ],
+			],
+		] );
+	}
 }

@@ -127,4 +127,8 @@ class Listings_Reviews_Trigger implements Trigger_Interface {
 	public function related_to_listing( $listing_id, $step_id ) {
 		return true;
 	}
+
+	public function get_matching_listings( $step_id ) {
+		return [];
+	}
 }

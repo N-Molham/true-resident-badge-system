@@ -99,4 +99,13 @@ interface Trigger_Interface {
 	 * @return boolean
 	 */
 	public function related_to_listing( $listing_id, $step_id );
+
+	/**
+	 * Get matched listings to given step if it's a listing page
+	 *
+	 * @param int $step_id
+	 *
+	 * @return array
+	 */
+	public function get_matching_listings( $step_id );
 }

@@ -230,4 +230,22 @@ WHERE tax_meta.meta_key = %s", $this->meta_keys['term'], $this->meta_keys['taxon
 
 		return is_array( $listing_terms ) && in_array( (int) $requirements[ $this->field_names['term'] ], $listing_terms, true );
 	}
+
+	public function get_matching_listings( $step_id ) {
+		// get step requirements
+		$requirements = badgeos_get_step_requirements( $step_id );
+
+		return get_posts( [
+			'post_type' => 'job_listing',
+			'nopaging'  => true,
+			'fields'    => 'ids',
+			'tax_query' => [
+				[
+					'taxonomy' => $requirements[ $this->field_names['taxonomy'] ],
+					'field'    => 'term_id',
+					'terms'    => $requirements[ $this->field_names['term'] ],
+				],
+			],
+		] );
+	}
 }

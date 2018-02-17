@@ -306,4 +306,11 @@ class Listing_Challenges_Checklist_Trigger implements Trigger_Interface {
 
 		return array_key_exists( $this->checklist_field_name, $step_data );
 	}
+
+	public function get_matching_listings( $step_id ) {
+		// get step requirements
+		$requirements = badgeos_get_step_requirements( $step_id );
+
+		return [ (int) $requirements[ $this->listing_id_field_name ] ];
+	}
 }

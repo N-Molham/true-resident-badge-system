@@ -59,6 +59,7 @@ class Backend extends Component {
 		add_filter( 'badgeos_achievement_data_meta_box_fields', [ &$this, 'append_badge_type_field' ], 15, 3 );
 
 		// WP post data save action
+		add_action( 'save_post_badges', [ &$this, 'clear_badges_cache' ], 99 );
 		add_action( 'save_post_badges', [ &$this, 'store_hidden_badges_as_option' ], 100 );
 
 		// WP admin dashboard action
@@ -223,6 +224,41 @@ class Backend extends Component {
 		$sql_results = dbDelta( $sql );
 
 		$this->add_notice_message( 'Database custom table(s) updated: <code>' . implode( ', ', $sql_results ) . '</code>', 10, false, true );
+	}
+
+	/**
+	 * @param int $badge_id
+	 *
+	 * @return void
+	 */
+	public function clear_badges_cache( $badge_id ) {
+
+		$triggers          = trbs_rewards()->get_triggers();
+		$badge_steps       = badgeos_get_required_achievements_for_achievement( $badge_id );
+		$matching_listings = [];
+
+		foreach ( $badge_steps as $step ) {
+
+			$step_trigger_type = get_post_meta( $step->ID, '_badgeos_trigger_type', true );
+			if ( empty( $step_trigger_type ) || ! isset( $triggers[ $step_trigger_type ] ) ) {
+				// skip un-recognized trigger
+				continue;
+			}
+
+			$trigger_obj         = $triggers[ $step_trigger_type ];
+			$matching_listings[] = $trigger_obj->get_matching_listings( $step->ID );
+		}
+
+		$matching_listings = array_filter( $matching_listings );
+		if ( empty( $matching_listings ) ) {
+			return;
+		}
+
+		$matching_listings = array_unique( call_user_func_array( 'array_merge', $matching_listings ) );
+
+		foreach ( $matching_listings as $listing_id ) {
+			delete_transient( 'trbs_listing_' . $listing_id . '_badges' );
+		}
 	}
 
 	/**

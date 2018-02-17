@@ -137,4 +137,8 @@ class User_Register_Trigger implements Trigger_Interface {
 	public function related_to_listing( $listing_id, $step_id ) {
 		return false;
 	}
+
+	public function get_matching_listings( $step_id ) {
+		return [];
+	}
 }
