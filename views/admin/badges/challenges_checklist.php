@@ -32,14 +32,6 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
-
-	<!-- Bootstrap core JavaScript -->
-	<!-- Placed at the end of the document so the pages load faster -->
-	<?php wp_scripts()->print_scripts( 'jquery-ui-sortable' ); ?>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="<?php printf( $enqueue_path, 'js/doT.js' ); ?>"></script>
-	<script src="<?php printf( $enqueue_path, 'js/jquery.repeatable.item.js' ); ?>"></script>
-	<script src="<?php printf( $enqueue_path, 'js/admin.js' ); ?>"></script>
 </head>
 <body>
 
@@ -82,4 +74,14 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 		</div>
 	</form>
 </div><!-- .container -->
+
+<!-- Bootstrap core JavaScript -->
+<!-- Placed at the end of the document so the pages load faster -->
+<?php wp_scripts()->print_scripts( 'jquery-ui-sortable' ); ?>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="<?php printf( $enqueue_path, 'js/doT.js' ); ?>"></script>
+<script src="<?php printf( $enqueue_path, 'js/jquery.repeatable.item.js' ); ?>"></script>
+<script src="<?php printf( $enqueue_path, 'js/admin.js' ); ?>"></script>
+
+</body>
 </html>
