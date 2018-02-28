@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.5.3\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2018-02-17 13:30:18+00:00\n"
+"POT-Creation-Date: 2018-02-28 17:38:23+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -329,27 +329,27 @@ msgstr ""
 msgid "Template <code>%s</code> File not found, calculated path: <code>%s</code>"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:41
+#: views/admin/badges/challenges_checklist.php:48
 msgid "Challenges Checklist"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:45
+#: views/admin/badges/challenges_checklist.php:52
 msgid "Add New"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:46
+#: views/admin/badges/challenges_checklist.php:53
 msgid "Are you sure?"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:55
+#: views/admin/badges/challenges_checklist.php:62
 msgid "Challenge Label"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:59
+#: views/admin/badges/challenges_checklist.php:66
 msgid "Remove"
 msgstr ""
 
-#: views/admin/badges/challenges_checklist.php:66
+#: views/admin/badges/challenges_checklist.php:73
 msgid "Save Changes"
 msgstr ""
 

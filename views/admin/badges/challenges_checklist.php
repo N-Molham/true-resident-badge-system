@@ -20,8 +20,7 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<!-- Bootstrap core CSS -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-	      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
 	<!-- Admin CSS -->
@@ -31,6 +30,14 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->    <!--[if lt IE 9]>
 	<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>    <![endif]-->
+
+	<!-- Bootstrap core JavaScript -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<?php wp_scripts()->print_scripts( 'jquery-ui-sortable' ); ?>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="<?php printf( $enqueue_path, 'js/doT.js' ); ?>"></script>
+	<script src="<?php printf( $enqueue_path, 'js/jquery.repeatable.item.js' ); ?>"></script>
+	<script src="<?php printf( $enqueue_path, 'js/admin.js' ); ?>"></script>
 </head>
 <body>
 
@@ -73,14 +80,4 @@ $enqueue_path = Helpers::enqueue_path() . '%s?ver=' . Helpers::assets_version();
 		</div>
 	</form>
 </div><!-- .container -->
-
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<?php wp_scripts()->print_scripts( 'jquery-ui-sortable' ); ?>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<script src="<?php printf( $enqueue_path, 'js/doT.js' ); ?>"></script>
-<script src="<?php printf( $enqueue_path, 'js/jquery.repeatable.item.js' ); ?>"></script>
-<script src="<?php printf( $enqueue_path, 'js/admin.js' ); ?>"></script>
 </html>
