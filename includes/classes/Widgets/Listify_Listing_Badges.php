@@ -17,18 +17,19 @@ use WP_Widget;
  * @package True_Resident\Badge_System\Widgets
  */
 class Listify_Listing_Badges extends WP_Widget {
+
 	/**
 	 * Sets up the widgets name etc
-	 *
-	 * @return Listify_Listing_Badges
 	 */
 	public function __construct() {
+
 		$widget_ops = [
 			'classname'   => 'trbs_listing_rewards',
 			'description' => __( 'Display the current opened listing\'s related badges which can be earned by unlocking that listing.', TRBS_DOMAIN ),
 		];
 
 		parent::__construct( 'trbs_listing_rewards', __( 'True Resident Listings Badges', TRBS_DOMAIN ), $widget_ops );
+
 	}
 
 	/**
@@ -40,6 +41,7 @@ class Listify_Listing_Badges extends WP_Widget {
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
+
 		$instance = wp_parse_args( $instance, $this->default_options() );
 
 		// widget before layout
@@ -60,6 +62,7 @@ class Listify_Listing_Badges extends WP_Widget {
 
 		// widget after layout
 		echo $args['after_widget'];
+
 	}
 
 	/**
@@ -70,6 +73,7 @@ class Listify_Listing_Badges extends WP_Widget {
 	 * @return void
 	 */
 	public function form( $instance ) {
+
 		$instance = wp_parse_args( $instance, $this->default_options() );
 
 		echo '<p><label for="', esc_attr( $this->get_field_id( 'title' ) ), '">', __( 'Widget Title', TRBS_DOMAIN ), ',</label>',
@@ -94,6 +98,7 @@ class Listify_Listing_Badges extends WP_Widget {
 		'<input type="number" class="widefat" id="', esc_attr( $this->get_field_id( 'limit' ) ), '" ',
 		'name="', esc_attr( $this->get_field_name( 'limit' ) ), '" value="', esc_attr( $instance['limit'] ), '">',
 		'</p>';
+
 	}
 
 	/**
@@ -105,6 +110,7 @@ class Listify_Listing_Badges extends WP_Widget {
 	 * @return array
 	 */
 	public function update( $new_instance, $old_instance ) {
+
 		$order_bys = array_values( $this->get_order_by_options() );
 
 		$old_instance['title']    = sanitize_text_field( $new_instance['title'] );
@@ -113,6 +119,7 @@ class Listify_Listing_Badges extends WP_Widget {
 		$old_instance['limit']    = absint( $new_instance['limit'] );
 
 		return $old_instance;
+
 	}
 
 	/**
@@ -121,6 +128,7 @@ class Listify_Listing_Badges extends WP_Widget {
 	 * @return array
 	 */
 	public function get_order_by_options() {
+
 		return [
 			'menu_order' => __( 'Menu Order', TRBS_DOMAIN ),
 			'ID'         => __( 'ID', TRBS_DOMAIN ),
@@ -130,6 +138,7 @@ class Listify_Listing_Badges extends WP_Widget {
 			'author'     => __( 'Author', TRBS_DOMAIN ),
 			'rand'       => __( 'Random', TRBS_DOMAIN ),
 		];
+
 	}
 
 	/**
@@ -138,6 +147,7 @@ class Listify_Listing_Badges extends WP_Widget {
 	 * @return array
 	 */
 	public function default_options() {
+
 		return [
 			'title'    => __( 'Listing Badges', TRBS_DOMAIN ),
 			'order_by' => 'menu_order',

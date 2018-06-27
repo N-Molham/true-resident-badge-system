@@ -9,6 +9,7 @@ use WP_Query;
  * @package True_Resident\Badge_System
  */
 class Frontend extends Component {
+
 	/**
 	 * Badges popover args
 	 *
@@ -22,13 +23,14 @@ class Frontend extends Component {
 	 * @return void
 	 */
 	protected function init() {
+
 		parent::init();
 
 		// BadgeOS achievement render
-		add_filter( 'badgeos_render_achievement', [ &$this, 'badge_render_output' ], 10, 2 );
+		add_filter( 'badgeos_render_achievement', [ $this, 'badge_render_output' ], 10, 2 );
 
 		// WP Styles printing action hook
-		add_action( 'wp_enqueue_scripts', [ &$this, 'badgeos_achievements_list_styling' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'badgeos_achievements_list_styling' ] );
 
 		// vars
 		$this->popover_args = [
@@ -47,7 +49,7 @@ class Frontend extends Component {
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
 			// Badges list pre-query
-			add_action( 'pre_get_posts', [ &$this, 'badgeos_query_list_all' ] );
+			add_action( 'pre_get_posts', [ $this, 'badgeos_query_list_all' ] );
 		}
 	}
 
@@ -59,6 +61,7 @@ class Frontend extends Component {
 	 * @return void
 	 */
 	public function badgeos_query_list_all( $query ) {
+
 		$post_type = $query->get( 'post_type' );
 		if ( is_string( $post_type ) ) {
 			// wrap in array
@@ -78,6 +81,7 @@ class Frontend extends Component {
 		if ( null !== $selected_type && ! empty( $selected_type ) ) {
 			// look for the selected type info
 			$selected_type = array_filter( trbs_rewards()->get_badge_types(), function ( $badge_type ) use ( $selected_type ) {
+
 				return $badge_type['value'] === $selected_type;
 			} );
 
@@ -132,7 +136,8 @@ class Frontend extends Component {
 	 * @return void
 	 */
 	public function badgeos_achievements_list_styling() {
-		if ( ! wp_script_is( 'badgeos-achievements', 'enqueued' ) ) {
+
+		if ( ! ( wp_script_is( 'badgeos-achievements', 'registered' ) || wp_script_is( 'badgeos-achievements', 'enqueued' ) ) ) {
 			// skip un-related content
 			return;
 		}
@@ -185,6 +190,7 @@ class Frontend extends Component {
 	 * @return string
 	 */
 	public function badge_render_output( $output, $badge_id ) {
+
 		// vars
 		$user_id        = get_current_user_id();
 		$badge          = get_post( $badge_id );
@@ -327,6 +333,7 @@ class Frontend extends Component {
 	 * @return void
 	 */
 	public function render_activities_suggestion_form( $listing ) {
+
 		// title
 		echo '<h2 class="popup-title">', sprintf( __( 'Suggestions for "%s"', TRBS_DOMAIN ), $listing->post_title ), '</h2>';
 
