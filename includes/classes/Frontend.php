@@ -48,9 +48,27 @@ class Frontend extends Component {
 		}
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+
 			// Badges list pre-query
 			add_action( 'pre_get_posts', [ $this, 'badgeos_query_list_all' ] );
+
 		}
+
+		add_action( 'init', [ $this, 'hooks_cleanup' ], PHP_INT_MAX );
+
+	}
+
+	/**
+	 * @return void
+	 */
+	public function hooks_cleanup() {
+
+		if ( has_filter( 'post_class', 'badgeos_add_earned_class_single' ) ) {
+
+			remove_filter( 'post_class', 'badgeos_add_earned_class_single' );
+
+		}
+
 	}
 
 	/**
