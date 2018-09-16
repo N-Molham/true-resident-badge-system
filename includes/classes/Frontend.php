@@ -200,45 +200,30 @@ class Frontend extends Component {
 	}
 
 	/**
-	 * BadgeOS achievement updated render
+	 * @param int   $badge_id
+	 * @param int   $user_id
+	 * @param array $steps
 	 *
-	 * @param string $output
-	 * @param int    $badge_id
-	 *
-	 * @return string
+	 * @return array
 	 */
-	public function badge_render_output( $output, $badge_id ) {
+	public function get_badge_completion_data( $badge_id, $user_id = 0, $steps = null ) {
 
-		// vars
-		$user_id        = get_current_user_id();
-		$badge          = get_post( $badge_id );
-		$multi_earnings = - 1 === (int) $badge->_badgeos_maximum_earnings;
-		$has_challenges = false;
-		$steps_data     = [];
+		if ( empty( $steps ) ) {
 
-		// check if user has earned this Achievement, and add an 'earned' class
-		$last_earning  = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
-		$is_earned     = false !== $last_earning;
-		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
+			$steps = badgeos_get_required_achievements_for_achievement( $badge_id );
 
-		$css_classes = [
-			'badgeos-achievements-list-item',
-			$earned_status,
-		];
-
-		// credly API
-		$credly_ID = '';
-
-		// If the achievement is earned and givable, override our credly classes
-		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) ) {
-			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
-			$credly_ID   = 'data-credlyid="' . $badge_id . '"';
 		}
 
-		// badge steps
-		$steps           = badgeos_get_required_achievements_for_achievement( $badge_id );
+		if ( 0 === $user_id ) {
+
+			$user_id = get_current_user_id();
+
+		}
+
 		$steps_count     = count( $steps );
 		$steps_completed = 0;
+		$steps_data      = [];
+		$has_challenges  = false;
 
 		for ( $i = 0; $i < $steps_count; $i ++ ) {
 			// vars
@@ -274,10 +259,9 @@ class Frontend extends Component {
 		$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
 
 		if ( $has_challenges ) {
-			// Challenges badge mark
-			$css_classes[] = 'badgeos-achievements-challenges-item';
 
-			foreach ( $steps_data as $step_id => &$step_data ) {
+			foreach ( $steps_data as $step_id => $step_data ) {
+
 				if ( ! isset( $step_data['challenges_checklist'] ) ) {
 					// skip
 					continue;
@@ -287,18 +271,73 @@ class Frontend extends Component {
 
 				// get points' marks
 				$points_indexes = array_keys( $step_data['challenges_checklist'] );
+
 				foreach ( $points_indexes as $point_id ) {
+
 					$step_data['challenges_checklist_marks'][ $point_id ] = null !== trbs_rewards()->get_checklist_mark( [
 							'badge' => $badge_id,
 							'step'  => $step_id,
 							'point' => $point_id,
 							'user'  => $user_id,
 						] );
+
 				}
+
+				$steps_data[ $step_id ] = $step_data;
+
 			}
 
 			// clear
 			unset( $step_id );
+		}
+
+		return compact( 'steps_data', 'earned_percentage', 'has_challenges', 'has_challenges' );
+
+	}
+
+	/**
+	 * BadgeOS achievement updated render
+	 *
+	 * @param string $output
+	 * @param int    $badge_id
+	 *
+	 * @return string
+	 */
+	public function badge_render_output( $output, $badge_id ) {
+
+		// vars
+		$user_id        = get_current_user_id();
+		$badge          = get_post( $badge_id );
+		$multi_earnings = - 1 === (int) $badge->_badgeos_maximum_earnings;
+
+		// check if user has earned this Achievement, and add an 'earned' class
+		$last_earning  = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
+		$is_earned     = false !== $last_earning;
+		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
+
+		$css_classes = [
+			'badgeos-achievements-list-item',
+			$earned_status,
+		];
+
+		// credly API
+		$credly_ID = '';
+
+		// If the achievement is earned and givable, override our credly classes
+		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) ) {
+			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
+			$credly_ID   = 'data-credlyid="' . $badge_id . '"';
+		}
+
+		$steps_completion_data = $this->get_badge_completion_data( $badge_id, $user_id );
+		$has_challenges        = $steps_completion_data['has_challenges'];
+		$steps_data            = $steps_completion_data['steps_data'];
+		$earned_percentage     = $steps_completion_data['earned_percentage'];
+
+		if ( $has_challenges ) {
+
+			$css_classes[] = 'badgeos-achievements-challenges-item';
+
 		}
 
 		// buffer start
