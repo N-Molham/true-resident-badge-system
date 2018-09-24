@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: True Resident BadgeOS Customization 1.5.3\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/true-resident-badge-system\n"
-"POT-Creation-Date: 2018-06-27 17:15:54+00:00\n"
+"POT-Creation-Date: 2018-09-24 13:11:31+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,85 +41,85 @@ msgstr ""
 msgid "Invalid taxonomy."
 msgstr ""
 
-#: includes/classes/Backend.php:108
+#: includes/classes/Backend.php:111
 msgid "Edit"
 msgstr ""
 
-#: includes/classes/Backend.php:140
+#: includes/classes/Backend.php:144
 msgid "Please select a form"
 msgstr ""
 
-#: includes/classes/Backend.php:155
+#: includes/classes/Backend.php:159
 msgid "Activities Suggestion Form"
 msgstr ""
 
-#: includes/classes/Backend.php:174
+#: includes/classes/Backend.php:178
 msgid "Unlock Mode"
 msgstr ""
 
-#: includes/classes/Backend.php:177
+#: includes/classes/Backend.php:181
 msgid "Multiple Unlocks"
 msgstr ""
 
-#: includes/classes/Backend.php:178
+#: includes/classes/Backend.php:182
 msgid "Single Unlock"
 msgstr ""
 
-#: includes/classes/Backend.php:315
+#: includes/classes/Backend.php:339
 msgid "Hide Achievement From POI Page"
 msgstr ""
 
-#: includes/classes/Backend.php:316
+#: includes/classes/Backend.php:340
 msgid "Yes, will hide this achievement from loading in the POI singular page."
 msgstr ""
 
-#: includes/classes/Backend.php:344
+#: includes/classes/Backend.php:369
 msgid "Badge Type"
 msgstr ""
 
-#: includes/classes/Backend.php:350
+#: includes/classes/Backend.php:375
 msgid "None"
 msgstr ""
 
-#: includes/classes/Frontend.php:172
+#: includes/classes/Frontend.php:190
 msgid "All Badges"
 msgstr ""
 
-#: includes/classes/Frontend.php:173
+#: includes/classes/Frontend.php:191
 msgid "Completed"
 msgstr ""
 
-#: includes/classes/Frontend.php:174
+#: includes/classes/Frontend.php:192
 msgid "Uncompleted"
 msgstr ""
 
-#: includes/classes/Frontend.php:176
+#: includes/classes/Frontend.php:194
 msgid "There are no badges for this place, but you can suggest one."
 msgstr ""
 
-#: includes/classes/Frontend.php:307
+#: includes/classes/Frontend.php:364
 msgid "Earned <span class=\"badgeos-earning-count\">%d</span> %s<br/>"
 msgstr ""
 
-#: includes/classes/Frontend.php:307
+#: includes/classes/Frontend.php:364
 msgid "time"
 msgid_plural "times"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/classes/Frontend.php:310
+#: includes/classes/Frontend.php:367
 msgid "Last earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:310
+#: includes/classes/Frontend.php:367
 msgid "Earned on"
 msgstr ""
 
-#: includes/classes/Frontend.php:338
+#: includes/classes/Frontend.php:395
 msgid "Suggestions for \"%s\""
 msgstr ""
 
-#: includes/classes/Frontend.php:353
+#: includes/classes/Frontend.php:410
 msgid ""
 "Please <a href=\"%s\" class=\"bookmark-notice-button-login\">log in</a> "
 "before submitting your suggestions"
@@ -200,7 +200,7 @@ msgid "True Resident Listing Category Check-in"
 msgstr ""
 
 #: includes/classes/Triggers/Listing_Category_Check_In_Trigger.php:57
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:132
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:142
 #: includes/classes/Triggers/Listing_Tag_Check_In_Trigger.php:64
 #: includes/classes/Triggers/Listings_Reviews_Trigger.php:61
 #: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:55
@@ -212,16 +212,16 @@ msgstr ""
 msgid "Any Category"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:109
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:116
 msgid "True Resident Listing Challenges Checklist"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:223
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:238
 #: includes/classes/Triggers/Specific_Listing_Check_In_Trigger.php:132
 msgid "Listing ID"
 msgstr ""
 
-#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:243
+#: includes/classes/Triggers/Listing_Challenges_Checklist_Trigger.php:258
 msgid "Manage Checklist"
 msgstr ""
 

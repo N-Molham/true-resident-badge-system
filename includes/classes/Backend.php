@@ -6,6 +6,7 @@
  * @package True_Resident\Badge_System
  */
 class Backend extends Component {
+
 	/**
 	 * BadgeOS meta box field name prefix
 	 *
@@ -33,6 +34,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	protected function init() {
+
 		parent::init();
 
 		// vars
@@ -80,6 +82,7 @@ class Backend extends Component {
 	 * @return string
 	 */
 	public function append_listing_badge_links_to_entry_value() {
+
 		$args = func_get_args();
 
 		// if entry page
@@ -130,6 +133,7 @@ class Backend extends Component {
 	 * @return array
 	 */
 	public function activities_suggestion_form_setting( $settings ) {
+
 		if ( false === class_exists( 'RGFormsModel' ) ) {
 			// Gravity Form is not installed/active
 			return $settings;
@@ -188,6 +192,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function manually_trigger_command() {
+
 		// target command
 		$cmd_name = sanitize_key( filter_input( INPUT_GET, 'command_name', FILTER_SANITIZE_STRING ) );
 
@@ -203,6 +208,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function update_db_tables() {
+
 		// load db API
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		global $wpdb;
@@ -237,28 +243,44 @@ class Backend extends Component {
 		$badge_steps       = badgeos_get_required_achievements_for_achievement( $badge_id );
 		$matching_listings = [];
 
+		if ( empty( $badge_steps ) ) {
+
+			return;
+
+		}
+
 		foreach ( $badge_steps as $step ) {
 
 			$step_trigger_type = get_post_meta( $step->ID, '_badgeos_trigger_type', true );
+
 			if ( empty( $step_trigger_type ) || ! isset( $triggers[ $step_trigger_type ] ) ) {
+
 				// skip un-recognized trigger
 				continue;
+
 			}
 
 			$trigger_obj         = $triggers[ $step_trigger_type ];
 			$matching_listings[] = $trigger_obj->get_matching_listings( $step->ID );
+
 		}
 
 		$matching_listings = array_filter( $matching_listings );
+
 		if ( empty( $matching_listings ) ) {
+
 			return;
+
 		}
 
 		$matching_listings = array_unique( call_user_func_array( 'array_merge', $matching_listings ) );
 
 		foreach ( $matching_listings as $listing_id ) {
+
 			delete_transient( 'trbs_listing_' . $listing_id . '_badges' );
+
 		}
+
 	}
 
 	/**
@@ -269,6 +291,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function store_hidden_badges_as_option( $badge_id ) {
+
 		// hidden badges
 		$hidden_badges = $this->get_hidden_badges();
 
@@ -302,6 +325,7 @@ class Backend extends Component {
 	 * @return array
 	 */
 	public function append_hide_from_listing_page_field( $fields, $prefix, $achievement_types ) {
+
 		if ( ! in_array( 'badges', $achievement_types, true ) ) {
 			// skip if badge not in the achievements list
 			return $fields;
@@ -331,6 +355,7 @@ class Backend extends Component {
 	 * @return array
 	 */
 	public function append_badge_type_field( $fields, $prefix, $achievement_types ) {
+
 		if ( ! in_array( 'badges', $achievement_types, true ) ) {
 			// skip if badge not in the achievements list
 			return $fields;
@@ -366,6 +391,7 @@ class Backend extends Component {
 	 * @return string
 	 */
 	public function badgeos_save_step_triggers_options( $title, $step_id, $step_data ) {
+
 		$triggers = trbs_rewards()->get_triggers();
 		foreach ( $triggers as $trigger_name => $trigger ) {
 			// trigger additional UI
@@ -381,6 +407,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function load_scripts() {
+
 		// main admin script
 		wp_enqueue_script( 'trbs-triggers', Helpers::enqueue_path() . 'js/admin.js', [
 			'jquery',
@@ -407,6 +434,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function badgeos_rewards_triggers_ui() {
+
 		$triggers = trbs_rewards()->get_triggers();
 		foreach ( $triggers as $trigger_name => $trigger ) {
 			// trigger additional UI
@@ -420,6 +448,7 @@ class Backend extends Component {
 	 * @return array
 	 */
 	public function get_hidden_badges() {
+
 		return array_values( get_option( $this->hidden_badges_option, [] ) );
 	}
 
@@ -434,6 +463,7 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function add_notice_message( $body, $priority = 10, $is_error = false, $is_dismissible = false ) {
+
 		$this->dashboard_messages[] = compact( 'body', 'priority', 'is_error', 'is_dismissible' );
 	}
 
@@ -443,8 +473,10 @@ class Backend extends Component {
 	 * @return void
 	 */
 	public function display_notice_messages() {
+
 		// sort by higher priority
 		usort( $this->dashboard_messages, function ( $a, $b ) {
+
 			return $a['priority'] - $b['priority'];
 		} );
 
