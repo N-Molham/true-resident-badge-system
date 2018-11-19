@@ -8,6 +8,7 @@ use WP_Job_Manager_Bookmarks;
  * @package True_Resident\Badge_System
  */
 class Bookmarks extends Component {
+
 	/*
 	 * @var string
 	 */
@@ -26,6 +27,7 @@ class Bookmarks extends Component {
 	 * @return void
 	 */
 	protected function init() {
+
 		parent::init();
 
 		// WP all plugin loaded action hook
@@ -38,6 +40,7 @@ class Bookmarks extends Component {
 	 * @return void
 	 */
 	public function replace_bookmark_handler() {
+
 		$this->wp_job_manager_bookmarks = isset( $GLOBALS['job_manager_bookmarks'] ) ? $GLOBALS['job_manager_bookmarks'] : null;
 		if ( null === $this->wp_job_manager_bookmarks ) {
 			// skip, Job Manager bookmarks object not found
@@ -55,6 +58,7 @@ class Bookmarks extends Component {
 	 * @return void
 	 */
 	public function bookmark_handler() {
+
 		global $wpdb;
 
 		$user_id = get_current_user_id();
@@ -132,12 +136,54 @@ class Bookmarks extends Component {
 	 * @return void
 	 */
 	public function delete_bookmark( $post_id, $user_id ) {
+
 		global $wpdb;
 
 		$wpdb->delete( $this->table_name(), [
 			'user_id' => $user_id,
 			'post_id' => $post_id,
 		], [ '%d', '%d' ] );
+
+	}
+
+	/**
+	 * @param int    $post_id
+	 * @param int    $user_id
+	 * @param string $date_created
+	 * @param string $bookmark_note
+	 *
+	 * @return void
+	 */
+	public function update_bookmark( $post_id, $user_id, $date_created = '', $bookmark_note = '' ) {
+
+		global $wpdb;
+
+		$changed_fields  = [];
+		$changed_formats = [];
+
+		if ( ! empty( $date_created ) ) {
+
+			$changed_fields['date_created'] = $date_created;
+			$changed_formats[]              = '%s';
+
+		}
+
+		if ( ! empty( $bookmark_note ) ) {
+
+			$changed_fields['bookmark_note'] = $bookmark_note;
+			$changed_formats[]               = '%s';
+
+		}
+
+		if ( count( $changed_formats ) ) {
+
+			$wpdb->update( $this->table_name(), $changed_fields, [
+				'user_id' => $user_id,
+				'post_id' => $post_id,
+			], $changed_formats, [ '%d', '%d' ] );
+
+		}
+
 	}
 
 	/**
@@ -148,6 +194,7 @@ class Bookmarks extends Component {
 	 * @return void
 	 */
 	public function add_bookmark( $post_id, $user_id, $bookmark_note = '' ) {
+
 		global $wpdb;
 
 		$bookmark_data = [
@@ -180,6 +227,7 @@ class Bookmarks extends Component {
 	 * @return int
 	 */
 	public function get_listing_bookmarks_count( $post_id, $user_id = 0 ) {
+
 		if ( 0 === $user_id ) {
 			// get count
 			return $this->wp_job_manager_bookmarks->bookmark_count( $post_id );
@@ -213,6 +261,7 @@ class Bookmarks extends Component {
 	 * @return null|string
 	 */
 	public function get_listing_last_bookmark( $post_id, $user_id = 0 ) {
+
 		global $wpdb;
 
 		$table_name = $this->table_name();
@@ -235,6 +284,7 @@ class Bookmarks extends Component {
 	 * @return string
 	 */
 	public function table_name() {
+
 		global $wpdb;
 
 		return "{$wpdb->prefix}job_manager_bookmarks";
@@ -247,6 +297,7 @@ class Bookmarks extends Component {
 	 * @return string
 	 */
 	public function get_cache_key( $user_id, $post_id ) {
+
 		return 'user_' . $user_id . '_bookmark_count_' . $post_id;
 	}
 
@@ -273,6 +324,7 @@ class Bookmarks extends Component {
 	 * @return WP_Job_Manager_Bookmarks
 	 */
 	public function get_wp_job_manager_bookmarks() {
+
 		return $this->wp_job_manager_bookmarks;
 	}
 
@@ -280,6 +332,7 @@ class Bookmarks extends Component {
 	 * @return string
 	 */
 	public function bookmark_mode_option_name() {
+
 		return 'bookmark_unlock_mode';
 	}
 }
