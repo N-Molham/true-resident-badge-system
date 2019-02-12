@@ -42,38 +42,38 @@ class Backend extends Component {
 		$this->hidden_badges_option = '_trbs_hidden_badges';
 
 		// WP admin dashboard messages area
-		add_action( 'admin_notices', [ &$this, 'display_notice_messages' ] );
+		add_action( 'admin_notices', [ $this, 'display_notice_messages' ] );
 
 		// WP initiation action hook
-		add_action( 'init', [ &$this, 'badgeos_rewards_triggers_ui' ] );
+		add_action( 'init', [ $this, 'badgeos_rewards_triggers_ui' ] );
 
 		// WP Admin enqueue script action
-		add_action( 'admin_enqueue_scripts', [ &$this, 'load_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'load_scripts' ] );
 
 		// BadgeOS before saving step filter
-		add_filter( 'badgeos_save_step', [ &$this, 'badgeos_save_step_triggers_options' ], 10, 3 );
+		add_filter( 'badgeos_save_step', [ $this, 'badgeos_save_step_triggers_options' ], 10, 3 );
 
 		// BadgeOS badge meta box fields filter
 		add_filter( 'badgeos_achievement_data_meta_box_fields', [
-			&$this,
+			$this,
 			'append_hide_from_listing_page_field',
 		], 10, 3 );
-		add_filter( 'badgeos_achievement_data_meta_box_fields', [ &$this, 'append_badge_type_field' ], 15, 3 );
+		add_filter( 'badgeos_achievement_data_meta_box_fields', [ $this, 'append_badge_type_field' ], 15, 3 );
 
 		// WP post data save action
-		add_action( 'save_post_badges', [ &$this, 'clear_badges_cache' ], 99 );
-		add_action( 'save_post_badges', [ &$this, 'store_hidden_badges_as_option' ], 100 );
+		add_action( 'save_post_badges', [ $this, 'clear_badges_cache' ], 99 );
+		add_action( 'save_post_badges', [ $this, 'store_hidden_badges_as_option' ], 100 );
 
 		// WP admin dashboard action
-		add_action( 'admin_action_trbs_run_command', [ &$this, 'manually_trigger_command' ] );
+		add_action( 'admin_action_trbs_run_command', [ $this, 'manually_trigger_command' ] );
 
 		// Job Manager settings fields
-		add_filter( 'job_manager_settings', [ &$this, 'activities_suggestion_form_setting' ], 999 );
-		add_filter( 'job_manager_settings', [ &$this, 'bookmark_mode_toggle_switch' ], 1000 );
+		add_filter( 'job_manager_settings', [ $this, 'activities_suggestion_form_setting' ], 999 );
+		add_filter( 'job_manager_settings', [ $this, 'bookmark_mode_toggle_switch' ], 1000 );
 
 		// GForms entries field value
-		add_action( 'gform_entries_column', [ &$this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
-		add_filter( 'gform_field_content', [ &$this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
+		add_action( 'gform_entries_column', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
+		add_filter( 'gform_field_content', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
 	}
 
 	/**
@@ -123,6 +123,9 @@ class Backend extends Component {
 		}
 
 		echo $edit_link;
+
+		return '';
+
 	}
 
 	/**
@@ -198,7 +201,7 @@ class Backend extends Component {
 
 		if ( method_exists( $this, $cmd_name ) ) {
 			// run command if found
-			call_user_func( [ &$this, $cmd_name ] );
+			$this->$cmd_name();
 		}
 	}
 
@@ -273,7 +276,7 @@ class Backend extends Component {
 
 		}
 
-		$matching_listings = array_unique( call_user_func_array( 'array_merge', $matching_listings ) );
+		$matching_listings = array_unique( array_merge( ...$matching_listings ) );
 
 		foreach ( $matching_listings as $listing_id ) {
 
@@ -299,16 +302,16 @@ class Backend extends Component {
 		$is_hidden     = 'on' === get_post_meta( $badge_id, $this->badge_field_prefix . 'hide_from_listing', true );
 		$in_list_index = array_search( $badge_id, $hidden_badges, true );
 
-		if ( $is_hidden ) {
-			if ( false === $in_list_index ) {
-				// add to list
-				$hidden_badges[] = $badge_id;
-			}
-		} else {
-			if ( false !== $in_list_index ) {
-				// remove from the list
-				unset( $hidden_badges[ $in_list_index ] );
-			}
+		if ( $is_hidden && false === $in_list_index ) {
+
+			// add to list
+			$hidden_badges[] = $badge_id;
+
+		} elseif ( false !== $in_list_index ) {
+
+			// remove from the list
+			unset( $hidden_badges[ $in_list_index ] );
+
 		}
 
 		// update hidden list

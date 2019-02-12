@@ -5,6 +5,12 @@ use stdClass;
 use True_Resident\Badge_System\Triggers\Trigger_Interface;
 use WP_Error;
 use WP_Post;
+use True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger;
+use True_Resident\Badge_System\Triggers\Listing_Challenges_Checklist_Trigger;
+use True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger;
+use True_Resident\Badge_System\Triggers\User_Register_Trigger;
 
 /**
  * BadgeOS rewards logic
@@ -12,6 +18,7 @@ use WP_Post;
  * @package True_Resident\Badge_System
  */
 class Rewards extends Component {
+
 	/**
 	 * Additional triggers list holder
 	 *
@@ -39,17 +46,19 @@ class Rewards extends Component {
 	 * @return void
 	 */
 	protected function init() {
+
 		parent::init();
 
 		// BadgeOS activity triggers action
-		add_filter( 'badgeos_activity_triggers', [ &$this, 'badegos_register_new_triggers' ] );
+		add_filter( 'badgeos_activity_triggers', [ $this, 'badegos_register_new_triggers' ] );
 
 		// BadgeOS step data requirements filter
-		add_filter( 'badgeos_get_step_requirements', [ &$this, 'badgeos_step_data_requirements' ], 10, 2 );
+		add_filter( 'badgeos_get_step_requirements', [ $this, 'badgeos_step_data_requirements' ], 10, 2 );
 
 		// WP Initialization
-		add_action( 'init', [ &$this, 'setup_db_tables_names' ], 1 );
-		add_action( 'init', [ &$this, 'badgeos_load_triggers' ] );
+		add_action( 'init', [ $this, 'setup_db_tables_names' ], 1 );
+		add_action( 'init', [ $this, 'badgeos_load_triggers' ] );
+		
 	}
 
 	/**
@@ -58,6 +67,7 @@ class Rewards extends Component {
 	 * @return void
 	 */
 	public function setup_db_tables_names() {
+
 		global $wpdb;
 
 		$wpdb->checklist_marks = $wpdb->prefix . 'checklist_marks';
@@ -67,17 +77,19 @@ class Rewards extends Component {
 	 * Load additional BadgeOS triggers hooks
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function badgeos_load_triggers() {
+
 		$force_reload_status = filter_input( INPUT_GET, $this->session_key, FILTER_SANITIZE_STRING );
 		switch ( $force_reload_status ) {
 			case 'reload':
 				// force to reload data and discard cache for the next session request
-				WC()->session->set( $this->session_key, true );
+				wc()->session->set( $this->session_key, true );
 				break;
 
 			case 'normal':
-				WC()->session->set( $this->session_key, false );
+				wc()->session->set( $this->session_key, false );
 				break;
 		}
 
@@ -107,8 +119,10 @@ class Rewards extends Component {
 	 * @param  string  $trigger_type step trigger type
 	 *
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function badgeos_step_data_requirements( $requirements, $step_id, $trigger_type = '' ) {
+
 		// vars
 		$trigger_type = '' === $trigger_type || empty( $trigger_type ) ? $this->get_step_type( $step_id ) : $trigger_type;
 		$triggers     = $this->get_triggers();
@@ -130,10 +144,13 @@ class Rewards extends Component {
 	 * @param array $triggers
 	 *
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function badegos_register_new_triggers( $triggers ) {
+
 		// list trigger with labels
 		$triggers = array_merge( $triggers, array_map( function ( $trigger ) {
+
 			return $trigger->label();
 		}, $this->get_triggers() ) );
 
@@ -146,8 +163,10 @@ class Rewards extends Component {
 	 * @param int $listing_id
 	 *
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function get_listings_badges( $listing_id ) {
+
 		// vars
 		$cache_id     = 'trbs_listing_' . $listing_id . '_badges';
 		$badges_found = get_transient( $cache_id );
@@ -207,8 +226,10 @@ class Rewards extends Component {
 	 * List of new triggers
 	 *
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function get_triggers() {
+
 		if ( null === $this->triggers_list ) {
 			/**
 			 * Filters the list of triggers' classes in the add-on
@@ -218,12 +239,12 @@ class Rewards extends Component {
 			 * @return array
 			 */
 			$triggers_classes = (array) apply_filters( 'trbs_rewards_activity_triggers', [
-				'True_Resident\Badge_System\Triggers\Listing_Category_Check_In_Trigger',
-				'True_Resident\Badge_System\Triggers\Listing_Tag_Check_In_Trigger',
-				'True_Resident\Badge_System\Triggers\Specific_Listing_Check_In_Trigger',
-				'True_Resident\Badge_System\Triggers\Listing_Challenges_Checklist_Trigger',
-				'True_Resident\Badge_System\Triggers\Listings_Reviews_Trigger',
-				'True_Resident\Badge_System\Triggers\User_Register_Trigger',
+				Listing_Category_Check_In_Trigger::class,
+				Listing_Tag_Check_In_Trigger::class,
+				Specific_Listing_Check_In_Trigger::class,
+				Listing_Challenges_Checklist_Trigger::class,
+				Listings_Reviews_Trigger::class,
+				User_Register_Trigger::class,
 			] );
 
 			foreach ( $triggers_classes as $trigger_class ) {
@@ -252,6 +273,7 @@ class Rewards extends Component {
 	 * @return int
 	 */
 	public function get_step_completed_percentage( $step_id, $user_id = null ) {
+
 		$step_type = $this->get_step_type( $step_id );
 		if ( ! isset( $this->triggers_list[ $step_type ] ) ) {
 			// step not in the additional type
@@ -274,6 +296,7 @@ class Rewards extends Component {
 	 * @return string
 	 */
 	public function get_step_type( $step_id ) {
+
 		return get_post_meta( $step_id, '_badgeos_trigger_type', true );
 	}
 
@@ -284,8 +307,10 @@ class Rewards extends Component {
 	 * @param string $step_type
 	 *
 	 * @return array|bool
+	 * @throws \ReflectionException
 	 */
 	public function get_step_data( $step_id, $step_type = '' ) {
+
 		$trigger = $this->get_step_trigger_object( $step_id, $step_type );
 		if ( false === $trigger ) {
 			// unknown trigger type
@@ -302,8 +327,10 @@ class Rewards extends Component {
 	 * @param string $step_type
 	 *
 	 * @return bool
+	 * @throws \ReflectionException
 	 */
 	public function is_checklist_step( $step_id, $step_type = '' ) {
+
 		$trigger = $this->get_step_trigger_object( $step_id, $step_type );
 		if ( false === $trigger || false === method_exists( $trigger, 'is_checklist_step' ) ) {
 			// wrong step type
@@ -320,8 +347,10 @@ class Rewards extends Component {
 	 * @param string $step_type
 	 *
 	 * @return Trigger_Interface|boolean
+	 * @throws \ReflectionException
 	 */
 	public function get_step_trigger_object( $step_id, $step_type = '' ) {
+
 		$step_type = '' === $step_type || empty( $step_type ) ? $this->get_step_type( $step_id ) : $step_type;
 
 		$triggers = $this->get_triggers();
@@ -342,6 +371,7 @@ class Rewards extends Component {
 	 * @return array
 	 */
 	public function get_checklist_marks( $args ) {
+
 		global $wpdb;
 
 		// default args
@@ -371,14 +401,14 @@ class Rewards extends Component {
 
 				case 'before':
 					if ( '' !== $arg_value || ! empty( $arg_value ) ) {
-						$sql_stmt   .= " AND mark_datetime < %s";
+						$sql_stmt   .= ' AND mark_datetime < %s';
 						$sql_vars[] = $arg_value;
 					}
 					break;
 
 				case 'after':
 					if ( '' !== $arg_value || ! empty( $arg_value ) ) {
-						$sql_stmt   .= " AND mark_datetime > %s";
+						$sql_stmt   .= ' AND mark_datetime > %s';
 						$sql_vars[] = $arg_value;
 					}
 					break;
@@ -426,8 +456,10 @@ class Rewards extends Component {
 	 * @param array $mark_args
 	 *
 	 * @return WP_Error|boolean
+	 * @throws \ReflectionException
 	 */
 	public function update_checklist_mark( $mark_args ) {
+
 		global $wpdb;
 
 		// get checklist point last mark
@@ -491,8 +523,10 @@ class Rewards extends Component {
 	 * @param array $mark_args
 	 *
 	 * @return null|string|WP_Error
+	 * @throws \ReflectionException
 	 */
 	public function get_checklist_mark( $mark_args ) {
+
 		global $wpdb;
 
 		// query badge info
@@ -540,12 +574,12 @@ class Rewards extends Component {
 		$last_earning = $this->get_last_badge_earning( $mark_args['step'], $mark_args['user'] );
 		if ( false !== $last_earning && isset( $last_earning->date_earned ) ) {
 			// get mark after the last earning datetime
-			$mark_sql    .= " AND mark_datetime > %s";
+			$mark_sql    .= ' AND mark_datetime > %s';
 			$mark_vars[] = date( 'Y-m-d H:i:s', $last_earning->date_earned );
 		}
 
 		// order by datetime descending
-		$mark_sql .= " ORDER BY mark_datetime DESC LIMIT 1";
+		$mark_sql .= ' ORDER BY mark_datetime DESC LIMIT 1';
 
 		// execute SQL
 		$mark_id = $wpdb->get_var( $wpdb->prepare( $mark_sql, $mark_vars ) );
@@ -570,6 +604,7 @@ class Rewards extends Component {
 	 * @return stdClass|bool
 	 */
 	public function get_last_badge_earning( $achievement_id, $user_id = 0 ) {
+
 		$last_earning = null;
 		$earnings     = badgeos_get_user_achievements( [
 			'user_id'        => $user_id,
@@ -590,6 +625,7 @@ class Rewards extends Component {
 		if ( null === $last_earning ) {
 			// sort object by earn date descending
 			usort( $earnings, function ( $a, $b ) {
+
 				return $a->date_earned < $b->date_earned ? 1 : - 1;
 			} );
 
@@ -613,8 +649,10 @@ class Rewards extends Component {
 	 * @param boolean $with_extra
 	 *
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function get_badge_steps( $badge, $with_extra = false ) {
+
 		$required_steps = get_posts( [
 			'post_type'           => 'step',
 			'posts_per_page'      => - 1,
@@ -666,6 +704,7 @@ class Rewards extends Component {
 	 * @return WP_Error|WP_Post
 	 */
 	public function get_badge( $badge_id ) {
+
 		$badge = get_post( $badge_id );
 		if ( null === $badge ) {
 			// badge not found
@@ -686,6 +725,7 @@ class Rewards extends Component {
 	 * @return array
 	 */
 	public function get_badge_types() {
+
 		return apply_filters( 'trbs_badge_types', [
 			[
 				'name'        => __( 'Explorer', TRBS_DOMAIN ),
@@ -711,6 +751,7 @@ class Rewards extends Component {
 	 * @return WP_Error|array
 	 */
 	public function get_suggestion_form() {
+
 		if ( false === class_exists( 'GFAPI' ) ) {
 			// GForms is missing
 			return new WP_Error( 'trbs_gform_missing', __( 'Gravity Forms not installed or active!', TRBS_DOMAIN ) );
@@ -730,6 +771,7 @@ class Rewards extends Component {
 
 		// check for missing fields
 		$required_fields = array_filter( $form['fields'], function ( $field ) {
+
 			/* @var $field \GF_Field */
 			if ( 'hidden' !== $field->get_input_type() ) {
 				// not hidden field
@@ -757,6 +799,7 @@ class Rewards extends Component {
 	 * @return string
 	 */
 	public function get_suggestion_form_option_name() {
+
 		return $this->suggestion_form_option_name;
 	}
 }

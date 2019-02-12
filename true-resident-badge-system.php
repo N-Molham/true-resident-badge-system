@@ -47,6 +47,7 @@ require_once TRBS_DIR . 'includes/functions.php';
  * @package True_Resident\Badge_System
  */
 class Plugin extends Singular {
+
 	/**
 	 * Plugin version
 	 *
@@ -100,13 +101,15 @@ class Plugin extends Singular {
 	 * Initialization
 	 *
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function init() {
+
 		// load language files
-		add_action( 'plugins_loaded', [ &$this, 'load_language' ] );
+		add_action( 'plugins_loaded', [ $this, 'load_language' ] );
 
 		// autoloader register
-		spl_autoload_register( [ &$this, 'autoloader' ] );
+		spl_autoload_register( [ $this, 'autoloader' ] );
 
 		// vars
 		$has_missing_plugins      = false;
@@ -138,7 +141,7 @@ class Plugin extends Singular {
 		}
 
 		if ( $has_missing_plugins ) {
-			add_action( 'admin_notices', [ &$this, 'missing_dependency_plugin_notice' ] );
+			add_action( 'admin_notices', [ $this, 'missing_dependency_plugin_notice' ] );
 
 			// skip as the dependencies aren't available
 			return;
@@ -152,13 +155,13 @@ class Plugin extends Singular {
 		$this->frontend  = Frontend::get_instance();
 
 		// plugin loaded hook
-		do_action_ref_array( 'trbs_loaded', [ &$this ] );
+		do_action_ref_array( 'trbs_loaded', [ $this ] );
 
 		// WP Widgets initialization
-		add_action( 'widgets_init', [ &$this, 'register_widgets' ] );
+		add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 
 		// plugin activation
-		register_activation_hook( TRBS_MAIN_FILE, [ &$this, 'plugin_activation_setups' ] );
+		register_activation_hook( TRBS_MAIN_FILE, [ $this, 'plugin_activation_setups' ] );
 	}
 
 	/**
@@ -167,6 +170,7 @@ class Plugin extends Singular {
 	 * @return void
 	 */
 	public function plugin_activation_setups() {
+
 		// Database tables
 		$this->backend->update_db_tables();
 	}
@@ -177,6 +181,7 @@ class Plugin extends Singular {
 	 * @return void
 	 */
 	public function register_widgets() {
+
 		// listing's badges
 		register_widget( __NAMESPACE__ . '\Widgets\Listify_Listing_Badges' );
 	}
@@ -187,9 +192,12 @@ class Plugin extends Singular {
 	 * @return void
 	 */
 	public function missing_dependency_plugin_notice() {
+
 		$missing_plugins = array_map( function ( $item ) {
+
 			return sprintf( '<a href="%s" target="_blank">%s</a>', esc_url( $item['link'] ), $item['title'] );
 		}, array_filter( $this->dependency_plugins, function ( $item ) {
+
 			return $item['inactive'];
 		} ) );
 
@@ -204,7 +212,9 @@ class Plugin extends Singular {
 	 * @return bool
 	 */
 	public function cache_disabled() {
+
 		return defined( 'TRBS_DISABLE_CACHE' ) && TRBS_DISABLE_CACHE;
+		
 	}
 
 	/**
@@ -216,6 +226,7 @@ class Plugin extends Singular {
 	 * @return void
 	 */
 	public function load_view( $view_name, $args = null ) {
+
 		// build view file path
 		$__view_name     = $view_name;
 		$__template_path = TRBS_DIR . 'views/' . $__view_name . '.php';
@@ -235,7 +246,7 @@ class Plugin extends Singular {
 		 * @param string $__template_path
 		 * @param string $__view_name
 		 */
-		do_action_ref_array( 'trbs_load_template_before', [ &$__template_path, $__view_name, $args ] );
+		do_action_ref_array( 'trbs_load_template_before', [ $__template_path, $__view_name, $args ] );
 
 		/**
 		 * Loading template file path filter
@@ -262,6 +273,7 @@ class Plugin extends Singular {
 	 * @return void
 	 */
 	public function load_language() {
+
 		load_plugin_textdomain( TRBS_DOMAIN, false, dirname( plugin_basename( TRBS_MAIN_FILE ) ) . '/languages' );
 	}
 
@@ -273,6 +285,7 @@ class Plugin extends Singular {
 	 * @return void
 	 */
 	public function autoloader( $class_name ) {
+
 		if ( strpos( $class_name, __NAMESPACE__ ) === false ) {
 			// skip non related classes
 			return;

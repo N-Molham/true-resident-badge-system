@@ -31,7 +31,7 @@ class Bookmarks extends Component {
 		parent::init();
 
 		// WP all plugin loaded action hook
-		add_action( 'plugins_loaded', [ &$this, 'replace_bookmark_handler' ] );
+		add_action( 'plugins_loaded', [ $this, 'replace_bookmark_handler' ] );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class Bookmarks extends Component {
 
 		// replace the default handler
 		remove_action( 'wp', [ $this->wp_job_manager_bookmarks, 'bookmark_handler' ] );
-		add_action( 'wp', [ &$this, 'bookmark_handler' ] );
+		add_action( 'wp', [ $this, 'bookmark_handler' ] );
 	}
 
 	/**
@@ -105,22 +105,18 @@ class Bookmarks extends Component {
 
 			}
 
+		} elseif ( $update_bookmark && $is_bookmarked ) {
+
+			// update existing one
+			$wpdb->update( $this->table_name(),
+				[ 'bookmark_note' => $bookmark_note ],
+				[ 'post_id' => $post_id, 'user_id' => $user_id ],
+				[ '%s' ], [ '%d', '%d' ]
+			);
+
 		} else {
 
-			if ( $update_bookmark && $is_bookmarked ) {
-
-				// update existing one
-				$wpdb->update( $this->table_name(),
-					[ 'bookmark_note' => $bookmark_note ],
-					[ 'post_id' => $post_id, 'user_id' => $user_id ],
-					[ '%s' ], [ '%d', '%d' ]
-				);
-
-			} else {
-
-				$this->add_bookmark( $post_id, $user_id, $bookmark_note );
-
-			}
+			$this->add_bookmark( $post_id, $user_id, $bookmark_note );
 
 		}
 
@@ -269,11 +265,11 @@ class Bookmarks extends Component {
 		$params     = [ $post_id ];
 
 		if ( $user_id ) {
-			$sql      .= " AND user_id = %d";
+			$sql      .= ' AND user_id = %d';
 			$params[] = $user_id;
 		}
 
-		$sql .= " ORDER BY date_created DESC LIMIT 1";
+		$sql .= ' ORDER BY date_created DESC LIMIT 1';
 
 		return $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
 	}
