@@ -74,6 +74,57 @@ class Backend extends Component {
 		// GForms entries field value
 		add_action( 'gform_entries_column', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
 		add_filter( 'gform_field_content', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
+
+		add_action( 'admin_action_reset_badge_earnings', [ $this, 'reset_badge_earnings' ] );
+
+		add_action( 'badgeos_settings', [ $this, 'add_badge_earnings_reset_button' ] );
+
+	}
+
+	/**
+	 * @return void
+	 */
+	public function add_badge_earnings_reset_button() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+
+			return;
+
+		}
+
+		echo '<tr valign="top"><th scope="row"><label>', __( 'Reset Earnings', TRBS_DOMAIN ), '</label></th><td>',
+		'<a href="', esc_url( wp_nonce_url( add_query_arg( 'action', 'reset_badge_earnings', admin_url( 'index.php' ) ), 'trbs_reset_earnings' ) ), '" class="button" onclick="return confirm(\'', __( 'Are you sure? this action can not be undone!', TRBS_DOMAIN ), '\');">',
+		__( 'Reset All Badges Earnings', TRBS_DOMAIN ), '</a></td></tr>';
+
+	}
+
+	/**
+	 * @return void
+	 */
+	public function reset_badge_earnings() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+
+			return;
+
+		}
+
+		check_admin_referer( 'trbs_reset_earnings' );
+
+		global $wpdb;
+
+		wc_set_time_limit();
+
+		$deleted = $wpdb->delete( $wpdb->usermeta, [ 'meta_key' => '_badgeos_achievements' ] );
+
+		if ( false === $deleted && $wpdb->last_error ) {
+
+			wp_die( 'Error deleting users achievement earnings: <code>' . $wpdb->last_error . '</code>' );
+
+		}
+
+		wp_die( sprintf( '%d achievement earnings revoked/deleted', $deleted ), 'Deleted' );
+
 	}
 
 	/**
@@ -239,6 +290,7 @@ class Backend extends Component {
 	 * @param int $badge_id
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function clear_badges_cache( $badge_id ) {
 
@@ -392,6 +444,7 @@ class Backend extends Component {
 	 * @param  array   $step_data Our array of all available step data
 	 *
 	 * @return string
+	 * @throws \ReflectionException
 	 */
 	public function badgeos_save_step_triggers_options( $title, $step_id, $step_data ) {
 
@@ -435,6 +488,7 @@ class Backend extends Component {
 	 * Handle new rewards triggers UI
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function badgeos_rewards_triggers_ui() {
 
