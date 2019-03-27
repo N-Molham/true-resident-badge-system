@@ -123,7 +123,7 @@ class Backend extends Component {
 
 		}
 
-		wp_die( sprintf( '%d achievement earnings revoked/deleted', $deleted ), 'Deleted' );
+		wp_die( sprintf( '%d achievement earnings revoked/deleted', $deleted ), 'Deleted', [ 'back_link' => true ] );
 
 	}
 
