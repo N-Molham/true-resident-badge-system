@@ -18,6 +18,11 @@ class Frontend extends Component {
 	public $popover_args;
 
 	/**
+	 * @var int
+	 */
+	protected $_target_user_id;
+
+	/**
 	 * Constructor
 	 *
 	 * @return void
@@ -56,6 +61,31 @@ class Frontend extends Component {
 
 		add_action( 'init', [ $this, 'hooks_cleanup' ], PHP_INT_MAX );
 
+		add_filter( 'shortcode_atts_badgeos_achievements_list', [ $this, 'filter_profile_badges_by_user' ] );
+
+	}
+
+	/**
+	 * @param array $attributes
+	 *
+	 * @return array
+	 */
+	public function filter_profile_badges_by_user( $attributes ) {
+
+		if ( ! function_exists( 'um_is_core_page' ) ) {
+
+			return $attributes;
+
+		}
+
+		if ( um_is_core_page( 'user' ) ) {
+
+			$attributes['user_id'] = um_profile_id();
+
+		}
+
+		return $attributes;
+
 	}
 
 	/**
@@ -77,6 +107,7 @@ class Frontend extends Component {
 	 * @param WP_Query $query
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function badgeos_query_list_all( $query ) {
 
@@ -155,7 +186,7 @@ class Frontend extends Component {
 	 */
 	public function badgeos_achievements_list_styling() {
 
-		if ( ! ( wp_script_is( 'badgeos-achievements', 'registered' ) || wp_script_is( 'badgeos-achievements', 'enqueued' ) ) ) {
+		if ( ! ( wp_script_is( 'badgeos-achievements', 'registered' ) || wp_script_is( 'badgeos-achievements' ) ) ) {
 			// skip un-related content
 			return;
 		}
@@ -205,6 +236,7 @@ class Frontend extends Component {
 	 * @param array $steps
 	 *
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function get_badge_completion_data( $badge_id, $user_id = 0, $steps = null ) {
 
@@ -302,11 +334,12 @@ class Frontend extends Component {
 	 * @param int    $badge_id
 	 *
 	 * @return string
+	 * @throws \ReflectionException
 	 */
 	public function badge_render_output( $output, $badge_id ) {
 
 		// vars
-		$user_id        = get_current_user_id();
+		$user_id        = $this->target_get_user_id();
 		$badge          = get_post( $badge_id );
 		$multi_earnings = - 1 === (int) $badge->_badgeos_maximum_earnings;
 
@@ -415,4 +448,34 @@ class Frontend extends Component {
 		// render form's shortcode
 		echo do_shortcode( '[gravityform id="' . $form['id'] . '" title="true" description="false" ajax="true"]' );
 	}
+
+	/**
+	 * Get target User ID
+	 *
+	 * @return int
+	 */
+	public function target_get_user_id() {
+
+		if ( null !== $this->_target_user_id ) {
+
+			return $this->_target_user_id;
+
+		}
+
+		$user_id = wp_doing_ajax() ? absint( filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT ) ) : 0;
+
+		$user_id = $user_id ? : get_current_user_id();
+
+		if ( function_exists( 'um_is_core_page' ) && um_is_core_page( 'user' ) ) {
+
+			$user_id = um_profile_id();
+
+		}
+
+		$this->_target_user_id = $user_id;
+
+		return $user_id;
+
+	}
+
 }
