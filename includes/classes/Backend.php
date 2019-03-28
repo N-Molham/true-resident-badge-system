@@ -76,15 +76,16 @@ class Backend extends Component {
 		add_filter( 'gform_field_content', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
 
 		add_action( 'admin_action_reset_badge_earnings', [ $this, 'reset_badge_earnings' ] );
+		add_action( 'admin_action_set_badge_earning_maximum', [ $this, 'set_badge_earning_maximum' ] );
 
-		add_action( 'badgeos_settings', [ $this, 'add_badge_earnings_reset_button' ] );
+		add_action( 'badgeos_settings', [ $this, 'add_badge_action_buttons' ] );
 
 	}
 
 	/**
 	 * @return void
 	 */
-	public function add_badge_earnings_reset_button() {
+	public function add_badge_action_buttons() {
 
 		if ( ! current_user_can( 'manage_options' ) ) {
 
@@ -95,6 +96,39 @@ class Backend extends Component {
 		echo '<tr valign="top"><th scope="row"><label>', __( 'Reset Earnings', TRBS_DOMAIN ), '</label></th><td>',
 		'<a href="', esc_url( wp_nonce_url( add_query_arg( 'action', 'reset_badge_earnings', admin_url( 'index.php' ) ), 'trbs_reset_earnings' ) ), '" class="button" onclick="return confirm(\'', __( 'Are you sure? this action can not be undone!', TRBS_DOMAIN ), '\');">',
 		__( 'Reset All Badges Earnings', TRBS_DOMAIN ), '</a></td></tr>';
+
+		echo '<tr valign="top"><th scope="row"><label>', __( 'Set Earning Maximum', TRBS_DOMAIN ), '</label></th><td>',
+		'<a href="', esc_url( wp_nonce_url( add_query_arg( 'action', 'set_badge_earning_maximum', admin_url( 'index.php' ) ), 'trbs_set_badge_earning_maximum' ) ), '" class="button" onclick="return confirm(\'', __( 'Are you sure? this action can not be undone!', TRBS_DOMAIN ), '\');">',
+		__( 'Set All Badges Maximum Earning', TRBS_DOMAIN ), '</a></td></tr>';
+
+	}
+
+	/**
+	 * @return void
+	 */
+	public function set_badge_earning_maximum() {
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+
+			return;
+
+		}
+
+		check_admin_referer( 'trbs_set_badge_earning_maximum' );
+
+		global $wpdb;
+
+		wc_set_time_limit();
+
+		$updated = $wpdb->update( $wpdb->postmeta, [ 'meta_value' => 1 ], [ 'meta_key' => '_badgeos_maximum_earnings' ], [ '%d' ], [ '%s' ] );
+
+		if ( false === $updated && $wpdb->last_error ) {
+
+			wp_die( 'Error updating maximum earnings: <code>' . $wpdb->last_error . '</code>' );
+
+		}
+
+		wp_die( sprintf( '%d badges maximum earnings set to 1', $updated ), 'Updated', [ 'back_link' => true ] );
 
 	}
 
@@ -439,9 +473,9 @@ class Backend extends Component {
 	/**
 	 * Save additional steps data
 	 *
-	 * @param  string  $title The original title for our step
-	 * @param  integer $step_id The given step's post ID
-	 * @param  array   $step_data Our array of all available step data
+	 * @param string  $title The original title for our step
+	 * @param integer $step_id The given step's post ID
+	 * @param array   $step_data Our array of all available step data
 	 *
 	 * @return string
 	 * @throws \ReflectionException
