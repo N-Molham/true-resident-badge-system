@@ -16,7 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die();
 }
 
-if ( '' === session_id() ) {
+if ( PHP_SESSION_NONE === session_status() || '' === session_id() ) {
 	// start session of not there
 	session_start();
 }
@@ -214,7 +214,7 @@ class Plugin extends Singular {
 	public function cache_disabled() {
 
 		return defined( 'TRBS_DISABLE_CACHE' ) && TRBS_DISABLE_CACHE;
-		
+
 	}
 
 	/**

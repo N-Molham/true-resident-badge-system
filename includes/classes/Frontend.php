@@ -133,9 +133,11 @@ class Frontend extends Component {
 			$selected_type = array_filter( trbs_rewards()->get_badge_types(), function ( $badge_type ) use ( $selected_type ) {
 
 				return $badge_type['value'] === $selected_type;
+
 			} );
 
 			if ( count( $selected_type ) > 0 ) {
+
 				$selected_type = array_shift( $selected_type );
 
 				// if found then filter badge based on it
@@ -151,8 +153,11 @@ class Frontend extends Component {
 					'value'   => $selected_type['value'],
 					'compare' => '=',
 				];
+
 				$query->set( 'meta_query', $meta_query );
+
 			}
+
 		}
 
 		// check for related badges for a specific listing
@@ -251,24 +256,7 @@ class Frontend extends Component {
 		$last_earning = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
 		$is_earned    = false !== $last_earning;
 
-		// completion data
-		$steps_completion_data = Rewards::get_badge_completion_data( $badge_id, $user_id );
-		$has_challenges        = $steps_completion_data['has_challenges'];
-		$steps_data            = $steps_completion_data['steps_data'];
-		$earned_percentage     = $steps_completion_data['earned_percentage'];
-
-		if ( false === $is_earned && $earned_percentage >= 100 ) {
-
-			badgeos_award_achievement_to_user( $badge_id, $user_id );
-
-			$is_earned    = true;
-			$last_earning = new stdClass();
-
-			$last_earning->earn_count            = 1;
-			$last_earning->date_earned           = current_time( 'timestamp' );
-			$last_earning->date_earned_formatted = date( 'M j, Y', $last_earning->date_earned );
-
-		}
+		$render_progress = isset( $_REQUEST['trbs_listing_id'] );
 
 		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
 		$css_classes   = [
@@ -280,16 +268,25 @@ class Frontend extends Component {
 		$credly_ID = '';
 
 		// If the achievement is earned and givable, override our credly classes
-		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) ) {
+		if ( $is_earned && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) ) {
 
 			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
 			$credly_ID   = 'data-credlyid="' . $badge_id . '"';
 
 		}
 
-		if ( $has_challenges ) {
+		if ( $render_progress ) {
 
-			$css_classes[] = 'badgeos-achievements-challenges-item';
+			// completion data
+			$steps_completion_data = Rewards::get_badge_completion_data( $badge_id, $user_id );
+			$steps_data            = $steps_completion_data['steps_data'];
+			$earned_percentage     = $steps_completion_data['earned_percentage'];
+
+			if ( $steps_completion_data['has_challenges'] ) {
+
+				$css_classes[] = 'badgeos-achievements-challenges-item';
+
+			}
 
 		}
 
@@ -306,7 +303,7 @@ class Frontend extends Component {
 		$excerpt         = '' === $badge->post_excerpt || empty( $badge->post_excerpt ) ? $badge->post_content : $badge->post_excerpt;
 		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
 
-		if ( false === $is_earned ) {
+		if ( $render_progress ) {
 
 			// progress bar
 			$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
@@ -319,13 +316,19 @@ class Frontend extends Component {
 			$popover_content .= '<span class="badgeos-earning">';
 
 			if ( $multi_earnings && isset( $last_earning->earn_count ) ) {
+
 				// earn count
-				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> %s<br/>', TRBS_DOMAIN ), $last_earning->earn_count, _n( 'time', 'times', $last_earning->earn_count, TRBS_DOMAIN ) );
+				$popover_content .= sprintf( __( 'Earned <span class="badgeos-earning-count">%d</span> %s<br/>', TRBS_DOMAIN ),
+					$last_earning->earn_count,
+					_n( 'time', 'times', $last_earning->earn_count, TRBS_DOMAIN )
+				);
+
 			}
 
 			$popover_content .= $multi_earnings ? __( 'Last earned on', TRBS_DOMAIN ) : __( 'Earned on', TRBS_DOMAIN );
 			$popover_content .= ' <span class="badgeos-earning-date">' . $last_earning->date_earned_formatted . '</span>';
 			$popover_content .= '</span>';
+
 		}
 
 		$popover_content .= '</div><!-- .badgeos-item-excerpt --></div><!-- .badgeos-item-description -->';
@@ -333,8 +336,16 @@ class Frontend extends Component {
 		// Each Achievement
 		echo '<a href="javascript:void(0)" id="badgeos-achievements-list-item-', $badge_id, '" data-id="', $badge_id, '" ',
 		'data-content="', esc_attr( $popover_content ), '" ', Helpers::parse_attributes( $this->popover_args ),
-		'class="', implode( ' ', $css_classes ), '"', $credly_ID,
-		' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '" data-completed="', $earned_percentage, '" data-last-earning="', esc_attr( json_encode( $last_earning ) ), '">';
+		'class="', implode( ' ', $css_classes ), '" ', $credly_ID;
+
+		if ( $render_progress ) {
+
+			echo ' data-steps-data="', esc_attr( json_encode( $steps_data ) ), '" data-completed="', $earned_percentage, '"';
+
+		}
+
+		echo ' data-last-earning="', esc_attr( json_encode( $last_earning ) ), '">';
+
 		// Achievement Image
 		echo '<span class="badgeos-item-image">', badgeos_get_achievement_post_thumbnail( $badge ), '</span></a><!-- .badgeos-achievements-list-item -->';
 
