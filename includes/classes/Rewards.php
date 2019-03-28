@@ -1,6 +1,9 @@
 <?php namespace True_Resident\Badge_System;
 
+use GF_Field;
+use GFAPI;
 use ReflectionClass;
+use ReflectionException;
 use stdClass;
 use True_Resident\Badge_System\Triggers\Trigger_Interface;
 use WP_Error;
@@ -58,7 +61,7 @@ class Rewards extends Component {
 		// WP Initialization
 		add_action( 'init', [ $this, 'setup_db_tables_names' ], 1 );
 		add_action( 'init', [ $this, 'badgeos_load_triggers' ] );
-		
+
 	}
 
 	/**
@@ -77,7 +80,7 @@ class Rewards extends Component {
 	 * Load additional BadgeOS triggers hooks
 	 *
 	 * @return void
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function badgeos_load_triggers() {
 
@@ -114,12 +117,12 @@ class Rewards extends Component {
 	/**
 	 * Update badgeos_get_step_requirements to include our custom requirements
 	 *
-	 * @param  array   $requirements The current step requirements
-	 * @param  integer $step_id The given step's post ID
-	 * @param  string  $trigger_type step trigger type
+	 * @param array   $requirements The current step requirements
+	 * @param integer $step_id The given step's post ID
+	 * @param string  $trigger_type step trigger type
 	 *
 	 * @return array
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function badgeos_step_data_requirements( $requirements, $step_id, $trigger_type = '' ) {
 
@@ -144,7 +147,7 @@ class Rewards extends Component {
 	 * @param array $triggers
 	 *
 	 * @return array
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function badegos_register_new_triggers( $triggers ) {
 
@@ -152,6 +155,7 @@ class Rewards extends Component {
 		$triggers = array_merge( $triggers, array_map( function ( $trigger ) {
 
 			return $trigger->label();
+
 		}, $this->get_triggers() ) );
 
 		return $triggers;
@@ -163,16 +167,19 @@ class Rewards extends Component {
 	 * @param int $listing_id
 	 *
 	 * @return array
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function get_listings_badges( $listing_id ) {
 
 		// vars
 		$cache_id     = 'trbs_listing_' . $listing_id . '_badges';
 		$badges_found = get_transient( $cache_id );
-		if ( false !== $badges_found && false === true_resident_badge_system()->cache_disabled() && false === WC()->session->get( $this->session_key, false ) ) {
+
+		if ( false !== $badges_found && false === $this->plugin->cache_disabled() && false === WC()->session->get( $this->session_key, false ) ) {
+
 			// load from cache
 			return $badges_found;
+
 		}
 
 		// not cached data, so calculate it.
@@ -226,7 +233,7 @@ class Rewards extends Component {
 	 * List of new triggers
 	 *
 	 * @return array
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function get_triggers() {
 
@@ -307,7 +314,7 @@ class Rewards extends Component {
 	 * @param string $step_type
 	 *
 	 * @return array|bool
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function get_step_data( $step_id, $step_type = '' ) {
 
@@ -327,7 +334,7 @@ class Rewards extends Component {
 	 * @param string $step_type
 	 *
 	 * @return bool
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function is_checklist_step( $step_id, $step_type = '' ) {
 
@@ -338,6 +345,7 @@ class Rewards extends Component {
 		}
 
 		return $trigger->is_checklist_step( $step_id );
+
 	}
 
 	/**'
@@ -347,7 +355,7 @@ class Rewards extends Component {
 	 * @param string $step_type
 	 *
 	 * @return Trigger_Interface|boolean
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function get_step_trigger_object( $step_id, $step_type = '' ) {
 
@@ -456,7 +464,7 @@ class Rewards extends Component {
 	 * @param array $mark_args
 	 *
 	 * @return WP_Error|boolean
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function update_checklist_mark( $mark_args ) {
 
@@ -523,7 +531,7 @@ class Rewards extends Component {
 	 * @param array $mark_args
 	 *
 	 * @return null|string|WP_Error
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function get_checklist_mark( $mark_args ) {
 
@@ -557,13 +565,11 @@ class Rewards extends Component {
 			return new WP_Error( 'trbs_step_not_found', __( 'Badge step not found!', TRBS_DOMAIN ) );
 		}
 
-		if (
-			! isset( $target_step->step_data ) ||
-			! isset( $target_step->step_data['challenges_checklist'] ) ||
-			! isset( $target_step->step_data['challenges_checklist'][ $mark_args['point'] ] )
-		) {
+		if ( ! isset( $target_step->step_data['challenges_checklist'][ $mark_args['point'] ] ) ) {
+
 			// checklist point not found!
-			return new WP_Error( 'trbs_checklist_point_not_found', __( 'Checklist point not foudn!', TRBS_DOMAIN ) );
+			return new WP_Error( 'trbs_checklist_point_not_found', __( 'Checklist point not found!', TRBS_DOMAIN ) );
+
 		}
 
 		// last mark for that point
@@ -623,14 +629,17 @@ class Rewards extends Component {
 		}
 
 		if ( null === $last_earning ) {
+
 			// sort object by earn date descending
 			usort( $earnings, function ( $a, $b ) {
 
 				return $a->date_earned < $b->date_earned ? 1 : - 1;
+
 			} );
 
 			// get the latest one
 			$last_earning = array_shift( $earnings );
+
 		}
 
 		// format earn date
@@ -640,6 +649,7 @@ class Rewards extends Component {
 		$last_earning->earn_count = $earnings_count;
 
 		return $last_earning;
+
 	}
 
 	/**
@@ -649,7 +659,7 @@ class Rewards extends Component {
 	 * @param boolean $with_extra
 	 *
 	 * @return array
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function get_badge_steps( $badge, $with_extra = false ) {
 
@@ -753,26 +763,32 @@ class Rewards extends Component {
 	public function get_suggestion_form() {
 
 		if ( false === class_exists( 'GFAPI' ) ) {
+
 			// GForms is missing
 			return new WP_Error( 'trbs_gform_missing', __( 'Gravity Forms not installed or active!', TRBS_DOMAIN ) );
+
 		}
 
 		$form_id = absint( get_option( $this->get_suggestion_form_option_name(), 0 ) );
 		if ( 0 === $form_id ) {
+
 			// form not set/selected
 			return new WP_Error( 'trbs_suggestion_form_not_set', __( 'Suggestion form not set!', TRBS_DOMAIN ) );
+
 		}
 
-		$form = \GFAPI::get_form( $form_id );
+		$form = GFAPI::get_form( $form_id );
 		if ( false === $form ) {
+
 			// invalid form
 			return new WP_Error( 'trbs_suggestion_form_invalid', __( 'Invalid suggestion form!', TRBS_DOMAIN ) );
+
 		}
 
 		// check for missing fields
 		$required_fields = array_filter( $form['fields'], function ( $field ) {
 
-			/* @var $field \GF_Field */
+			/* @var $field GF_Field */
 			if ( 'hidden' !== $field->get_input_type() ) {
 				// not hidden field
 				return false;
@@ -788,8 +804,10 @@ class Rewards extends Component {
 		} );
 
 		if ( 2 !== count( $required_fields ) ) {
+
 			// missing required fields
 			return new WP_Error( 'trbs_suggestion_fields_missing', __( 'Missing required fields in the suggestion form! <code>listing_id</code> or <code>badge_id</code>', TRBS_DOMAIN ) );
+
 		}
 
 		return $form;
@@ -801,5 +819,103 @@ class Rewards extends Component {
 	public function get_suggestion_form_option_name() {
 
 		return $this->suggestion_form_option_name;
+
+	}
+
+	/**
+	 * @param int   $badge_id
+	 * @param int   $user_id
+	 * @param array $steps
+	 *
+	 * @return array
+	 * @throws ReflectionException
+	 */
+	public static function get_badge_completion_data( $badge_id, $user_id = 0, $steps = null ) {
+
+		if ( empty( $steps ) ) {
+
+			$steps = badgeos_get_required_achievements_for_achievement( $badge_id );
+
+		}
+
+		if ( 0 === $user_id ) {
+
+			$user_id = get_current_user_id();
+
+		}
+
+		$steps_count     = count( $steps );
+		$steps_completed = 0;
+		$steps_data      = [];
+		$has_challenges  = false;
+
+		for ( $i = 0; $i < $steps_count; $i ++ ) {
+			// vars
+			$step_id         = $steps[ $i ]->ID;
+			$step_type       = trbs_rewards()->get_step_type( $step_id );
+			$step_completed  = count( badgeos_get_user_achievements( [
+					'user_id'        => $user_id,
+					'achievement_id' => $step_id,
+					'since'          => absint( badgeos_achievement_last_user_activity( $badge_id, $user_id ) ),
+				] ) ) > 0;
+			$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
+
+			if ( false === $has_challenges ) {
+				// check if badge has challenges checklist step or not
+				$has_challenges = trbs_rewards()->is_checklist_step( $step_id, $step_type );
+			}
+
+			// get step data
+			$steps_data[ $step_id ] = trbs_rewards()->get_step_data( $step_id, $step_type );
+
+			// clear un-wanted data
+			unset( $steps_data[ $step_id ]['checklist_max_index'] );
+
+			// with step title
+			$steps_data[ $step_id ]['title'] = $steps[ $i ]->post_title;
+		}
+
+		// clear
+		unset( $step_id, $step_type, $step_completed );
+
+		// overall percentage ( positive and 100% max )
+		$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
+		$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
+
+		if ( $has_challenges ) {
+
+			foreach ( $steps_data as $step_id => $step_data ) {
+
+				if ( ! isset( $step_data['challenges_checklist'] ) ) {
+					// skip
+					continue;
+				}
+
+				$step_data['challenges_checklist_marks'] = [];
+
+				// get points' marks
+				$points_indexes = array_keys( $step_data['challenges_checklist'] );
+
+				foreach ( $points_indexes as $point_id ) {
+
+					$step_data['challenges_checklist_marks'][ $point_id ] = null !== trbs_rewards()->get_checklist_mark( [
+							'badge' => $badge_id,
+							'step'  => $step_id,
+							'point' => $point_id,
+							'user'  => $user_id,
+						] );
+
+				}
+
+				$steps_data[ $step_id ] = $step_data;
+
+			}
+
+			// clear
+			unset( $step_id );
+		}
+
+		return compact( 'steps_data', 'earned_percentage', 'has_challenges', 'has_challenges' );
+
 	}
 }

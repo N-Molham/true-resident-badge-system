@@ -6,6 +6,7 @@
  * @package True_Resident\Badge_System\Triggers
  */
 interface Trigger_Interface {
+
 	/**
 	 * Trigger label
 	 *
@@ -108,4 +109,5 @@ interface Trigger_Interface {
 	 * @return array
 	 */
 	public function get_matching_listings( $step_id );
+
 }

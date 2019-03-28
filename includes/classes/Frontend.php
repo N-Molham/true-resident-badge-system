@@ -1,5 +1,6 @@
 <?php namespace True_Resident\Badge_System;
 
+use stdClass;
 use WP_Post;
 use WP_Query;
 
@@ -61,7 +62,7 @@ class Frontend extends Component {
 
 		add_action( 'init', [ $this, 'hooks_cleanup' ], PHP_INT_MAX );
 
-		add_filter( 'shortcode_atts_badgeos_achievements_list', [ $this, 'filter_profile_badges_by_user' ] );
+		add_filter( 'shortcode_atts_badgeos_achievements_list', [ $this, 'filter_profile_badges_by_user' ], 20 );
 
 	}
 
@@ -78,7 +79,7 @@ class Frontend extends Component {
 
 		}
 
-		if ( um_is_core_page( 'user' ) ) {
+		if ( 'profile' === $attributes['user_id'] || um_is_core_page( 'user' ) ) {
 
 			$attributes['user_id'] = um_profile_id();
 
@@ -231,103 +232,6 @@ class Frontend extends Component {
 	}
 
 	/**
-	 * @param int   $badge_id
-	 * @param int   $user_id
-	 * @param array $steps
-	 *
-	 * @return array
-	 * @throws \ReflectionException
-	 */
-	public function get_badge_completion_data( $badge_id, $user_id = 0, $steps = null ) {
-
-		if ( empty( $steps ) ) {
-
-			$steps = badgeos_get_required_achievements_for_achievement( $badge_id );
-
-		}
-
-		if ( 0 === $user_id ) {
-
-			$user_id = get_current_user_id();
-
-		}
-
-		$steps_count     = count( $steps );
-		$steps_completed = 0;
-		$steps_data      = [];
-		$has_challenges  = false;
-
-		for ( $i = 0; $i < $steps_count; $i ++ ) {
-			// vars
-			$step_id         = $steps[ $i ]->ID;
-			$step_type       = trbs_rewards()->get_step_type( $step_id );
-			$step_completed  = count( badgeos_get_user_achievements( [
-					'user_id'        => $user_id,
-					'achievement_id' => $step_id,
-					'since'          => absint( badgeos_achievement_last_user_activity( $badge_id, $user_id ) ),
-				] ) ) > 0;
-			$steps_completed += $step_completed ? 100 : trbs_rewards()->get_step_completed_percentage( $step_id );
-
-			if ( false === $has_challenges ) {
-				// check if badge has challenges checklist step or not
-				$has_challenges = trbs_rewards()->is_checklist_step( $step_id, $step_type );
-			}
-
-			// get step data
-			$steps_data[ $step_id ] = trbs_rewards()->get_step_data( $step_id, $step_type );
-
-			// clear un-wanted data
-			unset( $steps_data[ $step_id ]['checklist_max_index'] );
-
-			// with step title
-			$steps_data[ $step_id ]['title'] = $steps[ $i ]->post_title;
-		}
-
-		// clear
-		unset( $step_id, $step_type, $step_completed );
-
-		// overall percentage ( positive and 100% max )
-		$earned_percentage = abs( round( $steps_completed ? $steps_completed / $steps_count : 0 ) );
-		$earned_percentage = $earned_percentage > 100 ? 100 : $earned_percentage;
-
-		if ( $has_challenges ) {
-
-			foreach ( $steps_data as $step_id => $step_data ) {
-
-				if ( ! isset( $step_data['challenges_checklist'] ) ) {
-					// skip
-					continue;
-				}
-
-				$step_data['challenges_checklist_marks'] = [];
-
-				// get points' marks
-				$points_indexes = array_keys( $step_data['challenges_checklist'] );
-
-				foreach ( $points_indexes as $point_id ) {
-
-					$step_data['challenges_checklist_marks'][ $point_id ] = null !== trbs_rewards()->get_checklist_mark( [
-							'badge' => $badge_id,
-							'step'  => $step_id,
-							'point' => $point_id,
-							'user'  => $user_id,
-						] );
-
-				}
-
-				$steps_data[ $step_id ] = $step_data;
-
-			}
-
-			// clear
-			unset( $step_id );
-		}
-
-		return compact( 'steps_data', 'earned_percentage', 'has_challenges', 'has_challenges' );
-
-	}
-
-	/**
 	 * BadgeOS achievement updated render
 	 *
 	 * @param string $output
@@ -341,14 +245,33 @@ class Frontend extends Component {
 		// vars
 		$user_id        = $this->target_get_user_id();
 		$badge          = get_post( $badge_id );
-		$multi_earnings = - 1 === (int) $badge->_badgeos_maximum_earnings;
+		$multi_earnings = - 1 === (int) $badge->_badgeos_maximum_earnings || $badge->_badgeos_maximum_earnings > 1;
 
 		// check if user has earned this Achievement, and add an 'earned' class
-		$last_earning  = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
-		$is_earned     = false !== $last_earning;
-		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
+		$last_earning = trbs_rewards()->get_last_badge_earning( $badge_id, $user_id );
+		$is_earned    = false !== $last_earning;
 
-		$css_classes = [
+		// completion data
+		$steps_completion_data = Rewards::get_badge_completion_data( $badge_id, $user_id );
+		$has_challenges        = $steps_completion_data['has_challenges'];
+		$steps_data            = $steps_completion_data['steps_data'];
+		$earned_percentage     = $steps_completion_data['earned_percentage'];
+
+		if ( false === $is_earned && $earned_percentage >= 100 ) {
+
+			badgeos_award_achievement_to_user( $badge_id, $user_id );
+
+			$is_earned    = true;
+			$last_earning = new stdClass();
+
+			$last_earning->earn_count            = 1;
+			$last_earning->date_earned           = current_time( 'timestamp' );
+			$last_earning->date_earned_formatted = date( 'M j, Y', $last_earning->date_earned );
+
+		}
+
+		$earned_status = $is_earned ? 'user-has-earned' : 'user-has-not-earned';
+		$css_classes   = [
 			'badgeos-achievements-list-item',
 			$earned_status,
 		];
@@ -358,14 +281,11 @@ class Frontend extends Component {
 
 		// If the achievement is earned and givable, override our credly classes
 		if ( 'user-has-earned' === $earned_status && $giveable = credly_is_achievement_giveable( $badge_id, $user_id ) ) {
+
 			$css_classes = array_merge( $css_classes, [ 'share-credly', 'addCredly' ] );
 			$credly_ID   = 'data-credlyid="' . $badge_id . '"';
-		}
 
-		$steps_completion_data = $this->get_badge_completion_data( $badge_id, $user_id );
-		$has_challenges        = $steps_completion_data['has_challenges'];
-		$steps_data            = $steps_completion_data['steps_data'];
-		$earned_percentage     = $steps_completion_data['earned_percentage'];
+		}
 
 		if ( $has_challenges ) {
 
@@ -385,8 +305,14 @@ class Frontend extends Component {
 		// Achievement Short Description
 		$excerpt         = '' === $badge->post_excerpt || empty( $badge->post_excerpt ) ? $badge->post_content : $badge->post_excerpt;
 		$popover_content .= '<div class="badgeos-item-excerpt">' . wpautop( apply_filters( 'get_the_excerpt', $excerpt ) );
-		$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
-		$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span></span>';
+
+		if ( false === $is_earned ) {
+
+			// progress bar
+			$popover_content .= '<span class="badgeos-percentage"><span class="badgeos-percentage-bar" style="width: ' . $earned_percentage . '%;"></span>';
+			$popover_content .= '<span class="badgeos-percentage-number">' . $earned_percentage . '&percnt;</span></span>';
+
+		}
 
 		if ( $is_earned && isset( $last_earning->date_earned ) ) {
 			// earn date
