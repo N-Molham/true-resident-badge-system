@@ -104,16 +104,18 @@ class Backend extends Component {
 
 		wc_set_time_limit();
 
-		$backlogs = $wpdb->get_results( "SELECT log.ID as log_id, log.post_author AS user_id, log_meta.meta_value AS badge_id 
+		$backlogs = $wpdb->get_results( "SELECT SQL_CALC_FOUND_ROWS log.ID as log_id, log.post_author AS user_id, log_meta.meta_value AS badge_id 
 FROM {$wpdb->posts} AS log
 JOIN {$wpdb->postmeta} AS log_meta ON log_meta.post_id = ID AND log_meta.meta_key = '_badgeos_log_achievement_id'
 JOIN {$wpdb->posts} AS badge ON badge.ID = log_meta.meta_value AND badge.post_type = 'badges'
 JOIN {$wpdb->users} AS user ON user.ID = log.post_author
-WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_meta.meta_value IS NOT NULL ORDER BY log.ID ASC LIMIT 500" );
+WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_meta.meta_value IS NOT NULL ORDER BY log.ID ASC LIMIT 200" );
 
 		ob_start();
 
 		if ( count( $backlogs ) ) {
+
+			echo $wpdb->get_var( 'SELECT FOUND_ROWS()' ), ' Found';
 
 			echo '<ul>';
 
@@ -144,13 +146,17 @@ WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_me
 
 			echo '</ul>';
 
+			echo '<p><a id="backlog-next-patch" href="', esc_url( add_query_arg( 'last_log_id', $last_log_id ) ), '">Next patch</a></p>';
+
+			echo '<script>setTimeout( function() { document.getElementById("backlog-next-patch").click(); }, 500 )</script>';
+
 		} else {
 
 			echo '<p>No more found, that is it.</p>';
 
 		}
 
-		wp_die( ob_get_clean() . '<p><a href="' . esc_url( add_query_arg( 'last_log_id', $last_log_id ) ) . '">Next patch</a></p>', 'Update' );
+		wp_die( ob_get_clean(), 'Update' );
 
 	}
 
