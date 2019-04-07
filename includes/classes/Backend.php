@@ -1,5 +1,7 @@
 <?php namespace True_Resident\Badge_System;
 
+use ReflectionException;
+
 /**
  * Backend logic
  *
@@ -79,6 +81,76 @@ class Backend extends Component {
 		add_action( 'admin_action_set_badge_earning_maximum', [ $this, 'set_badge_earning_maximum' ] );
 
 		add_action( 'badgeos_settings', [ $this, 'add_badge_action_buttons' ] );
+
+		add_action( 'admin_action_badges_backlog', [ $this, 'trace_back_badges' ] );
+
+	}
+
+	/**
+	 * @return void
+	 * @throws ReflectionException
+	 */
+	public function trace_back_badges() {
+
+		if ( false === current_user_can( 'manage_options' ) ) {
+
+			return;
+
+		}
+
+		global $wpdb;
+
+		$last_log_id = absint( filter_input( INPUT_GET, 'last_log_id', FILTER_SANITIZE_NUMBER_INT ) );
+
+		wc_set_time_limit();
+
+		$backlogs = $wpdb->get_results( "SELECT log.ID as log_id, log.post_author AS user_id, log_meta.meta_value AS badge_id 
+FROM {$wpdb->posts} AS log
+JOIN {$wpdb->postmeta} AS log_meta ON log_meta.post_id = ID AND log_meta.meta_key = '_badgeos_log_achievement_id'
+JOIN {$wpdb->posts} AS badge ON badge.ID = log_meta.meta_value AND badge.post_type = 'badges'
+JOIN {$wpdb->users} AS user ON user.ID = log.post_author
+WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_meta.meta_value IS NOT NULL ORDER BY log.ID ASC LIMIT 500" );
+
+		ob_start();
+
+		if ( count( $backlogs ) ) {
+
+			echo '<ul>';
+
+			foreach ( $backlogs as $log ) {
+
+				$last_log_id = $log->log_id;
+
+				$user_edit_link  = '<a href="' . get_edit_user_link( $log->user_id ) . '" target="_blank">' . $log->user_id . '</a>';
+				$badge_edit_link = '<a href="' . get_edit_post_link( $log->badge_id ) . '" target="_blank">' . $log->badge_id . '</a>';
+
+				if ( badgeos_has_user_earned_achievement( $log->badge_id, $log->user_id ) ) {
+
+					echo '<li>User ', $user_edit_link, ' already has badge ', $badge_edit_link, '</li>';
+
+					continue;
+
+				}
+
+				// Setup our achievement object
+				$achievement_object = badgeos_build_achievement_object( $log->badge_id );
+
+				// Update user's earned achievements
+				badgeos_update_user_achievements( [ 'user_id' => $log->user_id, 'new_achievements' => [ $achievement_object ] ] );
+
+				echo '<li>Reward user ', $user_edit_link, ' with badge ', $badge_edit_link, '</li>';
+
+			}
+
+			echo '</ul>';
+
+		} else {
+
+			echo '<p>No more found, that is it.</p>';
+
+		}
+
+		wp_die( ob_get_clean() . '<p><a href="' . esc_url( add_query_arg( 'last_log_id', $last_log_id ) ) . '">Next patch</a></p>', 'Update' );
 
 	}
 
@@ -324,7 +396,7 @@ class Backend extends Component {
 	 * @param int $badge_id
 	 *
 	 * @return void
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function clear_badges_cache( $badge_id ) {
 
@@ -478,7 +550,7 @@ class Backend extends Component {
 	 * @param array   $step_data Our array of all available step data
 	 *
 	 * @return string
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function badgeos_save_step_triggers_options( $title, $step_id, $step_data ) {
 
@@ -522,7 +594,7 @@ class Backend extends Component {
 	 * Handle new rewards triggers UI
 	 *
 	 * @return void
-	 * @throws \ReflectionException
+	 * @throws ReflectionException
 	 */
 	public function badgeos_rewards_triggers_ui() {
 
