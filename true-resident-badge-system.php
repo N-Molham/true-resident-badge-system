@@ -111,42 +111,6 @@ class Plugin extends Singular {
 		// autoloader register
 		spl_autoload_register( [ $this, 'autoloader' ] );
 
-		// vars
-		$has_missing_plugins      = false;
-		$this->dependency_plugins = [
-			'badgeos/badgeos.php'                                   => [
-				'title'    => 'BadegOS',
-				'link'     => 'https://wordpress.org/plugins/badgeos/',
-				'inactive' => false,
-			],
-			'wp-job-manager/wp-job-manager.php'                     => [
-				'title'    => 'WP Job Manager',
-				'link'     => 'https://wordpress.org/plugins/wp-job-manager/',
-				'inactive' => false,
-			],
-			'wp-job-manager-bookmarks/wp-job-manager-bookmarks.php' => [
-				'title'    => 'WP Job Manager Bookmarks',
-				'link'     => 'https://wpjobmanager.com/add-ons/bookmarks/',
-				'inactive' => false,
-			],
-		];
-
-		foreach ( $this->dependency_plugins as $plugin_name => $plugin_info ) {
-			// check if plugin is active or not
-			$plugin_info['inactive'] = Helpers::is_plugin_inactive( $plugin_name );
-			if ( $plugin_info['inactive'] ) {
-				// the plugin is missing
-				$has_missing_plugins = true;
-			}
-		}
-
-		if ( $has_missing_plugins ) {
-			add_action( 'admin_notices', [ $this, 'missing_dependency_plugin_notice' ] );
-
-			// skip as the dependencies aren't available
-			return;
-		}
-
 		// modules
 		$this->rewards   = Rewards::get_instance();
 		$this->bookmarks = Bookmarks::get_instance();
