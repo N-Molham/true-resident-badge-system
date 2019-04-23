@@ -16,7 +16,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die();
 }
 
-if ( PHP_SESSION_NONE === session_status() || '' === session_id() ) {
+if ( 'cli' !== php_sapi_name() && ( PHP_SESSION_NONE === session_status() || '' === session_id() ) ) {
 	// start session of not there
 	session_start();
 }

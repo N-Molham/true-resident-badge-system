@@ -3,3 +3,4 @@ syntax: glob
 node_modules
 .sass-cache
 package-lock.json
+bin
