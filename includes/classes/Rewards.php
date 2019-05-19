@@ -73,7 +73,19 @@ class Rewards extends Component {
 
 		global $wpdb;
 
-		$wpdb->checklist_marks = $wpdb->prefix . 'checklist_marks';
+		$wpdb->checklist_marks = $this->get_checkist_table_name();
+
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_checkist_table_name() {
+
+		global $wpdb;
+
+		return $wpdb->prefix . 'checklist_marks';
+
 	}
 
 	/**
