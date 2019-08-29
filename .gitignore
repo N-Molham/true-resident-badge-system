@@ -3,4 +3,3 @@ composer.phar
 vendor/
 node_modules/
 package-lock.json
-bin/
