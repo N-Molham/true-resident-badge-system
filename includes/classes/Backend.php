@@ -47,24 +47,21 @@ class Backend extends Component {
 		add_action( 'admin_notices', [ $this, 'display_notice_messages' ] );
 
 		// WP initiation action hook
-		add_action( 'init', [ $this, 'badgeos_rewards_triggers_ui' ] );
+		// add_action( 'init', [ $this, 'badgeos_rewards_triggers_ui' ] );
 
 		// WP Admin enqueue script action
 		add_action( 'admin_enqueue_scripts', [ $this, 'load_scripts' ] );
 
 		// BadgeOS before saving step filter
-		add_filter( 'badgeos_save_step', [ $this, 'badgeos_save_step_triggers_options' ], 10, 3 );
+		// add_filter( 'badgeos_save_step', [ $this, 'badgeos_save_step_triggers_options' ], 10, 3 );
 
 		// BadgeOS badge meta box fields filter
-		add_filter( 'badgeos_achievement_data_meta_box_fields', [
-			$this,
-			'append_hide_from_listing_page_field',
-		], 10, 3 );
-		add_filter( 'badgeos_achievement_data_meta_box_fields', [ $this, 'append_badge_type_field' ], 15, 3 );
+		// add_filter( 'badgeos_achievement_data_meta_box_fields', [ $this, 'append_hide_from_listing_page_field' ], 10, 3 );
+		// add_filter( 'badgeos_achievement_data_meta_box_fields', [ $this, 'append_badge_type_field' ], 15, 3 );
 
 		// WP post data save action
-		add_action( 'save_post_badges', [ $this, 'clear_badges_cache' ], 99 );
-		add_action( 'save_post_badges', [ $this, 'store_hidden_badges_as_option' ], 100 );
+		// add_action( 'save_post_badges', [ $this, 'clear_badges_cache' ], 99 );
+		// add_action( 'save_post_badges', [ $this, 'store_hidden_badges_as_option' ], 100 );
 
 		// WP admin dashboard action
 		add_action( 'admin_action_trbs_run_command', [ $this, 'manually_trigger_command' ] );
@@ -77,12 +74,12 @@ class Backend extends Component {
 		add_action( 'gform_entries_column', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
 		add_filter( 'gform_field_content', [ $this, 'append_listing_badge_links_to_entry_value' ], 999, 3 );
 
-		add_action( 'admin_action_reset_badge_earnings', [ $this, 'reset_badge_earnings' ] );
-		add_action( 'admin_action_set_badge_earning_maximum', [ $this, 'set_badge_earning_maximum' ] );
+		// add_action( 'admin_action_reset_badge_earnings', [ $this, 'reset_badge_earnings' ] );
+		// add_action( 'admin_action_set_badge_earning_maximum', [ $this, 'set_badge_earning_maximum' ] );
 
-		add_action( 'badgeos_settings', [ $this, 'add_badge_action_buttons' ] );
+		// add_action( 'badgeos_settings', [ $this, 'add_badge_action_buttons' ] );
 
-		add_action( 'admin_action_badges_backlog', [ $this, 'trace_back_badges' ] );
+		// add_action( 'admin_action_badges_backlog', [ $this, 'trace_back_badges' ] );
 
 	}
 
@@ -619,6 +616,7 @@ WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_me
 	public function get_hidden_badges() {
 
 		return array_values( get_option( $this->hidden_badges_option, [] ) );
+
 	}
 
 	/**
@@ -634,6 +632,7 @@ WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_me
 	public function add_notice_message( $body, $priority = 10, $is_error = false, $is_dismissible = false ) {
 
 		$this->dashboard_messages[] = compact( 'body', 'priority', 'is_error', 'is_dismissible' );
+
 	}
 
 	/**
@@ -647,6 +646,7 @@ WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_me
 		usort( $this->dashboard_messages, function ( $a, $b ) {
 
 			return $a['priority'] - $b['priority'];
+
 		} );
 
 		foreach ( $this->dashboard_messages as $message ) {

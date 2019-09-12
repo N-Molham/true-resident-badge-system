@@ -27,7 +27,7 @@ class Rewards extends Component {
 	 *
 	 * @var array
 	 */
-	protected $triggers_list;
+	protected $_triggers_list;
 
 	/**
 	 * Session key
@@ -53,14 +53,14 @@ class Rewards extends Component {
 		parent::init();
 
 		// BadgeOS activity triggers action
-		add_filter( 'badgeos_activity_triggers', [ $this, 'badegos_register_new_triggers' ] );
+		// add_filter( 'badgeos_activity_triggers', [ $this, 'badegos_register_new_triggers' ] );
 
 		// BadgeOS step data requirements filter
-		add_filter( 'badgeos_get_step_requirements', [ $this, 'badgeos_step_data_requirements' ], 10, 2 );
+		// add_filter( 'badgeos_get_step_requirements', [ $this, 'badgeos_step_data_requirements' ], 10, 2 );
 
 		// WP Initialization
 		add_action( 'init', [ $this, 'setup_db_tables_names' ], 1 );
-		add_action( 'init', [ $this, 'badgeos_load_triggers' ] );
+		// add_action( 'init', [ $this, 'badgeos_load_triggers' ] );
 
 	}
 
@@ -245,42 +245,42 @@ class Rewards extends Component {
 	 * List of new triggers
 	 *
 	 * @return array
-	 * @throws ReflectionException
 	 */
 	public function get_triggers() {
 
-		if ( null === $this->triggers_list ) {
-			/**
-			 * Filters the list of triggers' classes in the add-on
-			 *
-			 * @param array $triggers
-			 *
-			 * @return array
-			 */
-			$triggers_classes = (array) apply_filters( 'trbs_rewards_activity_triggers', [
-				Listing_Category_Check_In_Trigger::class,
-				Listing_Tag_Check_In_Trigger::class,
-				Specific_Listing_Check_In_Trigger::class,
-				Listing_Challenges_Checklist_Trigger::class,
-				Listings_Reviews_Trigger::class,
-				User_Register_Trigger::class,
-			] );
+		//		if ( null === $this->_triggers_list ) {
+		//			/**
+		//			 * Filters the list of triggers' classes in the add-on
+		//			 *
+		//			 * @param array $triggers
+		//			 *
+		//			 * @return array
+		//			 */
+		//			$triggers_classes = (array) apply_filters( 'trbs_rewards_activity_triggers', [
+		//				Listing_Category_Check_In_Trigger::class,
+		//				Listing_Tag_Check_In_Trigger::class,
+		//				Specific_Listing_Check_In_Trigger::class,
+		//				Listing_Challenges_Checklist_Trigger::class,
+		//				Listings_Reviews_Trigger::class,
+		//				User_Register_Trigger::class,
+		//			] );
+		//
+		//			foreach ( $triggers_classes as $trigger_class ) {
+		//				if ( ! class_exists( $trigger_class ) ) {
+		//					// trigger class not found!
+		//					continue;
+		//				}
+		//
+		//				// get instance
+		//				$trigger = ( new ReflectionClass( $trigger_class ) )->newInstance();
+		//
+		//				// append to list
+		//				$this->_triggers_list[ $trigger->activity_trigger() ] = $trigger;
+		//			}
+		//		}
 
-			foreach ( $triggers_classes as $trigger_class ) {
-				if ( ! class_exists( $trigger_class ) ) {
-					// trigger class not found!
-					continue;
-				}
+		return [];
 
-				// get instance
-				$trigger = ( new ReflectionClass( $trigger_class ) )->newInstance();
-
-				// append to list
-				$this->triggers_list[ $trigger->activity_trigger() ] = $trigger;
-			}
-		}
-
-		return $this->triggers_list;
 	}
 
 	/**
@@ -294,7 +294,7 @@ class Rewards extends Component {
 	public function get_step_completed_percentage( $step_id, $user_id = null ) {
 
 		$step_type = $this->get_step_type( $step_id );
-		if ( ! isset( $this->triggers_list[ $step_type ] ) ) {
+		if ( ! isset( $this->_triggers_list[ $step_type ] ) ) {
 			// step not in the additional type
 			return 0;
 		}
@@ -304,7 +304,7 @@ class Rewards extends Component {
 			$user_id = get_current_user_id();
 		}
 
-		return $this->triggers_list[ $step_type ]->get_step_percentage( $step_id, $user_id );
+		return $this->_triggers_list[ $step_type ]->get_step_percentage( $step_id, $user_id );
 	}
 
 	/**

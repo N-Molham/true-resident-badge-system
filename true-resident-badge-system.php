@@ -1,5 +1,4 @@
 <?php namespace True_Resident\Badge_System;
-
 /**
  * Plugin Name: True Resident BadgeOS Customization
  * Description: Customize badeOS plugin with website badge system functions
@@ -10,6 +9,8 @@
  * Domain Path: /languages
  * License: GNU General Public License, version 3, http://www.gnu.org/licenses/gpl-3.0.en.html
  */
+
+use True_Resident\Badge_System\Widgets\Listify_Listing_Badges;
 
 if ( ! defined( 'WPINC' ) ) {
 	// Exit if accessed directly
@@ -122,7 +123,7 @@ class Plugin extends Singular {
 		do_action_ref_array( 'trbs_loaded', [ $this ] );
 
 		// WP Widgets initialization
-		add_action( 'widgets_init', [ $this, 'register_widgets' ] );
+		// add_action( 'widgets_init', [ $this, 'register_widgets' ] );
 
 		// plugin activation
 		register_activation_hook( TRBS_MAIN_FILE, [ $this, 'plugin_activation_setups' ] );
@@ -137,6 +138,7 @@ class Plugin extends Singular {
 
 		// Database tables
 		$this->backend->update_db_tables();
+
 	}
 
 	/**
@@ -147,7 +149,8 @@ class Plugin extends Singular {
 	public function register_widgets() {
 
 		// listing's badges
-		register_widget( __NAMESPACE__ . '\Widgets\Listify_Listing_Badges' );
+		register_widget( Listify_Listing_Badges::class );
+
 	}
 
 	/**

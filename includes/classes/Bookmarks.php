@@ -32,6 +32,7 @@ class Bookmarks extends Component {
 
 		// WP all plugin loaded action hook
 		add_action( 'plugins_loaded', [ $this, 'replace_bookmark_handler' ] );
+
 	}
 
 	/**
@@ -50,6 +51,7 @@ class Bookmarks extends Component {
 		// replace the default handler
 		remove_action( 'wp', [ $this->wp_job_manager_bookmarks, 'bookmark_handler' ] );
 		add_action( 'wp', [ $this, 'bookmark_handler' ] );
+
 	}
 
 	/**
@@ -123,6 +125,7 @@ class Bookmarks extends Component {
 		// clear cache
 		delete_transient( 'bookmark_count_' . $post_id );
 		delete_transient( $this->get_cache_key( $user_id, $post_id ) );
+
 	}
 
 	/**
@@ -212,6 +215,7 @@ class Bookmarks extends Component {
 		 * @param string $date_created
 		 */
 		do_action_ref_array( 'true_resident_listing_new_check_in', $bookmark_data );
+
 	}
 
 	/**
@@ -248,6 +252,7 @@ class Bookmarks extends Component {
 		set_transient( $this->get_cache_key( $user_id, $post_id ), $bookmark_count, WEEK_IN_SECONDS );
 
 		return $bookmark_count;
+
 	}
 
 	/**
@@ -272,6 +277,7 @@ class Bookmarks extends Component {
 		$sql .= ' ORDER BY date_created DESC LIMIT 1';
 
 		return $wpdb->get_var( $wpdb->prepare( $sql, $params ) );
+
 	}
 
 	/**
@@ -284,6 +290,7 @@ class Bookmarks extends Component {
 		global $wpdb;
 
 		return "{$wpdb->prefix}job_manager_bookmarks";
+
 	}
 
 	/**
@@ -295,6 +302,7 @@ class Bookmarks extends Component {
 	public function get_cache_key( $user_id, $post_id ) {
 
 		return 'user_' . $user_id . '_bookmark_count_' . $post_id;
+
 	}
 
 	/**
@@ -312,6 +320,7 @@ class Bookmarks extends Component {
 		}
 
 		return $this->bookmark_mode;
+
 	}
 
 	/**
@@ -322,6 +331,7 @@ class Bookmarks extends Component {
 	public function get_wp_job_manager_bookmarks() {
 
 		return $this->wp_job_manager_bookmarks;
+
 	}
 
 	/**
@@ -330,5 +340,6 @@ class Bookmarks extends Component {
 	public function bookmark_mode_option_name() {
 
 		return 'bookmark_unlock_mode';
+
 	}
 }

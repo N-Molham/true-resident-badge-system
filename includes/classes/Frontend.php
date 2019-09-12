@@ -32,6 +32,7 @@ class Frontend extends Component {
 
 		parent::init();
 
+		/*
 		// BadgeOS achievement render
 		add_filter( 'badgeos_render_achievement', [ $this, 'badge_render_output' ], 10, 2 );
 
@@ -63,6 +64,7 @@ class Frontend extends Component {
 		add_action( 'init', [ $this, 'hooks_cleanup' ], PHP_INT_MAX );
 
 		add_filter( 'shortcode_atts_badgeos_achievements_list', [ $this, 'filter_profile_badges_by_user' ], 20 );
+		*/
 
 	}
 
