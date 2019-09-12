@@ -317,6 +317,7 @@ class Rewards extends Component {
 	public function get_step_type( $step_id ) {
 
 		return get_post_meta( $step_id, '_badgeos_trigger_type', true );
+		
 	}
 
 	/**
