@@ -297,16 +297,17 @@ WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_me
 	 */
 	public function activities_suggestion_form_setting( $settings ) {
 
-		if ( false === class_exists( 'RGFormsModel' ) ) {
+		$active_forms = true_resident_get_gravity_forms();
+
+		if ( is_wp_error( $active_forms ) ) {
 			// Gravity Form is not installed/active
 			return $settings;
 		}
 
 		// vars
-		$active_forms    = array_merge( [
+		$setting_options = [
 			[ 'title' => __( 'Please select a form', TRBS_DOMAIN ), 'id' => 0 ],
-		], \GFAPI::get_forms() );
-		$setting_options = [];
+		];
 
 		foreach ( $active_forms as $form ) {
 			// build options array
