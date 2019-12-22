@@ -300,18 +300,22 @@ WHERE log.ID > {$last_log_id} AND log.post_type = 'badgeos-log-entry' AND log_me
 		$active_forms = true_resident_get_gravity_forms();
 
 		if ( is_wp_error( $active_forms ) ) {
+			
 			// Gravity Form is not installed/active
 			return $settings;
+			
 		}
 
 		// vars
 		$setting_options = [
-			[ 'title' => __( 'Please select a form', TRBS_DOMAIN ), 'id' => 0 ],
+			0 => __( 'Please select a form', TRBS_DOMAIN ),
 		];
 
 		foreach ( $active_forms as $form ) {
+			
 			// build options array
 			$setting_options[ $form['id'] ] = $form['title'];
+			
 		}
 
 		// clear data
